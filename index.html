@@ -39,6 +39,24 @@ body::before{
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
 #app{position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:22px 24px 40px}
+/* Start screen help icons: top right of the page, outside the card */
+.topicons{position:fixed; z-index:20; top:max(12px,env(safe-area-inset-top)); right:max(12px,env(safe-area-inset-right)); display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:8px; max-width:200px}
+#app:not(:has(#screen-start:not([hidden]))) .topicons{display:none}
+.iconbtn{width:46px; height:46px; display:grid; place-items:center; padding:0; margin:0; border-radius:50%; cursor:pointer; color:#fff; background:rgba(255,255,255,.14); border:1.5px solid rgba(255,255,255,.55); box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 0 rgba(0,0,0,.25); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); transition:transform .15s cubic-bezier(.2,.8,.2,1),background .15s}
+.iconbtn svg{width:24px; height:24px}
+.iconbtn:active{transform:translateY(3px); box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 rgba(0,0,0,.25)}
+@media (hover:hover){ .iconbtn:hover{background:rgba(255,255,255,.24); transform:translateY(-2px)} }
+.iconbtn:focus-visible{outline:3px solid #8fd0ff; outline-offset:3px}
+.icontip{flex:1 0 100%; margin:0; text-align:right; font-size:.8rem; font-weight:700; color:#e8f4ff; text-shadow:0 1px 3px rgba(0,10,30,.7)}
+.icontip kbd{font:inherit; font-weight:900; padding:0 6px; border-radius:6px; border:1px solid rgba(255,255,255,.6); background:rgba(255,255,255,.14)}
+@media (prefers-reduced-motion:reduce){ .iconbtn{transition:none} }
+@media (max-width:600px){
+  .topicons{position:absolute; top:max(8px,env(safe-area-inset-top)); right:max(10px,env(safe-area-inset-right))}
+  #app:has(#screen-start:not([hidden])) .brand{padding-top:52px}
+  .icontip{display:none}
+}
+/* Round end card: hide the Tasks chip and move hint so nothing overlaps the result */
+body:has(#endOv:not([hidden])) .imp-panel, body:has(#endOv:not([hidden])) .hud-hint{visibility:hidden}
 .brand{text-align:center; margin:6px 0 18px}
 .brand h1{margin:0; font-size:2.4rem; letter-spacing:.02em; color:var(--accent); text-shadow:0 2px 18px rgba(255,150,50,.35)}
 .brand p{margin:4px 0 0; color:var(--muted); font-size:1.1rem}
@@ -758,12 +776,20 @@ dialog.kdlg{max-width:680px; width:min(680px,94vw); max-height:88vh; max-height:
     <h1>Mindminer Imposters</h1>
     <p>Welcome to MindMiners Mountain</p>
   </header>
+  <div class="topicons" id="startIcons">
+    <button type="button" class="iconbtn kbonly" id="btnKeysStart" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)" aria-keyshortcuts="?">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="6" width="19" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 10h1.5M9.5 10H11M13 10h1.5M16.5 10H18M7 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="iconbtn" id="btnHowTo" aria-label="How to play" title="How to play">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8.2v7.6l6-3.8z" fill="currentColor"/></svg>
+    </button>
+    <p class="icontip kbonly">Press <kbd>?</kbd> for shortcuts</p>
+  </div>
 
   <!-- ===== SCREEN: START ===== -->
   <section id="screen-start" class="screen" hidden aria-labelledby="h-start">
     <div class="card-panel center-card">
       <h2 id="h-start" tabindex="-1">Join the mine</h2>
-      <div class="howto-row"><button type="button" class="btn ghost small kbonly" id="btnKeysStart" aria-keyshortcuts="?">Keyboard shortcuts</button><button type="button" class="btn ghost small" id="btnHowTo">How to play</button></div>
       <label for="nick">Your nickname</label>
       <input type="text" id="nick" maxlength="16" autocomplete="off" spellcheck="false" placeholder="For example: Sam">
       <p class="hint">1 to 16 characters. Plain text only, no links.</p>
@@ -784,7 +810,6 @@ dialog.kdlg{max-width:680px; width:min(680px,94vw); max-height:88vh; max-height:
           <div style="margin-top:12px"><button type="button" class="btn" id="btnJoin">Join room</button></div>
         </div>
       </div>
-      <p class="hint tip kbonly">Tip: press ? for keyboard shortcuts</p>
       <div id="startMsg" class="notice" role="alert" hidden></div>
     </div>
   </section>
@@ -3617,8 +3642,8 @@ function initPlay() {
     else if ((key === "e" || key === " ") && imp.on) { e.preventDefault(); if (!e.repeat) impAct(); }
     else if (key === "q" && imp.on && !e.repeat) impTag();
     else if (key === "r" && imp.on && !e.repeat) impSabotage();
-    else if (key === "f" && imp.on && !e.repeat) meetKey("report");
-    else if (key === "b" && imp.on && !e.repeat) meetKey("meeting");
+    else if (key === "f" && imp.on && !e.repeat) { e.preventDefault(); meetKey("report"); } /* preventDefault: the letter must not land in the meeting chat box that opens */
+    else if (key === "b" && imp.on && !e.repeat) { e.preventDefault(); meetKey("meeting"); }
   });
   window.addEventListener("keyup", function (e) {
     if (warm.ui) taskKey(e, false);
