@@ -768,6 +768,44 @@ dialog.kdlg{max-width:680px; width:min(680px,94vw); max-height:88vh; max-height:
 .kdlg td{padding:5px 8px; border-bottom:1px solid var(--line); font-size:1.05rem; vertical-align:top}
 .kdlg td:first-child{white-space:nowrap; font-weight:800; width:34%}
 .kdlg .row{margin-top:16px}
+
+/* ===== STYLE: TOUR (first time walkthrough, coach marks) ===== */
+#tourRoot{position:fixed; inset:0; z-index:800; pointer-events:none}
+#tourRoot[hidden]{display:none}
+#tourRing{position:fixed; left:0; top:0; width:0; height:0; border-radius:16px; pointer-events:none; box-shadow:0 0 0 3px var(--accent), 0 0 22px 4px rgba(255,210,63,.5)}
+#tourRoot.dim #tourRing{box-shadow:0 0 0 9999px rgba(5,15,30,.6), 0 0 0 3px var(--accent), 0 0 22px 4px rgba(255,210,63,.5)}
+#tourRing.round{border-radius:50%}
+#tourRing::after{content:""; position:absolute; inset:-8px; border-radius:inherit; border:3px solid rgba(255,210,63,.75); animation:tourpulse 2.4s var(--ease) infinite}
+@keyframes tourpulse{0%,100%{opacity:.6; transform:scale(1)}50%{opacity:.1; transform:scale(1.07)}}
+#tourRoot.glide #tourRing{transition:left .45s var(--ease), top .45s var(--ease), width .45s var(--ease), height .45s var(--ease)}
+#tourPtr{position:fixed; left:0; top:0; width:40px; height:46px; pointer-events:none; will-change:transform}
+#tourRoot.glide #tourPtr{transition:transform .6s var(--ease)}
+#tourPtr .tp-in{width:100%; height:100%; transform-origin:14px 2px; animation:tourtap 1.8s var(--ease) infinite; filter:drop-shadow(0 4px 5px rgba(0,10,30,.55))}
+#tourPtr svg{width:40px; height:46px; display:block; overflow:visible}
+body.touch #tourPtr svg{transform:rotate(-12deg); transform-origin:14px 2px}
+#tourPtr .tp-rip{display:none; position:absolute; left:-8px; top:-19px; width:44px; height:44px; border-radius:50%; border:3px solid rgba(255,255,255,.85); opacity:0; animation:tourrip 1.8s var(--ease) infinite}
+body.touch #tourPtr .tp-rip{display:block}
+@keyframes tourtap{0%,55%,100%{transform:translate(0,0) scale(1)}28%{transform:translate(2px,7px) scale(.93)}}
+@keyframes tourrip{0%,22%{opacity:0; transform:scale(.2)}30%{opacity:.7; transform:scale(.4)}80%,100%{opacity:0; transform:scale(1.1)}}
+#tourBub{position:fixed; left:0; top:0; width:min(320px,calc(100vw - 20px)); box-sizing:border-box; pointer-events:auto; padding:14px 16px 12px; color:var(--text); background:rgba(10,28,48,.9); -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%); border:2px solid var(--line); border-radius:18px; box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 12px 40px rgba(0,10,30,.45); outline:none}
+#tourBub.in{animation:pop .45s var(--spring) both}
+#tourBub h3{margin:0 0 4px; font-size:1.2rem; line-height:1.2; color:var(--accent)}
+#tourBub p{margin:0; font-size:1.05rem; line-height:1.35}
+#tourBub .tb-foot{display:flex; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap}
+#tourBub .tb-step{font-weight:800; font-size:.9rem; color:var(--muted); margin-right:auto}
+#tourBub .tb-dots{display:inline-flex; gap:4px; margin-left:6px; vertical-align:middle}
+#tourBub .tb-dots i{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.3)}
+#tourBub .tb-dots i.on{background:var(--accent)}
+#tourBub .btn{margin:0}
+#tourBub .tb-skip{display:block; margin:8px 0 0 auto; padding:4px 2px; background:none; border:0; color:var(--muted); font:inherit; font-size:.9rem; font-weight:700; text-decoration:underline; cursor:pointer}
+#tourBub .tb-skip:focus-visible,#tourBub .btn:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+body.touch #tourBub .btn{min-height:44px}
+body.touch #tourBub .tb-skip{min-height:40px}
+@media (prefers-reduced-motion:reduce){
+  #tourRing::after,#tourPtr .tp-in,#tourPtr .tp-rip{animation:none}
+  #tourRoot.glide #tourRing,#tourRoot.glide #tourPtr{transition:none}
+  #tourBub.in{animation:fadein .25s linear both}
+}
 </style>
 </head>
 <body>
@@ -782,6 +820,9 @@ dialog.kdlg{max-width:680px; width:min(680px,94vw); max-height:88vh; max-height:
     </button>
     <button type="button" class="iconbtn" id="btnHowTo" aria-label="How to play" title="How to play">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8.2v7.6l6-3.8z" fill="currentColor"/></svg>
+    </button>
+    <button type="button" class="iconbtn" id="btnTour" aria-label="Show me around" title="Show me around">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.8 8.2l-2.1 5.5-5.5 2.1 2.1-5.5z" fill="currentColor"/></svg>
     </button>
     <p class="icontip kbonly">Press <kbd>?</kbd> for shortcuts</p>
   </div>
@@ -972,6 +1013,7 @@ dialog.kdlg{max-width:680px; width:min(680px,94vw); max-height:88vh; max-height:
       <span class="amb off" id="hudAmb">Cave sounds and campfire music: off</span>
       <button type="button" class="btn ghost small kbonly" id="btnMenuKeys" aria-keyshortcuts="?">Keyboard shortcuts</button>
       <button type="button" class="btn ghost small" id="btnMenuHow">How to play</button>
+      <button type="button" class="btn ghost small" id="btnMenuTour">Show me around</button>
       <button type="button" class="btn ghost small" id="btnPlayBack" hidden>Back to lobby</button>
     </div>
     <aside class="imp-panel" id="impPanel" hidden aria-label="Your role and tasks">
@@ -1069,6 +1111,26 @@ dialog.kdlg{max-width:680px; width:min(680px,94vw); max-height:88vh; max-height:
 
 <div id="toasts" role="status" aria-live="polite" aria-atomic="false"></div>
 <div class="sr" id="srLive" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<div id="tourRoot" hidden>
+  <div id="tourRing"></div>
+  <div id="tourPtr" aria-hidden="true">
+    <span class="tp-rip"></span>
+    <div class="tp-in"><svg viewBox="0 0 32 36" focusable="false"><path d="M9 3.2a2.4 2.4 0 0 1 4.8 0V13l1.2-.3a2.2 2.2 0 0 1 2.7 1.7l.2.5 1-.2a2.1 2.1 0 0 1 2.5 1.8l.1.7.8-.1c1.2 0 2.2 1 2.2 2.2v5.4c0 4-3 7-7 7h-2.6c-2.4 0-4.4-1.1-5.8-3L4 21.2a2.2 2.2 0 0 1 3.4-2.8L9 20z" fill="#fff" stroke="#1b1530" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+  </div>
+  <div id="tourBub" role="dialog" aria-modal="false" aria-labelledby="tourT" tabindex="-1">
+    <div id="tourLive" aria-live="polite" aria-atomic="true">
+      <h3 id="tourT"></h3>
+      <p id="tourX"></p>
+    </div>
+    <div class="tb-foot">
+      <span class="tb-step"><span id="tourN"></span><span class="tb-dots" id="tourDots" aria-hidden="true"></span></span>
+      <button type="button" class="btn ghost small" id="tourBack">Back</button>
+      <button type="button" class="btn small" id="tourNext">Next</button>
+    </div>
+    <button type="button" class="tb-skip" id="tourSkip">Skip tour</button>
+  </div>
+</div>
 
 <dialog id="keysDlg" class="kdlg" role="dialog" aria-modal="true" aria-labelledby="keysTitle">
   <h2 id="keysTitle">Keyboard shortcuts</h2>
@@ -3387,6 +3449,7 @@ function playDraw(now) {
   const vwW = play.vw / z, vwH = play.vh / z, mw = MAP_W * TILE, mh = MAP_H * TILE;
   const camX = vwW >= mw ? (mw - vwW) / 2 : Math.max(0, Math.min(mw - vwW, m.x - vwW / 2));
   const camY = vwH >= mh ? (mh - vwH) / 2 : Math.max(0, Math.min(mh - vwH, m.y - vwH / 2));
+  play.camX = camX; play.camY = camY; /* the tour uses these to point at spots on the map */
   c.setTransform(dpr * z, 0, 0, dpr * z, -camX * dpr * z, -camY * dpr * z);
   c.drawImage(play.mapCv, 0, 0);
   glowSpot(c, CAMP_POS.x, CAMP_POS.y, 200, "255,170,70", 0.13 + Math.sin(now / 1300) * 0.04);
@@ -6140,6 +6203,303 @@ function initShortcuts() {
   });
 }
 
+/* ===== TOUR: first time walkthrough (coach marks) =====
+   UI only. The flag "mmimp_tour_done" holds a short list of finished context names, nothing else (like the intro flag).
+   No network messages and no game rules are touched. In a round it never dims or pauses anything. */
+const TOUR_KEY = "mmimp_tour_done";
+const TOUR_CTX = ["start", "lobby", "play-warm", "play-imp", "meeting"];
+const tour = { on: false, ctx: "", steps: [], i: -1, raf: 0, poll: 0, adv: 0, glide: 0, st: null, dim: false, hide: false, session: [], rk: "", rAt: 0, pk: "", prev: null };
+function tourLoad() {
+  const a = tour.session.slice();
+  try {
+    const s = JSON.parse(localStorage.getItem(TOUR_KEY) || "[]");
+    if (Array.isArray(s)) s.forEach(function (x) { if (TOUR_CTX.indexOf(x) >= 0 && a.indexOf(x) < 0) a.push(x); });
+  } catch (e) { /* ignore */ }
+  return a;
+}
+function tourSave(a) { tour.session = a.slice(); try { localStorage.setItem(TOUR_KEY, JSON.stringify(a)); } catch (e) { /* ignore */ } }
+function tourIsDone(c) { return tourLoad().indexOf(c) >= 0; }
+function tourMark(c) { const a = tourLoad(); if (a.indexOf(c) < 0) { a.push(c); tourSave(a); } }
+function tourClearAll() { tour.session = []; try { localStorage.removeItem(TOUR_KEY); } catch (e) { /* ignore */ } }
+
+/* a spot on the map as a screen rectangle (uses the camera stored by playDraw) */
+function tourPt(x, y, w, h) {
+  if (typeof play.camX !== "number" || !isFinite(play.camX)) return null;
+  const cv = $("playCv").getBoundingClientRect(), z = play.zoom;
+  return { left: cv.left + (x - play.camX) * z - w / 2, top: cv.top + (y - play.camY) * z - h / 2, width: w, height: h, pt: true };
+}
+function tourNearestTask() {
+  const m = play.me;
+  if (!m) return null;
+  let best = null, bd = Infinity;
+  WARM_TASKS.forEach(function (t) {
+    if (warm.done.has(t.id)) return;
+    const d = Math.hypot(t.x - m.x, t.y - m.y);
+    if (d < bd) { bd = d; best = t; }
+  });
+  return best;
+}
+const TOUR_SETS = {
+  "start": function () {
+    return [
+      { t: "#nick", title: "Your name", text: "Type a nickname your team will see.", watch: function (st) { const v = $("nick").value.trim(); return !!v && v !== st.v; }, init: function (st) { st.v = $("nick").value.trim(); }, delay: 800 },
+      { t: "#startPickerHost", title: "Pick a miner", text: "Choose a colour. Each has its own helmet pattern." },
+      { t: "#screen-start .split .box:last-child", title: "Joining a friend?", text: "Type the 4 letter code from your host, then Join room." },
+      { t: "#btnCreate", title: "Hosting?", text: "Create a room to get a code to share." },
+      { t: "#startIcons", title: "Need help later?", text: "Replay the intro or this tour here." }
+    ];
+  },
+  "lobby": function () {
+    if (isHostView()) return [
+      { t: ".roombar", title: "Share this code", text: "Send these 4 letters to your team. Copy helps." },
+      { t: "#players", title: "Your crew", text: "Players appear here as they join." },
+      { t: "#screen-lobby .settings", title: "Room settings", text: "Pick the round and timings." },
+      { t: "#screen-lobby .pipe", title: "Icebreaker", text: "Optional campfire question before the game." },
+      { t: "#btnStart", title: "Ready?", text: "Start when everyone is in." }
+    ];
+    return [
+      { t: ".roombar", title: "Room code", text: "This is the room you joined." },
+      { t: "#players", title: "Your crew", text: "Players appear here as they join." },
+      { t: "#lobbyPickerHost", title: "Your colour", text: "Change your miner colour any time." },
+      { t: "#screen-lobby .lchat", title: "Say hi", text: "Chat with your team here." },
+      { t: "#waitLine", title: "Waiting for the host", text: "The host starts the game when everyone is in." }
+    ];
+  },
+  "play-warm": function () {
+    return [
+      { t: function () { return IS_TOUCH ? $("joy") : (play.me ? tourPt(play.me.x, play.me.y - 8, 64, 64) : null); },
+        title: "Move around", text: "W A S D or arrow keys.", tt: "Drag the stick.",
+        init: function (st) { st.x = play.me ? play.me.x : 0; st.y = play.me ? play.me.y : 0; },
+        watch: function (st) { return !!play.me && Math.hypot(play.me.x - st.x, play.me.y - st.y) >= TILE * 2; }, delay: 400 },
+      { t: "#warmBar", title: "Team goal", text: "Fill this bar before time runs out." },
+      { t: function () { if (IS_TOUCH) return $("tbUse"); const k = tourNearestTask(); return k ? tourPt(k.x, k.y, 76, 76) : null; },
+        title: "Go here", text: "Walk to the glowing spot and press E.", tt: "Walk to the glowing spot, then tap Use.",
+        panelOk: true, watch: function () { return !!warm.ui; }, delay: 150 },
+      { t: "#taskOv .ov-card", title: "Do the task", text: "Follow the panel. Esc to cancel.", tt: "Follow the panel. Tap Cancel to stop.",
+        panelOk: true, skipIf: function () { return !warm.ui; }, watch: function () { return !warm.ui; }, delay: 600 },
+      { t: "#btnMenu", title: "Menu", text: "Sound, help and leave are in here." }
+    ];
+  },
+  "play-imp": function () {
+    if (imp.role === "faker") return [
+      { t: IS_TOUCH ? "#tBtns" : "#ipToggle", title: "You are a faker", text: "Blend in. Q tags, R dims lamps.", tt: "Blend in. Tag and Sabotage buttons show up near targets." },
+      { t: "#impPanel", title: "Look busy", text: "Pretend to do these so nobody suspects you." },
+      { t: "#btnMenu", title: "Menu", text: "Sound, help and leave are in here." }
+    ];
+    return [
+      { t: "#impPanel", title: "Your tasks", text: "Do these. The arrow shows the next one." },
+      { t: function () { return (IS_TOUCH && !$("btnMeet").hidden) ? $("btnMeet") : tourPt(BELL_POS.x, BELL_POS.y, 80, 80); },
+        title: "See something?", text: "Press B at the bell or F near a body to call a meeting.", tt: "Walk to the bell or a body, then tap the meeting button." },
+      { t: "#btnMenu", title: "Menu", text: "Sound, help and leave are in here." }
+    ];
+  },
+  "meeting": function () {
+    return [
+      { t: "#meetInput", title: "Talk it out", text: "Share what you saw." },
+      { t: "#meetCards", title: "Vote", text: "When voting opens, tap a player, or press 1 to 9.", tt: "When voting opens, tap a player." },
+      { t: "#btnMeetSkip", title: "Not sure?", text: "You can skip." }
+    ];
+  }
+};
+function tourCtxNow() {
+  const s = screens.current;
+  if (s === "start") return "start";
+  if (s === "lobby") return "lobby";
+  if (s !== "play" || !play.on || !view) return "";
+  if (meet.on) return "meeting";
+  if (imp.on) return "play-imp";
+  if (warm.on) return "play-warm";
+  return "";
+}
+function tourReady(c) {
+  if (c === "play-warm") return !!play.me && !warm.over && !warm.ui;
+  if (c === "play-imp") return !!play.me && !imp.card && !imp.over && !warm.ui && !imp.out.has(view.myId);
+  if (c === "meeting") return meet.stage === "discuss";
+  return true;
+}
+/* true while something else owns the screen: the tour then hides (and starts later) */
+function tourBlocked(c, step) {
+  if (intro.open || $("confirm").open || $("keysDlg").open) return true;
+  if (c === "start" || c === "lobby") return false;
+  if (play.paused || (warm.on && warm.over) || (imp.on && imp.over)) return true;
+  if (!$("roleOv").hidden || !$("endOv").hidden || !$("pauseOv").hidden || !$("meetResOv").hidden || !$("menuPop").hidden) return true;
+  if (c !== "meeting" && !$("meetOv").hidden) return true;
+  if (!$("taskOv").hidden && !(step && step.panelOk)) return true;
+  return false;
+}
+function tourRectOf(s) {
+  let t = s.t;
+  if (typeof t === "function") t = t();
+  else if (typeof t === "string") t = document.querySelector(t);
+  if (!t) return null;
+  const r = t.getBoundingClientRect ? t.getBoundingClientRect() : t;
+  if (!(r.width > 0 && r.height > 0)) return null;
+  return { left: r.left, top: r.top, width: r.width, height: r.height, pt: !!t.pt };
+}
+function tourClamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function tourGo(i, dir) {
+  while (i >= 0 && i < tour.steps.length) {
+    const s = tour.steps[i];
+    if (!(s.skipIf && s.skipIf()) && tourRectOf(s)) break;
+    i += dir;
+  }
+  if (i >= tour.steps.length) { tourFinish(); return; }
+  if (i < 0) { if (tour.i < 0) tourStop(false); return; }
+  const s = tour.steps[i], first = tour.i < 0;
+  tour.i = i; tour.st = {}; tour.pk = "";
+  clearTimeout(tour.adv); tour.adv = 0;
+  if (s.init) { try { s.init(tour.st); } catch (e) { /* ignore */ } }
+  const n = tour.steps.length;
+  $("tourT").textContent = s.title;
+  $("tourX").textContent = IS_TOUCH && s.tt ? s.tt : s.text;
+  $("tourN").textContent = (i + 1) + " of " + n;
+  const dots = $("tourDots");
+  dots.replaceChildren();
+  for (let k = 0; k < n; k++) dots.appendChild(el("i", k === i ? { class: "on" } : null));
+  $("tourBack").hidden = i === 0;
+  $("tourNext").textContent = i === n - 1 ? "Got it" : "Next";
+  const root = $("tourRoot"), bub = $("tourBub");
+  if (!REDUCED_MOTION) { root.classList.add("glide"); clearTimeout(tour.glide); tour.glide = setTimeout(function () { root.classList.remove("glide"); }, 750); }
+  bub.classList.remove("in"); void bub.offsetWidth; bub.classList.add("in");
+  if (tour.ctx === "start" || tour.ctx === "lobby") {
+    const r0 = tourRectOf(s);
+    if (r0 && (r0.top < 60 || r0.top + Math.min(r0.height, 120) > window.innerHeight - 60)) {
+      try { (typeof s.t === "string" ? document.querySelector(s.t) : null).scrollIntoView({ block: "center", behavior: "auto" }); } catch (e) { /* ignore */ }
+    }
+    const a = document.activeElement;
+    if (first || !a || a === document.body || bub.contains(a)) { try { bub.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+  }
+  sfx("blip");
+  tourSched();
+}
+function tourNext() { if (tour.on) tourGo(tour.i + 1, 1); }
+function tourBack() { if (tour.on && tour.i > 0) tourGo(tour.i - 1, -1); }
+function tourStop(refocus) {
+  if (!tour.on && !tour.raf && !tour.poll) return;
+  tour.on = false; tour.i = -1; tour.hide = false;
+  cancelAnimationFrame(tour.raf); clearTimeout(tour.poll); clearTimeout(tour.adv); clearTimeout(tour.glide);
+  tour.raf = 0; tour.poll = 0; tour.adv = 0; tour.pk = "";
+  const root = $("tourRoot"), bub = $("tourBub");
+  const had = bub.contains(document.activeElement);
+  root.hidden = true; root.classList.remove("glide");
+  if (had) {
+    let f = tour.prev;
+    if (!f || !f.isConnected || !f.getClientRects().length) f = screens.current === "start" ? $("nick") : null;
+    if (refocus && f) { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+    else { try { document.activeElement.blur(); } catch (e) { /* ignore */ } }
+  }
+}
+function tourFinish() { const c = tour.ctx; tourMark(c); tourStop(true); }
+function tourSkip() { TOUR_CTX.forEach(tourMark); sfx("pop"); tourStop(true); }
+function tourStart(name) {
+  const mk = TOUR_SETS[name];
+  if (!mk) return;
+  tourStop(false);
+  const steps = mk();
+  if (!steps.length) return;
+  tour.prev = document.activeElement;
+  tour.on = true; tour.ctx = name; tour.steps = steps; tour.i = -1;
+  tour.dim = name === "start" || name === "lobby";
+  const root = $("tourRoot");
+  root.hidden = false; root.classList.toggle("dim", tour.dim);
+  tourGo(0, 1);
+}
+function tourReplay() {
+  tourClearAll(); tourStop(false); tour.rk = "";
+  const c = tourCtxNow();
+  if (c && tourReady(c) && !tourBlocked(c, null)) tourStart(c);
+  else toast("The tour will show again when you reach the next screen");
+}
+/* rAF while visible, a slow poll while something else covers the screen */
+function tourSched() {
+  if (!tour.on) return;
+  cancelAnimationFrame(tour.raf); clearTimeout(tour.poll);
+  tour.raf = 0; tour.poll = 0;
+  if (tour.hide) tour.poll = setTimeout(tourFrame, 300); else tour.raf = requestAnimationFrame(tourFrame);
+}
+function tourFrame() {
+  tour.raf = 0; tour.poll = 0;
+  if (!tour.on) return;
+  if (tourCtxNow() !== tour.ctx) { tourStop(false); return; }
+  const s = tour.steps[tour.i];
+  if (s.watch && !tour.adv) {
+    let ok = false;
+    try { ok = !!s.watch(tour.st); } catch (e) { /* ignore */ }
+    if (ok) tour.adv = setTimeout(function () { tour.adv = 0; if (tour.on && tour.steps[tour.i] === s) tourNext(); }, s.delay || 250);
+  }
+  const blocked = tourBlocked(tour.ctx, s);
+  if (blocked !== tour.hide) { tour.hide = blocked; $("tourRoot").hidden = blocked; tour.pk = ""; }
+  if (!blocked) tourPlace(s);
+  tourSched();
+}
+function tourPlace(s) {
+  const r = tourRectOf(s);
+  if (!r) return;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const key = [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height), vw, vh, tour.i].join();
+  if (key === tour.pk) return;
+  tour.pk = key;
+  const pad = r.pt ? 0 : 6;
+  let L = r.left - pad, T = r.top - pad, W = r.width + pad * 2, H = r.height + pad * 2;
+  if (r.pt) { L = tourClamp(L, 6, vw - W - 6); T = tourClamp(T, 6, vh - H - 6); }
+  let l2 = Math.max(L, 3), t2 = Math.max(T, 3), r2 = Math.min(L + W, vw - 3), b2 = Math.min(T + H, vh - 3);
+  if (r2 - l2 < 24 || b2 - t2 < 24) { l2 = tourClamp(L, 3, vw - 59); t2 = tourClamp(T, 3, vh - 59); r2 = l2 + 56; b2 = t2 + 56; }
+  const w2 = r2 - l2, h2 = b2 - t2, cx = l2 + w2 / 2, cy = t2 + h2 / 2;
+  const ring = $("tourRing");
+  ring.style.left = l2 + "px"; ring.style.top = t2 + "px"; ring.style.width = w2 + "px"; ring.style.height = h2 + "px";
+  ring.classList.toggle("round", !!r.pt);
+  /* pointer: tip inside a big target, low in the middle of a small one */
+  const big = w2 > 240 || h2 > 110;
+  const tx = big ? l2 + Math.min(w2 / 2, 90) : cx, ty = big ? t2 + Math.min(h2 / 2, 40) : t2 + h2 * 0.7;
+  $("tourPtr").style.transform = "translate(" + Math.round(tx - 14) + "px," + Math.round(ty - 2) + "px)";
+  /* bubble: beside the target, flipped or clamped to stay on screen */
+  const bub = $("tourBub"), bw = bub.offsetWidth, bh = bub.offsetHeight, mg = 10, gap = 14, below = big ? gap : 50;
+  const cxl = function (x) { return tourClamp(x, mg, vw - bw - mg); }, cyl = function (y) { return tourClamp(y, mg, vh - bh - mg); };
+  const opts = [
+    { x: cxl(cx - bw / 2), y: t2 - gap - bh, ok: t2 - gap - bh >= mg },
+    { x: l2 + w2 + gap, y: cyl(cy - bh / 2), ok: l2 + w2 + gap + bw <= vw - mg },
+    { x: l2 - gap - bw, y: cyl(cy - bh / 2), ok: l2 - gap - bw >= mg },
+    { x: cxl(cx - bw / 2), y: b2 + below, ok: b2 + below + bh <= vh - mg }
+  ];
+  let pick = null;
+  for (let k = 0; k < opts.length; k++) if (opts[k].ok) { pick = opts[k]; break; }
+  if (!pick) pick = { x: cxl(cx - bw / 2), y: cy < vh / 2 ? vh - bh - mg : mg };
+  bub.style.left = Math.round(pick.x) + "px"; bub.style.top = Math.round(pick.y) + "px";
+}
+/* start a tour when its screen is ready, nothing else is open and it was not done before */
+function tourAuto() {
+  if (tour.on) return;
+  const c = tourCtxNow();
+  if (!c || tourIsDone(c) || !tourReady(c) || tourBlocked(c, null)) { tour.rk = ""; return; }
+  const now = performance.now();
+  if (tour.rk !== c) { tour.rk = c; tour.rAt = now; return; }
+  if (now - tour.rAt >= (c === "start" || c === "lobby" ? 600 : 1200)) tourStart(c);
+}
+function initTour() {
+  $("tourNext").addEventListener("click", function () { sfx("pop"); tourNext(); if (screens.current === "play") this.blur(); });
+  $("tourBack").addEventListener("click", function () { sfx("pop"); tourBack(); if (screens.current === "play") this.blur(); });
+  $("tourSkip").addEventListener("click", tourSkip);
+  $("btnTour").addEventListener("click", tourReplay);
+  $("btnMenuTour").addEventListener("click", function () { playMenuClose(false); tourReplay(); });
+  window.addEventListener("resize", function () { tour.pk = ""; });
+  document.addEventListener("keydown", function (e) {
+    if (!tour.on || tour.hide || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+    if (intro.open || $("confirm").open || $("keysDlg").open) return;
+    const t = e.target, inB = $("tourBub").contains(t), inPlay = screens.current === "play";
+    const free = !inPlay && (t === document.body || t === document.documentElement);
+    const k = e.key;
+    let act = "";
+    if (k === "Escape" && (inB || !inPlay)) act = "skip";
+    else if (k === "Enter" && ((inB && t.tagName !== "BUTTON") || free)) act = "next";
+    else if (k === "ArrowRight" && (inB || free)) act = "next";
+    else if (k === "ArrowLeft" && (inB || free)) act = "back";
+    if (!act) return;
+    e.preventDefault(); e.stopPropagation();
+    if (act === "skip") tourSkip(); else if (act === "next") { sfx("pop"); tourNext(); } else { sfx("pop"); tourBack(); }
+  }, true);
+  setInterval(tourAuto, 400);
+}
+
 /* ===== BOOT ===== */
 initScrollFades();
 initMotion();
@@ -6149,6 +6509,7 @@ initStartScreen();
 initLobbyButtons();
 initIntro();
 initShortcuts();
+initTour();
 screens.show("start");
 /* the intro plays by itself only on the first visit and only from the start screen (never during a game) */
 if (!introSeen() && screens.current === "start" && !view && !host) introOpen(false, null);
