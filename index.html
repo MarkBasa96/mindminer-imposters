@@ -2,38 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Mindminer Imposters</title>
+<meta name="theme-color" content="#0e5a6b">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23127a8a'/%3E%3Cstop offset='1' stop-color='%2310305a'/%3E%3C/linearGradient%3E%3CradialGradient id='l' cx='.5' cy='.5' r='.5'%3E%3Cstop offset='0' stop-color='%23fff8d6'/%3E%3Cstop offset='1' stop-color='%23fff8d6' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23b)'/%3E%3Cpath d='M12 42a20 20 0 0 1 40 0z' fill='%23ffd23f'/%3E%3Cpath d='M12 42a20 20 0 0 1 40 0' fill='none' stroke='%23c99a00' stroke-width='2'/%3E%3Crect x='8' y='41' width='48' height='7' rx='3.5' fill='%23ffb347'/%3E%3Crect x='29' y='24' width='6' height='18' rx='2' fill='%23c99a00' opacity='.55'/%3E%3Ccircle cx='32' cy='30' r='12' fill='url(%23l)'/%3E%3Ccircle cx='32' cy='30' r='5.5' fill='%23ffffff' stroke='%2310305a' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23127a8a'/%3E%3Cpath d='M12 42a20 20 0 0 1 40 0z' fill='%23ffd23f'/%3E%3Crect x='8' y='41' width='48' height='7' rx='3.5' fill='%23ffb347'/%3E%3Ccircle cx='32' cy='30' r='5.5' fill='%23ffffff' stroke='%2310305a' stroke-width='2'/%3E%3C/svg%3E">
 <style>
 /* ===== STYLE: THEME ===== */
 :root{
-  --bg:#0f0c0a; --panel:#221b15; --panel2:#2d241c; --field:#17120e; --line:#5a4635;
-  --text:#fbf5ec; --muted:#d6c8b4; --accent:#ffb347; --accent2:#ff8c42; --ink:#2a1802;
-  --danger:#ff9a8a; --ok:#63e08f; --focus:#8fd0ff; --radius:18px;
-  --shadow:0 8px 24px rgba(0,0,0,.45);
+  --bg:#10305a; --panel:rgba(10,28,48,.48); --glass:rgba(255,255,255,.08); --line:rgba(255,255,255,.22);
+  --text:#ffffff; --muted:#e8f4ff; --ink:#1b1530; --focus:#8fd0ff; --radius:22px;
+  --primary:#ffd23f; --primary-edge:#c99a00; --go:#2ee59d; --go-edge:#12a86c; --danger:#ff6b6b; --danger-edge:#c43d3d;
+  --panel2:rgba(255,255,255,.08); --field:rgba(0,15,30,.45); --accent:#ffd23f; --accent2:#ffb347; --ok:#3ee6b0;
+  --shadow:0 12px 40px rgba(0,10,30,.35);
 }
 *{box-sizing:border-box}
 html{font-size:18px}
 body{
   margin:0; min-height:100vh; color:var(--text);
   font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif; line-height:1.4;
-  background:
-    radial-gradient(ellipse at 50% -10%, #4a3320 0%, rgba(74,51,32,0) 55%),
-    radial-gradient(circle at 12% 95%, #1b2838 0%, rgba(27,40,56,0) 50%),
-    radial-gradient(circle at 90% 85%, #2a1d36 0%, rgba(42,29,54,0) 48%),
-    radial-gradient(circle at 70% 35%, #1a1511 0%, rgba(26,21,17,0) 60%),
-    linear-gradient(#17120f,#0b0a0d);
+  background:linear-gradient(#0e5a6b,#10305a);
   background-attachment:fixed;
 }
 body::before{
-  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  content:""; position:fixed; inset:-10%; pointer-events:none; z-index:0;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255,170,70,.20), rgba(255,170,70,0) 50%),
-    radial-gradient(circle at 8% 40%, rgba(255,150,60,.08), rgba(255,150,60,0) 30%),
-    radial-gradient(circle at 94% 55%, rgba(255,150,60,.08), rgba(255,150,60,0) 30%);
-  animation:glow 9s ease-in-out infinite alternate;
+    radial-gradient(circle at 12% 92%, rgba(255,179,71,.55), rgba(255,179,71,0) 45%),
+    radial-gradient(circle at 90% 8%, rgba(255,95,162,.32), rgba(255,95,162,0) 42%),
+    radial-gradient(circle at 92% 90%, rgba(62,230,176,.30), rgba(62,230,176,0) 42%);
+  animation:glow 40s ease-in-out infinite alternate;
 }
-@keyframes glow{from{opacity:.55}to{opacity:1}}
+@keyframes glow{from{transform:translate(-2%,1%) scale(1)}to{transform:translate(2%,-2%) scale(1.06)}}
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes softpulse{0%,100%{opacity:.6}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){
@@ -368,6 +367,276 @@ button{font-family:inherit}
 @media (max-height:650px){
   .meet-cards{grid-auto-rows:minmax(44px,58px)}
 }
+/* ===== STYLE: LOOK PASS 3 (crystal mine at golden hour: glass panels, chunky buttons) ===== */
+.brand h1{font-weight:900; letter-spacing:-.02em; color:#ffe27a; background:linear-gradient(180deg,#fff3b0 10%,#ffd23f 55%,#ffa62b 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 3px 0 rgba(0,20,50,.45)) drop-shadow(0 6px 14px rgba(0,10,30,.35))}
+.brand p{color:var(--muted); font-weight:600}
+.card-panel,dialog,.meet-card,.ov-card,.hud,.hud-hint,.warmbar,.imp-panel,.toast{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 12px 40px rgba(0,10,30,.35);
+  -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%); color:var(--text);
+}
+.hud,.hud-hint,.warmbar,.imp-panel{border-radius:16px}
+.hud-hint,.toast{border-radius:999px}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .card-panel,dialog,.meet-card,.ov-card,.hud,.hud-hint,.warmbar,.imp-panel,.toast{background:rgba(10,28,48,.85)}
+}
+.toast{font-weight:800; padding:10px 22px}
+.camp{background:radial-gradient(ellipse at 50% 110%, rgba(255,179,71,.38), rgba(255,179,71,0) 62%), var(--panel)}
+.split .box,.pcard,.mc,.chatlog,.ktile,.stage{background:var(--glass); border:1px solid var(--line); box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.pcard{border-radius:18px; box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 6px 18px rgba(0,10,30,.25)}
+.pcard.me{border-color:var(--primary); box-shadow:0 0 0 2px rgba(255,210,63,.4), 0 6px 18px rgba(0,10,30,.25)}
+.mc{border-radius:16px; border-width:2px}
+.mc.mine,.ktile.done{background:rgba(62,230,176,.2); border-color:var(--ok)}
+.ktile{border-width:2px}
+input[type=text],select,textarea{background:var(--field); border:1.5px solid rgba(255,255,255,.4); color:var(--text)}
+input[type=text]::placeholder,textarea::placeholder{color:#c3d8ea}
+select option{background:#0e2742; color:#fff}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--focus); box-shadow:0 0 0 3px rgba(143,208,255,.35); outline:none}
+:focus-visible{outline:3px solid var(--focus); outline-offset:3px}
+.swatch{background:var(--field); border:3px solid rgba(255,255,255,.25)}
+.swatch:hover:not(:disabled){border-color:#fff}
+.swatch.on{border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,210,63,.3), 0 0 16px rgba(255,210,63,.45)}
+.notice{background:rgba(255,107,107,.22); border:1.5px solid var(--danger); color:#fff}
+.mycolor,.pipe,.ip-abil{border-top-color:var(--line)}
+.ov{background:rgba(6,20,40,.55)}
+#pauseOv{background:rgba(6,20,40,.65)}
+dialog::backdrop{background:rgba(6,20,40,.6)}
+#screen-play:not([hidden]){background:#16303f}
+.wb-track,.bar.big{background:rgba(0,15,30,.55); border-color:rgba(255,255,255,.6)}
+.wb-fill{background:repeating-linear-gradient(45deg,#ffd23f 0 12px,#ffb347 12px 24px)}
+.bar.big .fill{background:repeating-linear-gradient(45deg,#3ee6b0 0 12px,#2ee59d 12px 24px)}
+.ktile.next{border-color:var(--primary); box-shadow:0 0 14px rgba(255,210,63,.5)}
+.mbadge{background:var(--primary); color:var(--ink)}
+.mbadge.you{background:var(--ok); color:#06281c}
+.mbadge.vd{background:#e6fff6; color:#06281c}
+.mbadge.cnt{background:#fff; color:var(--ink); border-color:var(--primary)}
+.pill.host{background:var(--primary); color:var(--ink); box-shadow:0 2px 0 var(--primary-edge)}
+.pill.you{border:2px solid #fff; color:#fff}
+#roomCode{color:var(--primary); background:var(--glass); border:1px solid var(--line); border-radius:18px; padding:0 .15em 0 .45em; text-shadow:0 2px 0 rgba(0,20,50,.5); box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.roombar .tag{color:var(--muted)}
+/* buttons: primary by default, then go, ghost (secondary), danger */
+.btn{
+  min-height:clamp(42px,6.4vh,48px); margin-bottom:5px; font-weight:800; border-radius:14px; border:0; color:var(--ink);
+  padding:clamp(8px,1.4vh,12px) clamp(16px,1.8vw,26px);
+  background:var(--primary); box-shadow:0 5px 0 var(--primary-edge), 0 8px 14px rgba(0,10,30,.25);
+  transition:transform .12s, box-shadow .12s, filter .12s;
+}
+@media (hover:hover){.btn:hover:not(:disabled){filter:none; transform:translateY(-2px); box-shadow:0 7px 0 var(--primary-edge), 0 12px 18px rgba(0,10,30,.28)}}
+.btn:active:not(:disabled){transform:translateY(3px); box-shadow:0 2px 0 var(--primary-edge)}
+.btn.go{background:var(--go); color:#06281c; box-shadow:0 5px 0 var(--go-edge), 0 8px 14px rgba(0,10,30,.25); font-size:1.25rem; min-height:clamp(46px,7vh,56px); padding-left:clamp(22px,2.4vw,34px); padding-right:clamp(22px,2.4vw,34px); animation:gopulse 2.4s ease-in-out infinite}
+@media (hover:hover){.btn.go:hover:not(:disabled){box-shadow:0 7px 0 var(--go-edge), 0 12px 18px rgba(0,10,30,.28)}}
+.btn.go:active:not(:disabled){box-shadow:0 2px 0 var(--go-edge); animation:none}
+@keyframes gopulse{0%,100%{filter:drop-shadow(0 0 0 rgba(46,229,157,0))}50%{filter:drop-shadow(0 0 12px rgba(46,229,157,.75))}}
+.btn.ghost{background:rgba(255,255,255,.14); color:#fff; border:1.5px solid rgba(255,255,255,.55); box-shadow:0 5px 0 rgba(0,0,0,.25); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px)}
+@media (hover:hover){.btn.ghost:hover:not(:disabled){border-color:#fff; background:rgba(255,255,255,.22); box-shadow:0 7px 0 rgba(0,0,0,.25)}}
+.btn.ghost:active:not(:disabled){box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.btn.danger{background:var(--danger); color:#2b0a0a; border:0; box-shadow:0 5px 0 var(--danger-edge), 0 8px 14px rgba(0,10,30,.25)}
+@media (hover:hover){.btn.danger:hover:not(:disabled){box-shadow:0 7px 0 var(--danger-edge), 0 12px 18px rgba(0,10,30,.28)}}
+.btn.danger:active:not(:disabled){box-shadow:0 2px 0 var(--danger-edge)}
+.btn.small,.camp .btn.small{min-height:38px; padding:6px 14px; font-size:.95rem; border-radius:12px}
+.btn:disabled{opacity:.45; cursor:not-allowed; box-shadow:none; transform:none; animation:none}
+.btn.go:disabled{filter:none}
+#btnPpStart{box-shadow:0 5px 0 var(--primary-edge)}
+.camp .btn{min-height:clamp(40px,6vh,48px)}
+.meet-btn{min-height:48px}
+/* lobby bug fix: action row sits in normal flow at the end of the panel, never over the colour picker */
+.lobby-grid>.card-panel:first-child{display:flex; flex-direction:column; padding-bottom:clamp(10px,2vh,22px)}
+.lobby-grid>.card-panel:first-child>*{flex:0 0 auto}
+.actions{position:sticky; bottom:calc(-1 * clamp(10px,2vh,22px)); z-index:2; background:rgba(12,34,58,.97); margin:auto calc(-1 * clamp(10px,2vh,22px)) calc(-1 * clamp(10px,2vh,22px)); padding:clamp(10px,1.6vh,16px) clamp(10px,2vh,22px); border-top:1px solid var(--line); border-radius:0 0 22px 22px}
+.mycolor{padding-bottom:4px}
+.dots{background:var(--primary)}
+.wait::before,.camp-ember,.amb::before{background:var(--primary)}
+@media (prefers-reduced-motion:reduce){
+  body::before,.btn.go{animation:none!important}
+}
+/* ===== STYLE: MOBILE AND TOUCH ===== */
+button,.swatch,.mc{touch-action:manipulation}
+#app{padding-top:max(clamp(6px,1.6vh,22px),env(safe-area-inset-top)); padding-bottom:max(clamp(6px,1.6vh,22px),env(safe-area-inset-bottom)); padding-left:max(clamp(10px,2vw,24px),env(safe-area-inset-left)); padding-right:max(clamp(10px,2vw,24px),env(safe-area-inset-right))}
+#playCv{touch-action:none}
+.meet-card{height:min(94vh,720px); height:min(94dvh,720px)}
+.ov-card{max-height:94vh; max-height:94dvh}
+.joy,.tbtns{display:none}
+body.touch .joy:not([hidden]){display:block; position:absolute; left:max(16px,env(safe-area-inset-left)); bottom:max(16px,env(safe-area-inset-bottom)); width:132px; height:132px; border-radius:50%; z-index:4; touch-action:none; user-select:none; -webkit-user-select:none; background:rgba(255,255,255,.14); border:1.5px solid rgba(255,255,255,.55); box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 8px 24px rgba(0,10,30,.3); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px)}
+.joy-knob{position:absolute; left:50%; top:50%; width:56px; height:56px; border-radius:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,.7); border:2px solid #fff; box-shadow:0 4px 0 rgba(0,0,0,.25); pointer-events:none}
+body.touch .tbtns:not([hidden]){display:flex; position:absolute; right:max(16px,env(safe-area-inset-right)); bottom:max(16px,env(safe-area-inset-bottom)); z-index:4; gap:14px; align-items:flex-end; flex-direction:row}
+.tb{width:84px; height:84px; border-radius:50%; font:inherit; font-weight:800; font-size:1rem; color:var(--ink); background:rgba(255,210,63,.92); border:2px solid #fff; box-shadow:0 5px 0 var(--primary-edge), 0 8px 18px rgba(0,10,30,.3); touch-action:none; user-select:none; -webkit-user-select:none; cursor:pointer}
+.tb:active{transform:translateY(3px); box-shadow:0 2px 0 var(--primary-edge)}
+.tb[hidden]{display:none}
+#tbUse{width:96px; height:96px; font-size:1.15rem}
+#tbTag,#tbSab{background:rgba(255,107,107,.94); color:#2b0a0a; box-shadow:0 5px 0 var(--danger-edge), 0 8px 18px rgba(0,10,30,.3); font-size:.9rem}
+body.touch .meet-btn{left:50%; right:auto; transform:translateX(-50%); bottom:60px}
+body.touch #btnPause{right:10px; bottom:auto; top:50%}
+.keypad{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px}
+.keybtn{font-size:1.4rem; margin-bottom:5px}
+@media (max-width:820px), (pointer:coarse){
+  input[type=text],select,textarea,#code,.field select{font-size:max(16px,1rem)!important}
+  .btn{min-height:48px}
+  .btn.small{min-height:44px}
+  .actions .btn,.g-host .btn,.end-btns .btn,dialog .row .btn,.pause-card .row .btn{flex:1 1 140px}
+}
+@media (max-width:820px){
+  #app{padding-left:max(8px,env(safe-area-inset-left)); padding-right:max(8px,env(safe-area-inset-right))}
+  .lobby-grid{grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,3fr) minmax(0,2fr)}
+  #settingsHost{grid-template-columns:1fr}
+  .picker{display:grid; grid-template-columns:repeat(5,1fr); gap:8px}
+  .swatch{width:100%; height:auto; aspect-ratio:1/1}
+  #roomCode{font-size:clamp(2rem,9vw,3.2rem); letter-spacing:.18em}
+  .actions .btn{flex:1 1 0; min-width:0}
+  .roombar .btn{flex:1 1 auto}
+  .center-card{max-height:100%; overflow-y:auto}
+  .hud{top:8px; left:8px; gap:4px 10px; padding:6px 10px; font-size:.85rem; max-width:calc(100% - 16px)}
+  .hud .vol,.hud .amb{display:none}
+  .warmbar{top:auto; bottom:8px; width:calc(100% - 16px)}
+  .imp-panel{top:auto; bottom:160px; right:8px; width:min(210px,44vw); max-height:30%; font-size:.8rem; padding:8px 10px}
+  .hud-hint{bottom:auto; top:52px; font-size:.85rem; border-radius:16px; width:max-content}
+  body.touch .meet-btn{bottom:150px}
+  .meet-card{padding:8px}
+  .meet-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .meet-foot{padding-right:0}
+  .chatrow{position:sticky; bottom:0}
+  .ov-card{width:100%}
+}
+@media (max-width:820px) and (orientation:landscape), (max-height:480px){
+  .brand p{display:none}
+  .brand h1{font-size:1.3rem}
+  .lobby-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr); grid-template-rows:none}
+  .hud-hint{top:8px; left:auto; right:8px; transform:none}
+  .warmbar{top:8px; bottom:auto}
+  .picker{display:flex; flex-wrap:wrap; gap:6px}
+  .swatch{width:46px; height:46px; aspect-ratio:auto}
+}
+/* ===== STYLE: PHONE HUD STACK (top stack replaces the bottom bar so nothing sits under the stick or buttons) ===== */
+.topstack{display:contents}
+.hud .btn{flex:0 0 auto; white-space:nowrap}
+@media (max-width:820px){
+  .topstack{display:flex; flex-direction:column; align-items:stretch; gap:6px; position:absolute; z-index:3; pointer-events:none;
+    top:max(8px,env(safe-area-inset-top)); left:max(8px,env(safe-area-inset-left)); right:max(8px,env(safe-area-inset-right))}
+  .topstack>.hud,.topstack>.warmbar,.topstack>.imp-panel{position:relative; top:auto; left:auto; right:auto; bottom:auto; transform:none; width:auto; max-width:none; pointer-events:auto}
+  .topstack>.hud{padding:5px 10px; gap:2px 10px}
+  .topstack>.hud .btn.small{min-height:34px; margin:0; padding:4px 12px}
+  .topstack>.warmbar{padding:5px 10px 7px}
+  .topstack>.warmbar .wb-top{font-size:.85rem; gap:2px 10px; margin-bottom:4px}
+  .topstack>.warmbar .wb-track{height:22px}
+  .topstack>.warmbar .wb-pct{font-size:.9rem}
+  .topstack>.imp-panel{max-height:24vh; padding:6px 10px; font-size:.8rem}
+  body.touch .hud-hint{top:auto; bottom:calc(max(16px,env(safe-area-inset-bottom)) + 146px); left:50%; transform:translateX(-50%); width:max-content; max-width:calc(100% - 24px); transition:opacity .6s var(--ease)}
+  body.touch #screen-play:has(#btnMeet:not([hidden])) .hud-hint{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 206px)}
+  body.touch .meet-btn{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 150px)}
+}
+@media (max-width:480px){
+  .topstack>.hud{font-size:.8rem}
+  .topstack>.hud #btnPlaySnd{font-size:.85rem}
+}
+@media (max-width:400px){
+  body.touch .joy:not([hidden]){width:116px; height:116px}
+  body.touch .tbtns:not([hidden]){gap:8px}
+  .tb{width:72px; height:72px; font-size:.9rem}
+  #tbUse{width:80px; height:80px}
+}
+body.touch .hud-hint.fade{opacity:0; pointer-events:none}
+body.touch #btnPause{right:max(10px,env(safe-area-inset-right))}
+@media (max-width:820px) and (orientation:landscape), (max-height:480px){
+  .topstack{flex-direction:row; flex-wrap:wrap; align-items:flex-start}
+  .topstack>.warmbar{flex:1 1 220px}
+  body.touch .hud-hint{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 8px); top:auto; right:auto; left:50%; transform:translateX(-50%)}
+}
+
+/* ===== STYLE: MOTION (one language: cubic-bezier(.2,.8,.2,1), 120 to 450 ms, transform/opacity/filter only) ===== */
+:root{--ease:cubic-bezier(.2,.8,.2,1); --spring:cubic-bezier(.34,1.56,.64,1)}
+@keyframes scrin{from{opacity:0; transform:scale(.98); filter:blur(6px)}to{opacity:1; transform:none; filter:none}}
+@keyframes rise{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+@keyframes cardin{from{opacity:0; transform:scale(.94) translateY(8px)}to{opacity:1; transform:none}}
+@keyframes pop{0%{opacity:0; transform:scale(.8)}60%{opacity:1; transform:scale(1.06)}100%{opacity:1; transform:none}}
+@keyframes votepop{0%{transform:scale(.95)}55%{transform:scale(1.05)}100%{transform:none}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes ring{0%,100%{opacity:.85; transform:scale(1)}50%{opacity:.25; transform:scale(1.12)}}
+@keyframes ripple{from{opacity:.5; transform:scale(0)}to{opacity:0; transform:scale(1)}}
+@keyframes drop{from{opacity:0; transform:translateY(-22px)}60%{opacity:1; transform:translateY(3px)}to{opacity:1; transform:none}}
+@keyframes leave{from{opacity:1; transform:none}to{opacity:0; transform:scale(.85)}}
+@keyframes toastin{from{opacity:0; transform:translateY(-22px) scale(.94)}to{opacity:1; transform:none}}
+@keyframes edge{from{background-position:160% 0}to{background-position:-60% 0}}
+@keyframes shimmer{0%,72%{background-position:160% 0,0 0}100%{background-position:-60% 0,0 0}}
+@keyframes dust{0%{opacity:0; transform:translateY(8vh)}15%,80%{opacity:.5}100%{opacity:0; transform:translateY(-14vh)}}
+
+.screen{animation:scrin .35s var(--ease) both; transform-origin:50% 0}
+.ov{animation:screenin .3s var(--ease) both}
+.center-card>*,.lobby-grid>.card-panel>*{animation:rise .38s var(--ease) calc(var(--i,0) * 40ms + 60ms) both}
+.center-card>:nth-child(2),.lobby-grid>.card-panel>:nth-child(2){--i:1}
+.center-card>:nth-child(3),.lobby-grid>.card-panel>:nth-child(3){--i:2}
+.center-card>:nth-child(4),.lobby-grid>.card-panel>:nth-child(4){--i:3}
+.center-card>:nth-child(5),.lobby-grid>.card-panel>:nth-child(5){--i:4}
+.center-card>:nth-child(6),.lobby-grid>.card-panel>:nth-child(6){--i:5}
+.center-card>:nth-child(n+7),.lobby-grid>.card-panel>:nth-child(n+7){--i:6}
+.ov:not([hidden]) .ov-card,.ov:not([hidden]) .meet-card,dialog[open]{animation:cardin .32s var(--ease) both}
+dialog[open]::backdrop{animation:screenin .3s var(--ease) both}
+.toast{animation:toastin .45s var(--spring) both}
+
+/* buttons */
+.btn{transition:transform .3s var(--spring), box-shadow .2s var(--ease), filter .12s, background-color .2s, border-color .2s}
+.btn:active:not(:disabled){transition-duration:.07s,.07s,.12s,.2s,.2s}
+.btn:not(.meet-btn){position:relative}
+.btn{overflow:hidden}
+.btn::after{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; transition:opacity .25s var(--ease);
+  background:radial-gradient(circle 90px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.38), rgba(255,255,255,0) 70%)}
+@media (hover:hover){.btn:hover:not(:disabled)::after{opacity:1}}
+.btn.copied{animation:pop .45s var(--spring) both}
+.ripple{position:absolute; border-radius:50%; background:rgba(255,255,255,.55); pointer-events:none; transform:scale(0); animation:ripple .5s var(--ease) forwards}
+.btn:focus-visible{outline:3px solid var(--focus); outline-offset:3px}
+.tb{transition:transform .25s var(--spring), box-shadow .2s var(--ease)}
+body.touch .btn:active:not(:disabled){transform:translateY(3px)}
+
+/* glass edge shine on screen entry */
+.card-panel{position:relative}
+.card-panel::before{content:""; position:absolute; left:14px; right:14px; top:0; height:2px; border-radius:2px; pointer-events:none; opacity:.9;
+  background:linear-gradient(90deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.95) 50%,rgba(255,255,255,0) 70%) 160% 0/220% 100% no-repeat;
+  animation:edge .9s var(--ease) .15s 1 both}
+.tilt{transition:transform .25s var(--ease); transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.tilt.live{transition:transform .08s linear}
+
+/* lobby */
+.players{position:relative}
+.pcard{animation:none}
+.pcard.joined{animation:pop .45s var(--spring) var(--d,0ms) backwards}
+.pcard.leaving{position:absolute; margin:0; pointer-events:none; animation:leave .3s var(--ease) forwards}
+.pcard canvas{animation:bob 2.6s ease-in-out infinite}
+.pcard:nth-child(2n) canvas{animation-duration:3s; animation-delay:-.8s}
+.pcard:nth-child(3n) canvas{animation-duration:2.3s; animation-delay:-1.5s}
+#roomCode .ch{display:inline-block; animation:drop .5s var(--spring) calc(var(--i,0) * 90ms + 120ms) backwards}
+
+/* swatches */
+.swatch{transition:transform .25s var(--spring), border-color .2s var(--ease), box-shadow .2s var(--ease)}
+@media (hover:hover){.swatch:hover:not(:disabled){transform:scale(1.08)}}
+.swatch:active:not(:disabled){transform:scale(.95)}
+.swatch.on::before{content:""; position:absolute; inset:-7px; border-radius:19px; border:2px solid rgba(255,210,63,.85); pointer-events:none; animation:ring 3.4s ease-in-out infinite}
+
+/* title shimmer */
+.brand h1{background-image:linear-gradient(100deg,rgba(255,255,255,0) 42%,rgba(255,255,255,.9) 50%,rgba(255,255,255,0) 58%),linear-gradient(180deg,#fff3b0 10%,#ffd23f 55%,#ffa62b 100%);
+  background-size:200% 100%,100% 100%; background-repeat:no-repeat; background-position:160% 0,0 0; animation:shimmer 6s ease-in-out infinite}
+
+/* crystal dust */
+html::before,body::after{content:""; position:fixed; left:0; top:0; width:4px; height:4px; border-radius:50%; pointer-events:none; z-index:0; opacity:0; filter:blur(.6px)}
+html::before{box-shadow:8vw 82vh 0 0 rgba(255,236,190,.55), 23vw 64vh 0 1px rgba(190,240,255,.5), 41vw 90vh 0 0 rgba(255,236,190,.5), 63vw 70vh 0 1px rgba(255,200,230,.45), 78vw 86vh 0 0 rgba(190,240,255,.5), 93vw 60vh 0 0 rgba(255,236,190,.5); animation:dust 23s linear infinite}
+body::after{box-shadow:15vw 74vh 0 0 rgba(190,240,255,.5), 32vw 92vh 0 1px rgba(255,236,190,.5), 52vw 66vh 0 0 rgba(255,200,230,.45), 70vw 94vh 0 0 rgba(255,236,190,.55), 86vw 72vh 0 1px rgba(190,240,255,.45), 4vw 58vh 0 0 rgba(255,236,190,.45); animation:dust 31s linear -11s infinite}
+@media (max-width:820px){html::before,body::after{display:none}}
+
+/* meeting and votes */
+.mc{transition:transform .25s var(--spring), border-color .2s var(--ease), background-color .2s}
+.mc:not(:disabled):active{transform:scale(.97)}
+.mc.pop{animation:votepop .4s var(--spring)}
+@media (hover:hover){.mc:not(:disabled):hover{transform:translateY(-2px)}}
+
+@media (prefers-reduced-motion:reduce){
+  html::before,body::after{display:none}
+  .tilt{transform:none!important}
+  .ripple{display:none}
+  .btn:hover:not(:disabled),.swatch:hover:not(:disabled),.mc:not(:disabled):hover{transform:none}
+}
+/* Phones: toasts are wide rounded bars that sit above the stick and action buttons, never a squashed circle */
+@media (max-width:820px){
+  #toasts,#app:has(#screen-play:not([hidden])) ~ #toasts{left:16px; right:16px; transform:none; bottom:calc(170px + env(safe-area-inset-bottom))}
+  #app:not(:has(#screen-play:not([hidden]))) ~ #toasts{bottom:calc(16px + env(safe-area-inset-bottom))}
+  .toast{border-radius:16px; max-width:100%; text-align:center; padding:10px 16px}
+}
 </style>
 </head>
 <body>
@@ -453,7 +722,7 @@ button{font-family:inherit}
           <div id="lobbyPickerHost"></div>
         </div>
         <div class="actions">
-          <button type="button" class="btn" id="btnStart" hidden>Start game</button>
+          <button type="button" class="btn go" id="btnStart" hidden>Start game</button>
           <button type="button" class="btn danger" id="btnClose" hidden>Close room</button>
           <button type="button" class="btn ghost" id="btnLeave" hidden>Leave room</button>
         </div>
@@ -531,6 +800,7 @@ button{font-family:inherit}
   <section id="screen-play" class="screen" hidden aria-labelledby="h-play">
     <h2 id="h-play" class="sr" tabindex="-1">The mine. Move with W A S D or the arrow keys.</h2>
     <canvas id="playCv" role="img" aria-label="Mine map with miners"></canvas>
+    <div class="topstack" id="topStack">
     <div class="hud" id="playHud">
       <span id="hudRoom"></span>
       <span id="hudCount"></span>
@@ -538,9 +808,8 @@ button{font-family:inherit}
       <button type="button" class="btn ghost small" id="btnPlaySnd">Sound</button>
       <label class="vol" for="volPlay">Volume <input type="range" id="volPlay" class="volrange" min="0" max="100" value="35" aria-label="Volume"></label>
       <span class="amb off" id="hudAmb">Cave sounds: off</span>
-      <button type="button" class="btn danger small" id="btnPlayBack" hidden>Back to lobby</button>
+      <button type="button" class="btn ghost small" id="btnPlayBack" hidden>Back to lobby</button>
     </div>
-    <div class="hud-hint" id="hudHint">Move with W A S D or the arrow keys. Press M to mute or unmute sound.</div>
     <div class="warmbar" id="warmBar" hidden>
       <div class="wb-top">
         <span class="wb-name" id="wbName">Mindminer Mine</span>
@@ -559,7 +828,15 @@ button{font-family:inherit}
       <ul class="ip-list" id="ipList"></ul>
       <div class="ip-abil" id="ipAbil"></div>
     </aside>
+    </div>
+    <div class="hud-hint" id="hudHint">Move with W A S D or the arrow keys. Press M to mute or unmute sound.</div>
     <button type="button" class="btn meet-btn" id="btnMeet" hidden></button>
+    <div class="joy" id="joy" hidden aria-hidden="true"><div class="joy-knob" id="joyKnob"></div></div>
+    <div class="tbtns" id="tBtns" hidden>
+      <button type="button" class="tb" id="tbSab" hidden>Sabotage</button>
+      <button type="button" class="tb" id="tbTag" hidden>Tag</button>
+      <button type="button" class="tb" id="tbUse">Use</button>
+    </div>
     <div class="ov" id="meetOv" hidden role="dialog" aria-modal="true" aria-labelledby="meetTitle">
       <div class="meet-card">
         <div class="meet-head">
@@ -630,7 +907,7 @@ button{font-family:inherit}
         <p id="pauseText">Take a breath. The game carries on when the host resumes.</p>
         <div class="row end-btns" id="pauseHostBtns" hidden>
           <button type="button" class="btn" id="btnPauseResume">Resume</button>
-          <button type="button" class="btn ghost" id="btnPauseEnd">End round</button>
+          <button type="button" class="btn danger" id="btnPauseEnd">End round</button>
           <button type="button" class="btn ghost" id="btnPauseLobby">Back to lobby</button>
         </div>
       </div>
@@ -1810,8 +2087,8 @@ function stopCrackle() { audioStopCrackle(); camp.playing = false; }
 
 /* ===== AUDIO: one master gain, volume, cave ambience, campfire music ===== */
 /* Every sound goes through audio.master. Levels are kept quiet and similar:
-   footsteps .06, chimes .07, fail buzz .035, drone .02, drips .03, campfire music .035. */
-const AUDIO_DEFAULT_VOL = 0.35, AUDIO_BOOST = 1.6;
+   footsteps .06, chimes .07, fail buzz .035, drone .02, drips .03, campfire music .16 (MUSIC_LEVEL). */
+const AUDIO_DEFAULT_VOL = 0.6, AUDIO_BOOST = 1.6;
 const audio = { ctx: null, master: null, vol: AUDIO_DEFAULT_VOL, amb: null, crk: null, buf: null };
 function audioCtx() {
   if (audio.ctx) {
@@ -1905,7 +2182,7 @@ const MUSIC_CHORDS = [
   [98.00, 146.83, 164.81, 246.94]   /* G6 */
 ];
 const MUSIC_BELLS = [523.25, 587.33, 659.25, 783.99, 880.00];
-const MUSIC_CHORD_LEN = 7, MUSIC_FADE = 2.5;
+const MUSIC_CHORD_LEN = 7, MUSIC_FADE = 2.5, MUSIC_LEVEL = 0.16; /* chords play an octave up so laptop speakers carry them */
 function audioMusicNote(crk, freq, type, peak, t, atk, hold, rel, detune) {
   const ctx = audio.ctx;
   const o = ctx.createOscillator(), g = ctx.createGain();
@@ -1923,15 +2200,15 @@ function audioMusicSchedule(crk) {
   while (crk.nextChord < now + 3) {
     const t = crk.nextChord, ch = MUSIC_CHORDS[crk.idx % MUSIC_CHORDS.length];
     ch.forEach(function (f) {
-      audioMusicNote(crk, f, "sine", 0.12, t, MUSIC_FADE, MUSIC_CHORD_LEN - MUSIC_FADE, MUSIC_FADE, -4);
-      audioMusicNote(crk, f, "triangle", 0.05, t, MUSIC_FADE, MUSIC_CHORD_LEN - MUSIC_FADE, MUSIC_FADE, 4);
+      audioMusicNote(crk, f * 2, "sine", 0.12, t, MUSIC_FADE, MUSIC_CHORD_LEN - MUSIC_FADE, MUSIC_FADE, -4);
+      audioMusicNote(crk, f * 2, "triangle", 0.05, t, MUSIC_FADE, MUSIC_CHORD_LEN - MUSIC_FADE, MUSIC_FADE, 4);
     });
     crk.idx++;
     crk.nextChord = t + MUSIC_CHORD_LEN;
   }
   while (crk.nextBell < now + 3) {
     const f = MUSIC_BELLS[Math.floor(Math.random() * MUSIC_BELLS.length)];
-    audioMusicNote(crk, f, "sine", 0.1, Math.max(crk.nextBell, now), 0.04, 0, 3.5, 0);
+    audioMusicNote(crk, f, "sine", 0.16, Math.max(crk.nextBell, now), 0.04, 0, 3.5, 0);
     crk.nextBell += 3 + Math.random() * 4;
   }
 }
@@ -1942,7 +2219,7 @@ function audioStartCrackle(level) {
   try {
     const t0 = ctx.currentTime;
     const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1200;
-    const gain = ctx.createGain(); gain.gain.value = 0.035 * level;
+    const gain = ctx.createGain(); gain.gain.value = MUSIC_LEVEL * level;
     const fade = ctx.createGain();
     fade.gain.setValueAtTime(0.0001, t0); fade.gain.linearRampToValueAtTime(1, t0 + 1.5);
     lp.connect(gain); gain.connect(fade); fade.connect(audio.master);
@@ -1957,7 +2234,7 @@ function audioSetCrackle(level) {
   const c = audio.crk;
   if (!c || !audio.ctx) return;
   c.level = level;
-  try { c.gain.gain.setTargetAtTime(0.035 * level, audio.ctx.currentTime, 0.3); } catch (e) { /* ignore */ }
+  try { c.gain.gain.setTargetAtTime(MUSIC_LEVEL * level, audio.ctx.currentTime, 0.3); } catch (e) { /* ignore */ }
 }
 function audioStopCrackle() {
   const c = audio.crk;
@@ -1978,7 +2255,7 @@ function audioStopCrackle() {
 function audioStopAll() {
   audioStopAmb();
   audioStopCrackle();
-  if (audio.ctx) { try { audio.ctx.close(); } catch (e) { /* ignore */ } }
+  if (audio.ctx && audio.ctx.state !== "closed") { try { const p = audio.ctx.close(); if (p && p.catch) p.catch(function () { /* ignore */ }); } catch (e) { /* ignore */ } }
   audio.ctx = null; audio.master = null; audio.buf = null; play.noise = null;
 }
 
@@ -1992,6 +2269,7 @@ const screens = {
     document.body.classList.toggle("in-lobby", name === "lobby");
     if (name === "connecting") $("connText").textContent = text || "Connecting";
     if (name === "start") { showStartMsg(""); }
+    if (name === "start" || name === "connecting" || name === "ended") { lobbySeen = new Set(); const rc = $("roomCode"); if (rc) rc.dataset.code = ""; }
     const heading = { start: "h-start", connecting: "h-conn", ended: "h-end", lobby: "h-lobby", campfire: "h-camp", play: "h-play" }[name];
     const h = $(heading);
     if (h && name !== "lobby") { try { h.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
@@ -2135,7 +2413,19 @@ function buildLobbyUi() {
   $("btnClose").hidden = !isHost;
   $("btnLeave").hidden = isHost;
   $("waitLine").textContent = isHost ? "You are the host. Start when everyone has joined." : "Waiting for the host to start";
-  $("roomCode").textContent = view.code;
+  setRoomCode(view.code);
+}
+/* room code letters drop in one by one (only when the code changes) */
+function setRoomCode(code) {
+  const node = $("roomCode");
+  if (node.dataset.code === code) return;
+  node.dataset.code = code;
+  node.replaceChildren();
+  Array.from(code).forEach(function (c, i) {
+    const s = el("span", { class: "ch" }, c);
+    s.style.setProperty("--i", String(i));
+    node.appendChild(s);
+  });
 }
 function updatePipeCount() {
   $("pipeCount").textContent = Array.from($("pipe").value).length + " / " + PIPE_MAX;
@@ -2145,13 +2435,33 @@ function isDown(p) {
   if (p.isHost && NET.role === "client") return client.hostStale;
   return view.down.has(p.id);
 }
+let lobbySeen = new Set();
 function renderPlayers() {
   if (!view) return;
   const ul = $("players");
+  /* motion: remember who was shown, so new miners pop in and leavers fade out */
+  const prevSeen = lobbySeen;
+  const nowIds = new Set(view.players.map(function (p) { return String(p.id); }));
+  const ghosts = [];
+  if (prevSeen.size) {
+    Array.prototype.forEach.call(ul.children, function (old) {
+      const pid = old.dataset ? old.dataset.pid : "";
+      if (pid && !nowIds.has(pid) && !old.classList.contains("leaving")) {
+        const g = old.cloneNode(true);
+        g.classList.remove("joined"); g.classList.add("leaving");
+        g.style.left = old.offsetLeft + "px"; g.style.top = old.offsetTop + "px"; g.style.width = old.offsetWidth + "px";
+        ghosts.push(g);
+      }
+    });
+  }
   ul.replaceChildren();
+  lobbySeen = nowIds;
+  let newIdx = 0;
   const iAmHost = isHostView();
   view.players.forEach(function (p) {
-    const li = el("li", { class: "pcard" + (p.id === view.myId ? " me" : "") });
+    const li = el("li", { class: "pcard" + (p.id === view.myId ? " me" : "") + (prevSeen.has(String(p.id)) ? "" : " joined") });
+    li.dataset.pid = String(p.id);
+    if (!prevSeen.has(String(p.id))) li.style.setProperty("--d", (newIdx++ * 40) + "ms");
     li.appendChild(makeMinerCanvas(p.color, 72));
     li.appendChild(el("div", { class: "pname" }, p.nick));
     li.appendChild(el("div", { class: "psub" }, MINERS[p.color].name + ", " + p.pattern + " helmet"));
@@ -2172,6 +2482,11 @@ function renderPlayers() {
     }
     ul.appendChild(li);
   });
+  ghosts.forEach(function (g) {
+    ul.appendChild(g);
+    g.addEventListener("animationend", function () { if (g.parentNode) g.parentNode.removeChild(g); });
+    setTimeout(function () { if (g.parentNode) g.parentNode.removeChild(g); }, 700);
+  });
   $("count").textContent = view.players.length + " of " + MAX_PLAYERS + " miners";
 }
 function renderSettings() {
@@ -2185,7 +2500,7 @@ function renderSettings() {
   updatePipeCount();
 }
 function renderLobby() {
-  $("roomCode").textContent = view.code;
+  setRoomCode(view.code);
   renderPlayers();
   renderSettings();
   if (isHostView()) {
@@ -2198,6 +2513,14 @@ function renderLobby() {
   view.players.forEach(function (p) { if (p.id === view.myId) mine = p.color; else taken.add(p.color); });
   if (lobbyPicker) lobbyPicker.update(mine, taken);
 }
+let copiedTimer = 0;
+function flashCopied() {
+  const b = $("btnCopy");
+  b.textContent = "Copied";
+  b.classList.remove("copied"); void b.offsetWidth; b.classList.add("copied");
+  clearTimeout(copiedTimer);
+  copiedTimer = setTimeout(function () { b.textContent = "Copy code"; b.classList.remove("copied"); }, 1500);
+}
 function copyCode() {
   if (!view) return;
   const code = view.code;
@@ -2208,9 +2531,10 @@ function copyCode() {
     let ok = false;
     try { ok = document.execCommand("copy"); } catch (e) { /* ignore */ }
     toast(ok ? "Code copied" : "Code selected, press Ctrl+C to copy");
+    if (ok) flashCopied();
   };
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(code).then(function () { toast("Code copied"); }, fallback);
+    navigator.clipboard.writeText(code).then(function () { toast("Code copied"); flashCopied(); }, fallback);
   } else fallback();
 }
 function initLobbyButtons() {
@@ -2414,7 +2738,7 @@ function buildMapCanvas() {
     for (let tx = 0; tx < MAP_W; tx++) {
       const v = tileAt(tx, ty), px = tx * T, py = ty * T, h = tileHash(tx, ty);
       if (v === 1) {
-        c.fillStyle = (tx + ty) % 2 ? "#3a4659" : "#3e4a5e"; c.fillRect(px, py, T, T);
+        c.fillStyle = (tx + ty) % 2 ? "#55879a" : "#598c9f"; c.fillRect(px, py, T, T);
         if (h < 22) { c.fillStyle = "rgba(255,255,255,0.04)"; c.fillRect(px + 8 + h % 12, py + 10, 10, 6); }
         c.fillStyle = "rgba(0,0,0,0.14)"; c.fillRect(px, py, T, 1); c.fillRect(px, py, 1, T);
         c.fillStyle = "rgba(0,0,0,0.25)";
@@ -2422,14 +2746,14 @@ function buildMapCanvas() {
         if (tileAt(tx - 1, ty) === 0) c.fillRect(px, py, 5, T);
         if (tileAt(tx + 1, ty) === 0) c.fillRect(px + T - 5, py, 5, T);
       } else if (v === 0) {
-        c.fillStyle = h < 30 ? "#151821" : "#191c26"; c.fillRect(px, py, T, T);
+        c.fillStyle = h < 30 ? "#2e2833" : "#332c38"; c.fillRect(px, py, T, T);
         if (h > 80) { c.fillStyle = "rgba(255,255,255,0.03)"; c.fillRect(px + 6, py + 8, 14, 8); }
         if (tileAt(tx, ty + 1) !== 0) {
-          c.fillStyle = "#2a3040"; c.fillRect(px, py + T - 12, T, 12);
-          c.fillStyle = "#3b4458"; c.fillRect(px, py + T - 12, T, 2);
+          c.fillStyle = "#6b5650"; c.fillRect(px, py + T - 12, T, 12);
+          c.fillStyle = "#8f7468"; c.fillRect(px, py + T - 12, T, 2);
         }
       } else {
-        c.fillStyle = "#1f4a6e"; c.fillRect(px, py, T, T);
+        c.fillStyle = "#2a6a9a"; c.fillRect(px, py, T, T);
       }
     }
   }
@@ -2613,10 +2937,11 @@ function playUpdate(dt) {
   play.puffs = play.puffs.filter(function (p) { return p.age < 0.7; });
   if (!m) return;
   const k = meet.on ? {} : play.keys; /* nobody moves during a meeting */
-  const ax = (k.right ? 1 : 0) - (k.left ? 1 : 0), ay = (k.down ? 1 : 0) - (k.up ? 1 : 0);
+  const jy = (!meet.on && JOY.on && Math.hypot(JOY.x, JOY.y) >= 0.2) ? JOY : null; /* touch stick, analogue */
+  const ax = jy ? jy.x : (k.right ? 1 : 0) - (k.left ? 1 : 0), ay = jy ? jy.y : (k.down ? 1 : 0) - (k.up ? 1 : 0);
   let moved = false;
   if (ax || ay) {
-    const sp = SPEEDS[view.settings.speed] || SPEEDS.normal, l = Math.hypot(ax, ay);
+    const sp = SPEEDS[view.settings.speed] || SPEEDS.normal, l = jy ? Math.max(1, Math.hypot(ax, ay)) : Math.hypot(ax, ay);
     const r = moveCircle(m.x, m.y, ax / l * sp * dt, ay / l * sp * dt);
     moved = Math.hypot(r.x - m.x, r.y - m.y) > 0.05;
     m.x = r.x; m.y = r.y;
@@ -2654,7 +2979,7 @@ function drawMiner(c, e, now, z) {
 function playDraw(now) {
   const cv = $("playCv"), c = cv.getContext("2d"), dpr = play.dpr, z = play.zoom;
   c.setTransform(dpr, 0, 0, dpr, 0, 0);
-  c.fillStyle = "#0b0d12"; c.fillRect(0, 0, play.vw, play.vh);
+  c.fillStyle = "#16303f"; c.fillRect(0, 0, play.vw, play.vh);
   const m = play.me;
   if (!m) {
     c.fillStyle = "#fbf5ec"; c.textAlign = "center"; c.font = "bold 28px Segoe UI, sans-serif";
@@ -2805,8 +3130,55 @@ function pauseUi() {
     if (isH) { try { $("btnPauseResume").focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
   }
 }
+var JOY = { on: false, x: 0, y: 0 };
+var IS_TOUCH = !!((window.matchMedia && window.matchMedia("(pointer: coarse)").matches) || "ontouchstart" in window);
+function initTouch() {
+  if (!IS_TOUCH) return;
+  document.body.classList.add("touch");
+  $("btnRoleOk").textContent = "Got it";
+  $("btnTaskCancel").textContent = "Cancel";
+  const joy = $("joy"), knob = $("joyKnob"), tb = $("tBtns");
+  function joyReset() { JOY.on = false; JOY.x = 0; JOY.y = 0; knob.style.transform = "translate(-50%,-50%)"; }
+  function joyMove(e) {
+    const r = joy.getBoundingClientRect(), R = r.width / 2 - 8;
+    let dx = (e.clientX - (r.left + r.width / 2)) / R, dy = (e.clientY - (r.top + r.height / 2)) / R;
+    const l = Math.hypot(dx, dy);
+    if (l > 1) { dx /= l; dy /= l; }
+    JOY.x = dx; JOY.y = dy; JOY.on = true;
+    knob.style.transform = "translate(calc(-50% + " + (dx * R) + "px), calc(-50% + " + (dy * R) + "px))";
+  }
+  joy.addEventListener("pointerdown", function (e) { try { joy.setPointerCapture(e.pointerId); } catch (x) { /* ignore */ } joyMove(e); e.preventDefault(); });
+  joy.addEventListener("pointermove", function (e) { if (JOY.on) { joyMove(e); e.preventDefault(); } });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(function (n) { joy.addEventListener(n, joyReset); });
+  function tap(id, fn) {
+    $(id).addEventListener("pointerdown", function (e) { e.preventDefault(); if (play.on && !play.paused) fn(); });
+  }
+  tap("tbUse", function () { if (warm.on) warmAct(); else if (imp.on) impAct(); });
+  tap("tbTag", impTag);
+  tap("tbSab", impSabotage);
+  /* same wording as the keys, but for taps */
+  const hint = $("hudHint");
+  new MutationObserver(function () {
+    const t = hint.textContent;
+    const n = t.replace("Press E or Space to start", "Tap Use to start").replace("Press Q to tag", "Tap Tag to tag").replace("Press R to sabotage", "Tap Sabotage to sabotage")
+      .replace("Press F to report", "Tap Report to report").replace("Press B to ring", "Tap Call meeting to ring").replace("then press Enter", "then tap Got it")
+      .replace(/^Move with W A S D.*$/, "Drag the round stick to move.");
+    if (n !== t) hint.textContent = n;
+  }).observe(hint, { childList: true, characterData: true, subtree: true });
+  setInterval(function () {
+    const ok = play.on && !play.paused && !meet.on && !warm.ui && !(imp.on && imp.card) && !!play.me && (warm.on || imp.on);
+    joy.hidden = !ok; tb.hidden = !ok;
+    if (!ok) { joyReset(); return; }
+    const now = performance.now(), m = play.me, out = imp.on && imp.out.has(view.myId);
+    const faker = imp.on && imp.role === "faker" && !imp.over && !out;
+    $("tbTag").hidden = !(faker && imp.tagUntil <= now && impNearTarget(m));
+    $("tbSab").hidden = !(faker && imp.sabUntil <= now && impNearLamp(m));
+    $("tbUse").hidden = imp.on && (imp.over || out);
+  }, 150);
+}
 const PLAY_KEYS = { w: "up", a: "left", s: "down", d: "right", arrowup: "up", arrowleft: "left", arrowdown: "down", arrowright: "right" };
 function initPlay() {
+  initTouch();
   window.addEventListener("keydown", function (e) {
     if (!play.on || e.ctrlKey || e.metaKey || e.altKey || $("confirm").open) return;
     if (play.paused) return; /* nothing works while the host has paused */
@@ -3309,6 +3681,15 @@ function taskBuildKeys(ui, body) {
   });
   ui.msg = el("div", { class: "bigtxt" }, "Press the first key");
   body.appendChild(row); body.appendChild(ui.msg);
+  if (IS_TOUCH) { /* on-screen keys for phones and tablets */
+    const pad = el("div", { class: "keypad" });
+    letters.split("").forEach(function (L) {
+      const b = el("button", { type: "button", class: "btn ghost keybtn" }, L);
+      b.addEventListener("pointerdown", function (e) { e.preventDefault(); if (warm.ui === ui) taskKeyPress(ui, L); });
+      pad.appendChild(b);
+    });
+    body.appendChild(pad);
+  }
   taskRenderKeys(ui);
 }
 function taskRenderKeys(ui) {
@@ -4048,7 +4429,7 @@ function impVision(c, camX, camY, m, z) {
   const sx = (m.x - camX) * z, sy = (m.y - 16 - camY) * z, R = imp.rv * z;
   c.setTransform(play.dpr, 0, 0, play.dpr, 0, 0);
   const g = c.createRadialGradient(sx, sy, R * 0.55, sx, sy, R);
-  g.addColorStop(0, "rgba(4,5,9,0)"); g.addColorStop(1, "rgba(4,5,9,0.95)");
+  g.addColorStop(0, "rgba(4,5,9,0)"); g.addColorStop(1, "rgba(4,5,9,0.73)");
   c.fillStyle = g; c.fillRect(0, 0, play.vw, play.vh);
 }
 
@@ -4093,7 +4474,7 @@ function meetUpdateBtn(m) {
   if (imp.on && !imp.over && !imp.card && !warm.ui && !meet.on && m && !imp.out.has(view.myId)) kind = meetNearBody(m) ? "report" : meetNearBell(m) ? "meeting" : "";
   if (kind !== meet.btn) {
     meet.btn = kind; b.hidden = !kind;
-    b.textContent = kind === "report" ? "Report body (F)" : "Call meeting (B)";
+    b.textContent = kind === "report" ? (IS_TOUCH ? "Report body" : "Report body (F)") : (IS_TOUCH ? "Call meeting" : "Call meeting (B)");
   }
 }
 function meetOnMsg(msg) {
@@ -4266,7 +4647,90 @@ function initMeeting() {
   $("btnMeet").addEventListener("click", function () { if (meet.btn) meetKey(meet.btn); $("btnMeet").blur(); });
 }
 
+/* ===== UI: MOTION (light sheen, ripple, tilt, hint fade, vibrate; UI only) ===== */
+function initMotion() {
+  const mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+  const fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+  let raf = 0, last = null;
+  /* one delegated pointermove, rAF throttled: sheen follows the cursor, cards tilt */
+  document.addEventListener("pointermove", function (e) {
+    if (mq.matches || e.pointerType === "touch") return;
+    last = e;
+    if (raf) return;
+    raf = requestAnimationFrame(function () {
+      raf = 0;
+      const ev = last; if (!ev || !ev.target || !ev.target.closest) return;
+      const b = ev.target.closest(".btn");
+      if (b) {
+        const r = b.getBoundingClientRect();
+        b.style.setProperty("--mx", (ev.clientX - r.left) + "px");
+        b.style.setProperty("--my", (ev.clientY - r.top) + "px");
+      }
+      if (fine) {
+        const t = ev.target.closest("#screen-start .center-card, .pcard:not(.leaving)");
+        if (t && !(document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && t.contains(document.activeElement))) {
+          const r = t.getBoundingClientRect();
+          const px = (ev.clientX - r.left) / r.width - .5, py = (ev.clientY - r.top) / r.height - .5;
+          const k = t.classList.contains("center-card") ? 2 : 4;
+          t.classList.add("tilt", "live");
+          t.style.setProperty("--ry", (px * k * 2).toFixed(2) + "deg");
+          t.style.setProperty("--rx", (-py * k * 2).toFixed(2) + "deg");
+        }
+      }
+    });
+  }, { passive: true });
+  if (fine) {
+    document.addEventListener("pointerout", function (e) {
+      const t = e.target && e.target.closest ? e.target.closest(".tilt") : null;
+      if (!t || (e.relatedTarget && t.contains(e.relatedTarget))) return;
+      t.classList.remove("live");
+      t.style.setProperty("--rx", "0deg"); t.style.setProperty("--ry", "0deg");
+    });
+  }
+  /* click ripple from the pointer point */
+  document.addEventListener("pointerdown", function (e) {
+    if (mq.matches || !e.target || !e.target.closest) return;
+    const b = e.target.closest(".btn");
+    if (!b || b.disabled) return;
+    const r = b.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2.2;
+    const s = document.createElement("span");
+    s.className = "ripple";
+    s.style.width = s.style.height = d + "px";
+    s.style.left = (e.clientX - r.left - d / 2) + "px";
+    s.style.top = (e.clientY - r.top - d / 2) + "px";
+    b.appendChild(s);
+    s.addEventListener("animationend", function () { if (s.parentNode) s.parentNode.removeChild(s); });
+    setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 800);
+  }, { passive: true });
+  /* vote pop */
+  document.addEventListener("click", function (e) {
+    const c = e.target && e.target.closest ? e.target.closest(".mc") : null;
+    if (!c || c.disabled) return;
+    c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop");
+    setTimeout(function () { c.classList.remove("pop"); }, 450);
+  });
+  /* touch: tiny buzz on action buttons, and the move hint fades after about 6 seconds */
+  document.addEventListener("pointerdown", function (e) {
+    if (!e.target || !e.target.closest || !e.target.closest(".tb")) return;
+    try { if (navigator.vibrate) navigator.vibrate(10); } catch (x) { /* ignore */ }
+  }, { passive: true });
+  const hint = $("hudHint");
+  if (hint) {
+    let ht = 0, lastText = "";
+    const arm = function () {
+      if (hint.textContent === lastText) return;
+      lastText = hint.textContent;
+      hint.classList.remove("fade");
+      clearTimeout(ht);
+      ht = setTimeout(function () { hint.classList.add("fade"); }, 6000);
+    };
+    new MutationObserver(arm).observe(hint, { childList: true, characterData: true, subtree: true });
+    arm();
+  }
+}
+
 /* ===== BOOT ===== */
+initMotion();
 initPlay();
 initStartScreen();
 initLobbyButtons();
