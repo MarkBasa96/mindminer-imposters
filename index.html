@@ -517,8 +517,8 @@ button{font-family:inherit}
         </div>
       </div>
       <div class="row">
-        <span class="camp-snd"><span class="camp-ember off" id="campEmber" aria-hidden="true"></span><span id="campSndText">Crackle sound: off</span></span>
-        <button type="button" class="btn ghost small" id="btnCampSnd">Mute crackle</button>
+        <span class="camp-snd"><span class="camp-ember off" id="campEmber" aria-hidden="true"></span><span id="campSndText">Campfire music: off</span></span>
+        <button type="button" class="btn ghost small" id="btnCampSnd">Mute music</button>
         <label class="vol" for="volCamp">Volume <input type="range" id="volCamp" class="volrange" min="0" max="100" value="35" aria-label="Volume"></label>
         <button type="button" class="btn ghost" id="btnPpSkip" hidden>Skip</button>
         <button type="button" class="btn danger" id="btnPpEnd" hidden>End early</button>
@@ -1793,24 +1793,24 @@ function startFireDraw() {
   };
   camp.raf = requestAnimationFrame(frame);
 }
-function crackleAllowed() {
+function musicAllowed() {
   return !!view && view.settings.sound === "on" && !camp.muted;
 }
 function campSyncAudio() {
-  const allowed = crackleAllowed();
+  const allowed = musicAllowed();
   if (allowed && !camp.playing) startCrackle();
   if (!allowed && camp.playing) stopCrackle();
   const on = camp.playing;
   $("campEmber").classList.toggle("off", !on);
-  $("campSndText").textContent = "Crackle sound: " + (on ? "on" : (view && view.settings.sound !== "on" ? "off (host setting)" : "off"));
-  $("btnCampSnd").textContent = camp.muted ? "Unmute crackle" : "Mute crackle";
+  $("campSndText").textContent = "Campfire music: " + (on ? "on" : (view && view.settings.sound !== "on" ? "off (host setting)" : "off"));
+  $("btnCampSnd").textContent = camp.muted ? "Unmute music" : "Mute music";
 }
 function startCrackle() { camp.playing = audioStartCrackle(1); }
 function stopCrackle() { audioStopCrackle(); camp.playing = false; }
 
-/* ===== AUDIO: one master gain, volume, cave ambience, crackle ===== */
+/* ===== AUDIO: one master gain, volume, cave ambience, campfire music ===== */
 /* Every sound goes through audio.master. Levels are kept quiet and similar:
-   footsteps .06, chimes .07, fail buzz .035, drone .02, drips .03, crackle .035. */
+   footsteps .06, chimes .07, fail buzz .035, drone .02, drips .03, campfire music .035. */
 const AUDIO_DEFAULT_VOL = 0.35, AUDIO_BOOST = 1.6;
 const audio = { ctx: null, master: null, vol: AUDIO_DEFAULT_VOL, amb: null, crk: null, buf: null };
 function audioCtx() {
@@ -1897,34 +1897,59 @@ function audioStopAmb() {
     a.oscs.forEach(function (o) { o.stop(t + 0.3); });
   } catch (e) { /* ignore */ }
 }
-/* level 0..1 scales the crackle (the map uses distance to the fire) */
+/* Calm campfire music: slow warm chord pad plus soft bell notes. level 0..1 scales it (the map uses distance to the fire) */
+const MUSIC_CHORDS = [
+  [130.81, 164.81, 196.00, 246.94], /* Cmaj7 */
+  [110.00, 130.81, 164.81, 196.00], /* Am7 */
+  [87.31, 130.81, 164.81, 220.00],  /* Fmaj7 */
+  [98.00, 146.83, 164.81, 246.94]   /* G6 */
+];
+const MUSIC_BELLS = [523.25, 587.33, 659.25, 783.99, 880.00];
+const MUSIC_CHORD_LEN = 7, MUSIC_FADE = 2.5;
+function audioMusicNote(crk, freq, type, peak, t, atk, hold, rel, detune) {
+  const ctx = audio.ctx;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.value = freq; o.detune.value = detune;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(peak, t + atk);
+  g.gain.setValueAtTime(peak, t + atk + hold);
+  g.gain.linearRampToValueAtTime(0.0001, t + atk + hold + rel);
+  o.connect(g); g.connect(crk.lp);
+  o.start(t); o.stop(t + atk + hold + rel + 0.1);
+}
+function audioMusicSchedule(crk) {
+  if (audio.crk !== crk || !audio.ctx) return;
+  const now = audio.ctx.currentTime;
+  while (crk.nextChord < now + 3) {
+    const t = crk.nextChord, ch = MUSIC_CHORDS[crk.idx % MUSIC_CHORDS.length];
+    ch.forEach(function (f) {
+      audioMusicNote(crk, f, "sine", 0.12, t, MUSIC_FADE, MUSIC_CHORD_LEN - MUSIC_FADE, MUSIC_FADE, -4);
+      audioMusicNote(crk, f, "triangle", 0.05, t, MUSIC_FADE, MUSIC_CHORD_LEN - MUSIC_FADE, MUSIC_FADE, 4);
+    });
+    crk.idx++;
+    crk.nextChord = t + MUSIC_CHORD_LEN;
+  }
+  while (crk.nextBell < now + 3) {
+    const f = MUSIC_BELLS[Math.floor(Math.random() * MUSIC_BELLS.length)];
+    audioMusicNote(crk, f, "sine", 0.1, Math.max(crk.nextBell, now), 0.04, 0, 3.5, 0);
+    crk.nextBell += 3 + Math.random() * 4;
+  }
+}
 function audioStartCrackle(level) {
   if (audio.crk) return true;
   const ctx = audioCtx();
   if (!ctx) return false;
   try {
-    const buf = audioNoise(ctx);
-    const src = ctx.createBufferSource();
-    src.buffer = buf; src.loop = true;
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 450;
+    const t0 = ctx.currentTime;
+    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1200;
     const gain = ctx.createGain(); gain.gain.value = 0.035 * level;
-    src.connect(lp); lp.connect(gain); gain.connect(audio.master);
-    src.start();
-    const crk = { src: src, gain: gain, timer: 0, level: level };
-    const pop = function () {
-      if (audio.crk !== crk || !audio.ctx) return;
-      const s = audio.ctx.createBufferSource(); s.buffer = buf;
-      const hp = audio.ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 1400;
-      const g = audio.ctx.createGain(), now = audio.ctx.currentTime;
-      g.gain.setValueAtTime(0.0001, now);
-      g.gain.linearRampToValueAtTime(0.03 * crk.level, now + 0.005);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-      s.connect(hp); hp.connect(g); g.connect(audio.master);
-      s.start(now, Math.random() * 1.5, 0.06);
-      crk.timer = setTimeout(pop, 120 + Math.random() * 600);
-    };
+    const fade = ctx.createGain();
+    fade.gain.setValueAtTime(0.0001, t0); fade.gain.linearRampToValueAtTime(1, t0 + 1.5);
+    lp.connect(gain); gain.connect(fade); fade.connect(audio.master);
+    const crk = { lp: lp, gain: gain, fade: fade, timer: 0, level: level, idx: 0, nextChord: t0 + 0.1, nextBell: t0 + 4 };
     audio.crk = crk;
-    pop();
+    audioMusicSchedule(crk);
+    crk.timer = setInterval(function () { audioMusicSchedule(crk); }, 500);
     return true;
   } catch (e) { audio.crk = null; return false; }
 }
@@ -1932,14 +1957,22 @@ function audioSetCrackle(level) {
   const c = audio.crk;
   if (!c || !audio.ctx) return;
   c.level = level;
-  try { c.gain.gain.setTargetAtTime(0.035 * level, audio.ctx.currentTime, 0.15); } catch (e) { /* ignore */ }
+  try { c.gain.gain.setTargetAtTime(0.035 * level, audio.ctx.currentTime, 0.3); } catch (e) { /* ignore */ }
 }
 function audioStopCrackle() {
   const c = audio.crk;
   if (!c) return;
   audio.crk = null;
-  clearTimeout(c.timer);
-  try { c.src.stop(); } catch (e) { /* ignore */ }
+  clearInterval(c.timer);
+  try {
+    const t = audio.ctx.currentTime;
+    c.fade.gain.cancelScheduledValues(t);
+    c.fade.gain.setValueAtTime(c.fade.gain.value, t);
+    c.fade.gain.linearRampToValueAtTime(0.0001, t + 1);
+  } catch (e) { /* ignore */ }
+  setTimeout(function () {
+    try { c.lp.disconnect(); c.gain.disconnect(); c.fade.disconnect(); } catch (e) { /* ignore */ }
+  }, 1200);
 }
 /* Stops every loop and closes the audio context (pause, round end, teardown). */
 function audioStopAll() {
@@ -2700,7 +2733,7 @@ function playFrame(now) {
   } catch (e) { console.error("play error", e); }
   play.raf = requestAnimationFrame(playFrame);
 }
-/* Cave ambience runs only while a round is live and nobody is paused or in a meeting. Near the fire it adds a soft crackle. */
+/* Cave ambience runs only while a round is live and nobody is paused or in a meeting. Near the fire it adds soft music. */
 function playAmbience(now) {
   const m = play.me;
   const wanted = play.on && !!m && playSoundOn() && !play.paused && !meet.on && !warm.over && !imp.over && !(imp.on && imp.card);
