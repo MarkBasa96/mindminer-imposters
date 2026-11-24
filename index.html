@@ -739,6 +739,17 @@ body.intro-on{overflow:hidden}
 .intro-gowrap .btn{pointer-events:auto; margin:0; font-size:clamp(1.4rem,4vh,2rem); min-height:clamp(56px,9vh,76px); padding-left:1.6em; padding-right:1.6em; white-space:nowrap}
 .howto-row{display:flex; justify-content:flex-end; margin:-4px 0 8px}
 .howto-row .btn{margin:0}
+.howto-row{gap:8px}
+body.touch .kbonly{display:none !important}
+.tip{text-align:center; margin:14px 0 0}
+.cry:focus-visible{outline:3px solid var(--focus); outline-offset:4px; border-radius:8px}
+dialog.kdlg{max-width:680px; width:min(680px,94vw); max-height:88vh; max-height:88dvh; overflow:auto}
+.kdlg h2{margin:0 0 10px; font-size:1.5rem; color:var(--accent)}
+.kdlg h3{margin:16px 0 6px; font-size:1.15rem}
+.kdlg table{width:100%; border-collapse:collapse}
+.kdlg td{padding:5px 8px; border-bottom:1px solid var(--line); font-size:1.05rem; vertical-align:top}
+.kdlg td:first-child{white-space:nowrap; font-weight:800; width:34%}
+.kdlg .row{margin-top:16px}
 </style>
 </head>
 <body>
@@ -752,7 +763,7 @@ body.intro-on{overflow:hidden}
   <section id="screen-start" class="screen" hidden aria-labelledby="h-start">
     <div class="card-panel center-card">
       <h2 id="h-start" tabindex="-1">Join the mine</h2>
-      <div class="howto-row"><button type="button" class="btn ghost small" id="btnHowTo">How to play</button></div>
+      <div class="howto-row"><button type="button" class="btn ghost small kbonly" id="btnKeysStart" aria-keyshortcuts="?">Keyboard shortcuts</button><button type="button" class="btn ghost small" id="btnHowTo">How to play</button></div>
       <label for="nick">Your nickname</label>
       <input type="text" id="nick" maxlength="16" autocomplete="off" spellcheck="false" placeholder="For example: Sam">
       <p class="hint">1 to 16 characters. Plain text only, no links.</p>
@@ -773,6 +784,7 @@ body.intro-on{overflow:hidden}
           <div style="margin-top:12px"><button type="button" class="btn" id="btnJoin">Join room</button></div>
         </div>
       </div>
+      <p class="hint tip kbonly">Tip: press ? for keyboard shortcuts</p>
       <div id="startMsg" class="notice" role="alert" hidden></div>
     </div>
   </section>
@@ -804,7 +816,7 @@ body.intro-on{overflow:hidden}
             <div class="tag">Room code</div>
             <span id="roomCode" aria-label="Room code"></span>
           </div>
-          <button type="button" class="btn ghost" id="btnCopy">Copy code</button>
+          <button type="button" class="btn ghost" id="btnCopy" title="Copy code (C)" aria-keyshortcuts="C">Copy code</button>
         </div>
         <div class="listhead">
           <h2 id="h-lobby" tabindex="-1">Miners</h2>
@@ -825,7 +837,7 @@ body.intro-on{overflow:hidden}
           <div id="lobbyPickerHost"></div>
         </div>
         <div class="actions">
-          <button type="button" class="btn go" id="btnStart" hidden>Start game</button>
+          <button type="button" class="btn go" id="btnStart" hidden title="Start game (S)" aria-keyshortcuts="S">Start game</button>
           <button type="button" class="btn danger" id="btnClose" hidden>Close room</button>
           <button type="button" class="btn ghost" id="btnLeave" hidden>Leave room</button>
         </div>
@@ -919,8 +931,8 @@ body.intro-on{overflow:hidden}
         <span class="wb-counts"><span id="wbGems">Gems left 0</span><span id="wbTasks">Tasks 0 of 3</span></span>
       </div>
       <div class="hud-right">
-        <button type="button" class="btn ghost small" id="btnPause" hidden>Pause</button>
-        <button type="button" class="btn ghost small" id="btnMenu" aria-haspopup="true" aria-expanded="false" aria-controls="menuPop">Menu</button>
+        <button type="button" class="btn ghost small" id="btnPause" hidden title="Pause or resume (P)" aria-keyshortcuts="P">Pause</button>
+        <button type="button" class="btn ghost small" id="btnMenu" aria-haspopup="true" aria-expanded="false" aria-controls="menuPop" title="Menu (Esc)" aria-keyshortcuts="Escape">Menu</button>
       </div>
     </div>
     <div class="hud-menu" id="menuPop" hidden role="group" aria-label="Game menu">
@@ -933,6 +945,7 @@ body.intro-on{overflow:hidden}
       <button type="button" class="btn ghost small" id="btnPlaySnd">Sound</button>
       <label class="vol" for="volPlay">Volume <input type="range" id="volPlay" class="volrange" min="0" max="100" value="35" aria-label="Volume"></label>
       <span class="amb off" id="hudAmb">Cave sounds and campfire music: off</span>
+      <button type="button" class="btn ghost small kbonly" id="btnMenuKeys" aria-keyshortcuts="?">Keyboard shortcuts</button>
       <button type="button" class="btn ghost small" id="btnMenuHow">How to play</button>
       <button type="button" class="btn ghost small" id="btnPlayBack" hidden>Back to lobby</button>
     </div>
@@ -944,7 +957,7 @@ body.intro-on{overflow:hidden}
       </div>
     </aside>
     </div>
-    <div class="hud-hint" id="hudHint">Move with W A S D or the arrow keys. Press M to mute or unmute sound.</div>
+    <div class="hud-hint" id="hudHint">Move: W A S D or arrows. E use. M mute. Esc menu. ? shortcuts.</div>
     <button type="button" class="btn meet-btn" id="btnMeet" hidden></button>
     <div class="joy" id="joy" hidden aria-hidden="true"><div class="joy-knob" id="joyKnob"></div></div>
     <div class="tbtns" id="tBtns" hidden>
@@ -972,7 +985,7 @@ body.intro-on{overflow:hidden}
           </div>
         </div>
         <div class="meet-foot">
-          <button type="button" class="btn ghost" id="btnMeetSkip">Skip vote</button>
+          <button type="button" class="btn ghost" id="btnMeetSkip" title="Skip vote (0 or K)" aria-keyshortcuts="0 K">Skip vote</button>
           <span class="note" id="meetNote"></span>
         </div>
       </div>
@@ -1030,6 +1043,13 @@ body.intro-on{overflow:hidden}
 </main>
 
 <div id="toasts" role="status" aria-live="polite" aria-atomic="false"></div>
+<div class="sr" id="srLive" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<dialog id="keysDlg" class="kdlg" role="dialog" aria-modal="true" aria-labelledby="keysTitle">
+  <h2 id="keysTitle">Keyboard shortcuts</h2>
+  <div id="keysBody"></div>
+  <form method="dialog" class="row"><button type="submit" class="btn" autofocus>Close (Esc)</button></form>
+</dialog>
 
 <dialog id="confirm" aria-labelledby="confirmText">
   <form method="dialog">
@@ -1060,7 +1080,7 @@ body.intro-on{overflow:hidden}
   <div class="intro-ctl">
     <button type="button" class="btn ghost small" id="introSnd" aria-label="Sound off, tap for sound" title="Sound off, tap for sound"><span id="introSndT">Sound off</span><span class="long" id="introSndL">, tap for sound</span></button>
     <button type="button" class="btn ghost small" id="introPause" aria-label="Pause intro">Pause</button>
-    <button type="button" class="btn ghost small" id="introSkip">Skip intro</button>
+    <button type="button" class="btn ghost small" id="introSkip" title="Skip intro (Enter or Esc)">Skip intro</button>
   </div>
   <div class="intro-prog" aria-hidden="true"><i id="introProg"></i></div>
 </div>
@@ -2619,22 +2639,42 @@ function confirmAsk(text, okLabel) {
 
 /* ===== UI: COLOUR PICKER ===== */
 function createPicker(onPick) {
-  const root = el("div", { class: "picker", role: "group", "aria-label": "Miner colour" });
+  const root = el("div", { class: "picker", role: "radiogroup", "aria-label": "Miner colour" });
   const btns = MINERS.map(function (m, i) {
-    const b = el("button", { type: "button", class: "swatch" });
+    const b = el("button", { type: "button", class: "swatch", role: "radio", "aria-checked": "false", tabindex: "-1" });
     b.appendChild(makeMinerCanvas(i, 46));
     b.addEventListener("click", function () { if (!b.disabled) { sfx("swatch", i); onPick(i); } });
+    b.addEventListener("keydown", function (e) {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+      const k = e.key, n = btns.length;
+      let step = 0, to = -1;
+      if (k === "ArrowRight" || k === "ArrowDown") step = 1;
+      else if (k === "ArrowLeft" || k === "ArrowUp") step = -1;
+      else if (k === "Home") { for (let j = 0; j < n; j++) if (!btns[j].disabled) { to = j; break; } }
+      else if (k === "End") { for (let j = n - 1; j >= 0; j--) if (!btns[j].disabled) { to = j; break; } }
+      else return;
+      e.preventDefault();
+      if (step) { for (let j = 1; j <= n; j++) { const c = (i + step * j + n * j) % n; if (!btns[c].disabled) { to = c; break; } } }
+      if (to < 0 || to === i) return;
+      btns.forEach(function (x, j) { x.tabIndex = j === to ? 0 : -1; });
+      btns[to].focus();
+      sfx("swatch", to);
+      onPick(to);
+    });
     root.appendChild(b);
     return b;
   });
   return {
     root: root,
     update: function (selected, taken) {
+      let stop = btns[selected] && !taken.has(selected) ? selected : -1;
+      if (stop < 0) for (let j = 0; j < btns.length; j++) if (!taken.has(j)) { stop = j; break; }
       btns.forEach(function (b, i) {
         const isTaken = taken.has(i);
         b.disabled = isTaken;
+        b.tabIndex = i === stop ? 0 : -1;
         b.classList.toggle("on", i === selected);
-        b.setAttribute("aria-pressed", i === selected ? "true" : "false");
+        b.setAttribute("aria-checked", i === selected ? "true" : "false");
         const label = MINERS[i].name + ", " + MINERS[i].pattern + " helmet" + (isTaken ? ", taken" : "");
         b.setAttribute("aria-label", label);
         b.title = label;
@@ -2673,6 +2713,11 @@ function initStartScreen() {
     e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
   });
   $("code").addEventListener("keydown", function (e) { if (e.key === "Enter") $("btnJoin").click(); });
+  $("nick").addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" || e.isComposing) return;
+    e.preventDefault();
+    if (!$("code").value) $("code").focus(); else $("btnJoin").click();
+  });
   $("btnCreate").addEventListener("click", function () {
     const f = readStartForm(false);
     if (f) hostCreate(f.nick, me.color);
@@ -3280,6 +3325,7 @@ function playUpdate(dt) {
     if (play.stepT >= 0.34) { play.stepT = 0; playStep(); }
   } else play.stepT = 0.25;
   if (imp.on) impUpdate(m); else warmUpdate(m);
+  srContext(m);
 }
 function drawMiner(c, e, now, z) {
   const S = 60, img = playMinerImg(e.color);
@@ -3491,7 +3537,7 @@ function initTouch() {
     const t = hint.textContent;
     const n = t.replace("Press E or Space to start", "Tap Use to start").replace("Press Q to tag", "Tap Tag to tag").replace("Press R to sabotage", "Tap Sabotage to sabotage")
       .replace("Press F to report", "Tap Report to report").replace("Press B to ring", "Tap Call meeting to ring").replace("then press Enter", "then tap Got it")
-      .replace(/^Move with W A S D.*$/, "Drag the round stick to move.");
+      .replace(/^Move: W A S D.*$/, "Drag the round stick to move.");
     if (n !== t) hint.textContent = n;
   }).observe(hint, { childList: true, characterData: true, subtree: true });
   setInterval(function () {
@@ -3555,7 +3601,7 @@ function initPlay() {
   initTouch();
   initPlayMenu();
   window.addEventListener("keydown", function (e) {
-    if (!play.on || e.ctrlKey || e.metaKey || e.altKey || $("confirm").open || !$("menuPop").hidden) return;
+    if (!play.on || e.ctrlKey || e.metaKey || e.altKey || $("confirm").open || $("keysDlg").open || !$("menuPop").hidden) return;
     if (play.paused) return; /* nothing works while the host has paused */
     if (meet.on) return; /* the meeting screen uses the mouse and the chat box */
     if (imp.on && imp.card) {
@@ -3616,7 +3662,7 @@ const TASK_ACCEPT = 140;        /* host accepts task messages within this distan
 const TASK_LIMIT = 20;          /* seconds for any mini game */
 const TASK_MIN_MS = 1200;       /* host rejects a task finished faster than this */
 const HOLD_SECONDS = 3;
-const HINT_DEFAULT = "Move with W A S D or the arrow keys. Press M to mute or unmute sound.";
+const HINT_DEFAULT = "Move: W A S D or arrows. E use. M mute. Esc menu. ? shortcuts.";
 const WARM_TASKS = [
   { id: 0, kind: "hold", title: "Charge the crystal (Crystal Cavern)", x: Math.round(7.5 * TILE), y: Math.round(6 * TILE),
     help: "Hold the big button, or hold Space, until the bar is full. Letting go drains it slowly." },
@@ -3996,6 +4042,7 @@ function taskOpen(t) {
   else taskBuildCart(ui, body);
   $("taskOv").hidden = false;
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  if (t.kind === "cart") { const c1 = body.querySelector(".cry"); if (c1) { try { c1.focus({ preventScroll: true }); } catch (e) { /* ignore */ } } }
   ui.timer = setInterval(taskTick, 100);
 }
 function taskFinish(ok, why) {
@@ -4100,9 +4147,20 @@ function taskBuildCart(ui, body) {
   cart.appendChild(cartTxt);
   stage.appendChild(cart);
   const spots = [["6%", "10%", "#5ee0ff"], ["6%", "52%", "#b58cff"], ["28%", "30%", "#ff9ad0"]];
-  spots.forEach(function (s) {
-    const node = el("div", { class: "cry", role: "button", "aria-label": "Crystal" });
+  const load = function (node) {
+    if (node.hidden || warm.ui !== ui) return;
+    node.hidden = true; ui.count++;
+    cartTxt.textContent = "In the cart: " + ui.count + " of 3";
+    if (ui.count < 3) { sfx("taskStep"); const nx = stage.querySelector(".cry:not([hidden])"); if (nx) nx.focus(); }
+    if (ui.count >= 3) taskFinish(true);
+  };
+  body.appendChild(el("p", { class: "hint" }, "Drag, or press Enter on each crystal"));
+  spots.forEach(function (s, n) {
+    const node = el("div", { class: "cry", role: "button", tabindex: "0", "aria-label": "Crystal " + (n + 1) + ", press Enter to load" });
     node.style.left = s[0]; node.style.top = s[1];
+    node.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); load(node); }
+    });
     const cv = document.createElement("canvas"); cv.width = 56; cv.height = 64;
     crystalShape(cv.getContext("2d"), 28, 60, 56, s[2]);
     node.appendChild(cv);
@@ -4125,12 +4183,8 @@ function taskBuildCart(ui, body) {
       const r = node.getBoundingClientRect(), cr = cart.getBoundingClientRect();
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       const inside = cx >= cr.left - 20 && cx <= cr.right + 20 && cy >= cr.top - 20 && cy <= cr.bottom + 20;
-      if (!d.moved || inside) {
-        node.hidden = true; ui.count++;
-        cartTxt.textContent = "In the cart: " + ui.count + " of 3";
-        if (ui.count < 3) sfx("taskStep");
-        if (ui.count >= 3) taskFinish(true);
-      } else node.style.transform = "";
+      if (!d.moved || inside) load(node);
+      else node.style.transform = "";
     });
     node.addEventListener("pointercancel", function () { ui.drag = null; node.style.transform = ""; });
     stage.appendChild(node);
@@ -4915,6 +4969,7 @@ function meetTick() {
 function meetVote(t) {
   if (!meet.on || meet.stage !== "vote" || !view || imp.out.has(view.myId)) return;
   meet.myVote = t;
+  srSay(t === "skip" ? "Voted to skip" : "Voted for " + impName(t), true);
   sfx("voteCast");
   meetRender();
   sendHost({ t: "vote", target: t });
@@ -4933,10 +4988,11 @@ function meetRender() {
   if (res) res.votes.forEach(function (v) { pick.set(v[0], v[1]); if (v[1] !== "skip") counts.set(v[1], (counts.get(v[1]) || 0) + 1); });
   const ul = $("meetCards");
   ul.replaceChildren();
-  view.players.forEach(function (p) {
+  view.players.forEach(function (p, pi) {
     const out = imp.out.has(p.id), can = voting && !out && p.id !== me;
     const b = el("button", { type: "button", class: "mc" + (out ? " out" : "") + (meet.stage === "vote" && meet.myVote === p.id ? " mine" : "") });
     if (!can) b.disabled = true; else b.addEventListener("click", function () { meetVote(p.id); });
+    if (can && pi < 9) { b.setAttribute("aria-keyshortcuts", String(pi + 1)); b.title = "Vote (key " + (pi + 1) + ")"; }
     const cv = el("canvas", { width: 44, height: 44, "aria-hidden": "true" });
     cv.getContext("2d").drawImage(playMinerImg(p.color), 0, 0, 44, 44);
     b.appendChild(cv);
@@ -4944,6 +5000,7 @@ function meetRender() {
     box.appendChild(el("span", { class: "mn" }, p.nick + (p.id === me ? " (you)" : "")));
     box.appendChild(el("span", { class: "ms" }, (out ? "Out" : "Alive") + " | " + p.pattern));
     const badges = el("span", { class: "ms" });
+    if (can && pi < 9 && !IS_TOUCH) badges.appendChild(el("span", { class: "mbadge" }, "Key " + (pi + 1)));
     if (meet.stage === "vote") {
       if (meet.voted.has(p.id)) badges.appendChild(el("span", { class: "mbadge vd" }, "Voted"));
       if (meet.myVote === p.id) badges.appendChild(el("span", { class: "mbadge you" }, "Your vote"));
@@ -5028,7 +5085,10 @@ function chatSendFrom(inp) {
 function initMeeting() {
   const wire = function (inp, btn) {
     $(btn).addEventListener("click", function () { chatSendFrom($(inp)); });
-    $(inp).addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); chatSendFrom($(inp)); } });
+    $(inp).addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); chatSendFrom($(inp)); }
+      else if (e.key === "Escape" && !e.defaultPrevented) { e.preventDefault(); $(inp).blur(); } /* leave the box so number keys can vote */
+    });
   };
   wire("meetInput", "btnMeetSend");
   wire("lobbyInput", "btnLobbySend");
@@ -5790,7 +5850,10 @@ function introLabels() {
   $("introSndT").textContent = intro.sound ? "Sound on" : "Sound off";
   $("introSndL").textContent = intro.sound ? ", tap to mute" : ", tap for sound";
   const sl = intro.sound ? "Sound on, tap to mute" : "Sound off, tap for sound";
-  $("introSnd").setAttribute("aria-label", sl); $("introSnd").title = sl;
+  $("introSnd").setAttribute("aria-label", sl); $("introSnd").title = sl + " (M)";
+  $("introSnd").setAttribute("aria-keyshortcuts", "M");
+  $("introPause").title = (intro.userPaused ? "Play" : "Pause") + " (Space)";
+  $("introPause").setAttribute("aria-keyshortcuts", "Space");
   $("introPause").textContent = intro.userPaused ? "Play" : "Pause";
   $("introPause").setAttribute("aria-label", intro.userPaused ? "Play intro" : "Pause intro");
 }
@@ -5889,12 +5952,31 @@ function initIntro() {
     }
     e.stopImmediatePropagation();
     if (e.key === "Escape") { e.preventDefault(); introClose(); return; }
-    if (e.key === "Enter" || e.key === " ") {
-      const tg = e.target;
-      if (tg && tg.tagName === "BUTTON" && tg.id !== "introSkip") return;
+    const tg = e.target, tid = tg && tg.id;
+    if (e.key === " ") {
+      /* Space is Pause or Play, like a video. The start and finish buttons keep their normal Space click. */
+      if (tid === "introStart" || tid === "introGo") return;
+      e.preventDefault();
+      if (!e.repeat && !intro.gated && $("introGo").hidden) $("introPause").click();
+      return;
+    }
+    if (e.key === "Enter") {
+      if (tg && tg.tagName === "BUTTON" && tid !== "introSkip") return;
       e.preventDefault(); introClose(); return;
     }
+    if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      if (!e.repeat) $("introSnd").click();
+      return;
+    }
     if (intro.auto && !intro.sound) introSoundSet(true);
+  }, true);
+  /* stop the Space key release from also clicking a focused intro button (Space is handled on key down) */
+  window.addEventListener("keyup", function (e) {
+    if (!intro.open || e.key !== " ") return;
+    const tid = e.target && e.target.id;
+    if (tid === "introStart" || tid === "introGo") return;
+    e.preventDefault();
   }, true);
   window.addEventListener("resize", introResize);
   window.addEventListener("orientationchange", function () { setTimeout(introResize, 120); });
@@ -5906,6 +5988,133 @@ function initIntro() {
   $("btnMenuHow").addEventListener("click", function () { playMenuClose(false); introOpen(true, $("btnMenu")); });
 }
 
+/* ===== ACCESSIBILITY: SCREEN READER CONTEXT (polite, max one per 1.5 s, no repeat of the same text within 5 s) ===== */
+const sr = { last: 0, seen: new Map(), pend: "", pendT: 0, room: "", near: "", dark: false, tag: null, sab: null };
+function srSay(text, force) {
+  const live = $("srLive"), now = performance.now();
+  if (!live || !text) return;
+  const prev = sr.seen.get(text);
+  if (!force && prev !== undefined && now - prev < 5000) return;
+  const wait = sr.last + 1500 - now;
+  if (!force && wait > 0) {
+    sr.pend = text; /* keep only the newest waiting line */
+    if (!sr.pendT) sr.pendT = setTimeout(function () { sr.pendT = 0; const t = sr.pend; sr.pend = ""; if (t) srSay(t); }, wait + 20);
+    return;
+  }
+  sr.last = now; sr.seen.set(text, now);
+  if (sr.seen.size > 40) sr.seen.forEach(function (v, k) { if (now - v > 5000) sr.seen.delete(k); });
+  live.textContent = "";
+  setTimeout(function () { live.textContent = text; }, 40);
+}
+function srContext(m) {
+  if (!m || !view || meet.on || play.paused) return;
+  const now = performance.now(), tx = m.x / TILE, ty = m.y / TILE;
+  const room = MAP_ROOMS.find(function (r) { return tx >= r.x && tx < r.x + r.w && ty >= r.y && ty < r.y + r.h; });
+  if (room && room.name !== sr.room) { sr.room = room.name; srSay("Entered " + room.name); }
+  const out = imp.on && imp.out.has(view.myId);
+  let near = "";
+  if (!warm.ui && !out && !(imp.on && (imp.card || imp.over)) && !(warm.on && warm.over)) {
+    const s = imp.on ? impNearSpot(m) : (warm.on ? warmNearTask(m) : null);
+    if (s) near = "Near: " + s.title + ". Press E.";
+    else if (warm.on && !imp.on && warm.gems.some(function (g) { return Math.hypot(g.x - m.x, g.y - m.y) <= GEM_KEY; })) near = "Near: a gem. Press E.";
+    else if (imp.on && imp.role === "faker" && imp.sabUntil <= now && impNearLamp(m)) near = "Near: a lamp. Press R to sabotage.";
+  }
+  if (near !== sr.near) { sr.near = near; if (near) srSay(near); }
+  if (imp.on && imp.role === "faker" && !imp.over && !out) {
+    const t = imp.tagUntil <= now, s = imp.sabUntil <= now;
+    if (sr.tag === false && t) srSay("Tag is ready");
+    if (sr.sab === false && s) srSay("Sabotage is ready");
+    sr.tag = t; sr.sab = s;
+  } else { sr.tag = null; sr.sab = null; }
+  const dark = imp.on && imp.darkUntil > now;
+  if (dark !== sr.dark) { sr.dark = dark; srSay(dark ? "Lamps sabotaged. Vision is smaller." : "The lamps are back on."); }
+}
+
+/* ===== KEYBOARD SHORTCUTS (dialog and global keys) ===== */
+const KEY_GROUPS = [
+  ["Start screen", [["? or H", "Open this list"], ["Enter in Nickname", "Go to Room code, or press Join room if a code is typed"], ["Arrow keys, Home, End", "Choose a miner colour"]]],
+  ["Lobby", [["S", "Start game (host only)"], ["C", "Copy room code"], ["T", "Type in lobby chat"], ["Arrow keys", "Choose a miner colour"]]],
+  ["Round", [["W A S D or arrows", "Move"], ["E or Space", "Use: collect a gem, start a task"], ["M", "Mute or unmute"], ["Esc", "Open or close the menu, or cancel a task"], ["P", "Pause or resume (host only)"], ["Enter", "Close the role card"]]],
+  ["Imposters", [["Q", "Tag a nearby miner (fakers)"], ["R", "Sabotage a nearby lamp (fakers)"], ["F", "Report a body"], ["B", "Ring the meeting bell"]]],
+  ["Meeting", [["1 to 9", "Vote for the Nth player card"], ["0 or K", "Skip vote"], ["T", "Type in meeting chat"], ["Enter", "Send chat message"], ["Esc", "Leave the chat box"]]],
+  ["Paused", [["P or Esc", "Resume (host only)"]]],
+  ["Intro", [["Space", "Pause or play"], ["M", "Sound on or off"], ["Enter or Esc", "Skip the intro"]]]
+];
+let keysOpener = null;
+function keysBuild() {
+  const body = $("keysBody");
+  body.replaceChildren();
+  KEY_GROUPS.forEach(function (g) {
+    body.appendChild(el("h3", null, g[0]));
+    const tb = el("table", { "aria-label": g[0] + " shortcuts" });
+    g[1].forEach(function (r) {
+      const tr = el("tr");
+      tr.appendChild(el("td", null, r[0]));
+      tr.appendChild(el("td", null, r[1]));
+      tb.appendChild(tr);
+    });
+    body.appendChild(tb);
+  });
+}
+function keysOpen(opener) {
+  const d = $("keysDlg");
+  if (d.open || typeof d.showModal !== "function") return;
+  if (!d.dataset.built) { keysBuild(); d.dataset.built = "1"; }
+  playMenuClose(false);
+  keysOpener = opener || null;
+  play.keys = {};
+  d.showModal();
+  sfx("whoosh");
+}
+function initShortcuts() {
+  $("btnKeysStart").addEventListener("click", function () { keysOpen($("btnKeysStart")); });
+  $("btnMenuKeys").addEventListener("click", function () { keysOpen($("btnMenu")); });
+  $("keysDlg").addEventListener("close", function () {
+    let f = keysOpener;
+    keysOpener = null;
+    if (!f || !f.isConnected || !f.getClientRects().length) f = screens.current === "play" ? $("btnMenu") : null;
+    if (f) { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+    if (intro.open || $("confirm").open || $("keysDlg").open) return;
+    const t = e.target;
+    if (t && t.tagName && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return;
+    const k = e.key, lk = k.length === 1 ? k.toLowerCase() : k, scr = screens.current;
+    const help = k === "?" || (k === "/" && e.shiftKey) || (lk === "h" && !e.shiftKey);
+    if (scr === "play" && play.paused) {
+      if ((lk === "p" || k === "Escape") && !e.shiftKey && isHostView()) { e.preventDefault(); hostSetPause(false); }
+      else if (help) { e.preventDefault(); keysOpen(document.activeElement); }
+      return;
+    }
+    if (scr === "play" && warm.ui) return; /* the task panel owns the keys */
+    if (help) { e.preventDefault(); keysOpen(document.activeElement); return; }
+    if (e.shiftKey) return;
+    if (scr === "lobby") {
+      if (lk === "s") { const b = $("btnStart"); if (isHostView() && !b.hidden && !b.disabled) { e.preventDefault(); b.click(); } }
+      else if (lk === "c") { e.preventDefault(); $("btnCopy").click(); }
+      else if (lk === "t") { e.preventDefault(); $("lobbyInput").focus(); }
+      return;
+    }
+    if (scr !== "play" || !play.on) return;
+    if (meet.on) {
+      if (lk === "t") { e.preventDefault(); $("meetInput").focus(); }
+      else if (meet.stage === "vote") {
+        if (lk === "0" || lk === "k") { const b = $("btnMeetSkip"); if (!b.disabled) { e.preventDefault(); b.click(); } }
+        else if (/^[1-9]$/.test(k)) {
+          const b = $("meetCards").querySelectorAll("button.mc")[Number(k) - 1];
+          if (b && !b.disabled) { e.preventDefault(); b.click(); }
+        }
+      }
+      return;
+    }
+    if (imp.on && imp.card) return;
+    if (!$("endOv").hidden) return;
+    if (k === "Escape" && $("menuPop").hidden) { e.preventDefault(); playMenuOpen(); }
+    else if (lk === "p" && isHostView() && !$("btnPause").hidden) { e.preventDefault(); $("btnPause").click(); }
+  });
+}
+
 /* ===== BOOT ===== */
 initScrollFades();
 initMotion();
@@ -5914,6 +6123,7 @@ initPlay();
 initStartScreen();
 initLobbyButtons();
 initIntro();
+initShortcuts();
 screens.show("start");
 /* the intro plays by itself only on the first visit and only from the start screen (never during a game) */
 if (!introSeen() && screens.current === "start" && !view && !host) introOpen(false, null);
