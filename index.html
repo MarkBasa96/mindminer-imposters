@@ -1533,6 +1533,7 @@ const clientHandlers = {
     send(ctx.conn, { t: "pong" });
   },
   kicked: function () {
+    sfx("kicked");
     endSession("You were removed", "The host removed you from the room.");
   },
   closed: function () {
@@ -1694,6 +1695,7 @@ function hostStart(peer, code, nick, color) {
   peer.on("connection", hostOnConnection);
   host.pingTimer = setInterval(hostPingTick, 1000);
   hostBroadcastLobby();
+  sfx("created");
 }
 function hostOnConnection(conn) {
   if (!host) { try { conn.close(); } catch (e) { /* ignore */ } return; }
@@ -1822,8 +1824,9 @@ function applyLobby(msg) {
   if (view) {
     const oldMap = new Map(view.players.map(function (p) { return [p.id, p]; }));
     const newMap = new Map(players.map(function (p) { return [p.id, p]; }));
-    players.forEach(function (p) { if (!oldMap.has(p.id) && p.id !== myId) toast(p.nick + " joined"); });
-    oldMap.forEach(function (p, id) { if (!newMap.has(id) && id !== myId) toast(p.nick + " left"); });
+    players.forEach(function (p) { if (!oldMap.has(p.id) && p.id !== myId) { toast(p.nick + " joined"); sfx("joined"); } });
+    oldMap.forEach(function (p, id) { if (!newMap.has(id) && id !== myId) { toast(p.nick + " left"); sfx("left"); } });
+    if (!isHostView() && JSON.stringify(view.settings) !== JSON.stringify(sanitizeSettings(msg.settings))) sfx("settingTick");
   }
   const first = !view;
   view = {
@@ -1875,6 +1878,7 @@ function setPpView(m) {
   };
 }
 let bubbleKeys = [];
+let ppSfxKey = "";
 const BUBBLE_SLOTS = [[18, 9], [50, 9], [82, 9], [15, 31], [50, 31], [85, 31], [15, 53], [85, 53], [15, 75], [85, 75]];
 function renderGuess() {
   const g = ppView.g, iAmHost = isHostView();
@@ -1885,6 +1889,11 @@ function renderGuess() {
   const label = function (p) { return p.nick + " (" + MINERS[p.color].name + ", " + p.pattern + ")"; };
   const status = $("gStatus"), card = $("gCard"), list = $("gList");
   list.textContent = "";
+  if (st === "reveal" && ppSfxKey !== "r" + g.n) {
+    ppSfxKey = "r" + g.n;
+    sfx("ppReveal");
+    if (g.myGuess && !g.mine && !g.watcher) setTimeout(function () { sfx(g.myGuess === g.authorId ? "ppRight" : "ppWrong"); }, 330);
+  } else if (st !== "reveal") ppSfxKey = "";
   card.hidden = !(st === "guess" || st === "reveal");
   card.textContent = card.hidden ? "" : g.text;
   $("ansBox").hidden = !(st === "collect" && !g.watcher);
@@ -1974,8 +1983,9 @@ function renderAnswers() {
 function shareAnswer() {
   if (myShared || !view || !(ppView.active && (ppView.mode === "type" || (ppView.mode === "guess" && ppView.g && ppView.g.stage === "collect" && !ppView.g.watcher)))) return;
   const text = cleanText($("ansInput").value, 100);
-  if (!text) { toast("Type something first"); return; }
+  if (!text) { toast("Type something first"); sfx("buzz"); return; }
   myShared = true;
+  sfx("ppPluck");
   if (isHostView()) {
     const me = host && host.players.get(view.myId);
     hostHandlers.ppAnswer({ text: text }, { player: me });
@@ -2010,7 +2020,7 @@ function showCampfire() {
   $("btnPpSkip").hidden = !iAmHost;
   $("btnPpEnd").hidden = !iAmHost;
   $("campWait").hidden = iAmHost;
-  if (!wasCamp) { myShared = false; $("ansInput").value = ""; bubbleKeys = []; $("bubbles").textContent = ""; }
+  if (!wasCamp) { myShared = false; $("ansInput").value = ""; bubbleKeys = []; $("bubbles").textContent = ""; ppSfxKey = ""; sfx("ppStart"); }
   renderAnswers();
   if (!wasCamp) startFireDraw();
   campSyncAudio();
@@ -2259,6 +2269,175 @@ function audioStopAll() {
   audio.ctx = null; audio.master = null; audio.buf = null; play.noise = null;
 }
 
+/* ===== SFX: one helper, a table of short recipes (oscillators, envelopes, filtered noise) =====
+   sfx(name, arg) is gated by the host Sound setting and the mute buttons, rate limited per name,
+   soft attack, peaks .03 to .12 before master. Nodes are disconnected when they end.
+   Every sound already has a visual cue (toast, overlay, bar or banner). */
+const sfxState = { last: {}, any: 0, hoverEl: null };
+const SFX_GAP = { hover: 80, bump: 400, timerTick: 300, swatch: 40, settingTick: 120, chatIn: 150, blip: 150, toggle: 50 };
+const SFX_PENT = [0, 2, 4, 7, 9];
+function sfxOn() { return (!view || view.settings.sound === "on") && !play.muted && !camp.muted; }
+function sfxTone(c, t, f, dur, peak, type, f2, atk) {
+  const o = c.createOscillator(), g = c.createGain(), a = Math.min(atk || 0.012, dur * 0.5);
+  o.type = type || "sine";
+  o.frequency.setValueAtTime(f, t);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(peak, t + a);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(audio.master);
+  o.onended = function () { try { o.disconnect(); g.disconnect(); } catch (e) { /* ignore */ } };
+  o.start(t); o.stop(t + dur + 0.03);
+}
+function sfxNoise(c, t, dur, peak, type, f1, f2, q, atk) {
+  const s = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain(), a = Math.min(atk || 0.008, dur * 0.5);
+  s.buffer = audioNoise(c);
+  fl.type = type; fl.Q.value = q || 0.8;
+  fl.frequency.setValueAtTime(f1, t);
+  if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(peak, t + a);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(fl); fl.connect(g); g.connect(audio.master);
+  s.onended = function () { try { s.disconnect(); fl.disconnect(); g.disconnect(); } catch (e) { /* ignore */ } };
+  s.start(t, Math.random() * 1.2, dur + 0.03);
+}
+/* notes one after another: freqs, start gap, each length */
+function sfxSeq(c, t, freqs, step, dur, peak, type) {
+  freqs.forEach(function (f, i) { sfxTone(c, t + i * step, f, dur, peak, type || "sine"); });
+}
+const SFX = {
+  /* UI */
+  hover: function (c, t) { sfxTone(c, t, 1800, 0.03, 0.012, "sine"); },
+  pop: function (c, t) { sfxTone(c, t, 520, 0.09, 0.08, "triangle", 340); },
+  popGo: function (c, t) { sfxTone(c, t, 700, 0.1, 0.08, "triangle", 480); sfxTone(c, t, 1400, 0.08, 0.03, "sine"); },
+  popDanger: function (c, t) { sfxTone(c, t, 300, 0.13, 0.09, "triangle", 180); },
+  swatch: function (c, t, i) {
+    const n = Number(i) || 0, f = 392 * Math.pow(2, (SFX_PENT[n % 5] + 12 * (Math.floor(n / 5) % 2)) / 12);
+    sfxTone(c, t, f, 0.16, 0.08, "sine"); sfxTone(c, t, f * 2, 0.1, 0.02, "triangle");
+  },
+  toggle: function (c, t) { sfxNoise(c, t, 0.03, 0.05, "bandpass", 2500, 0, 1.2); sfxTone(c, t, 900, 0.045, 0.04, "triangle"); },
+  ding: function (c, t) { sfxTone(c, t, 1318, 0.5, 0.08, "sine"); sfxTone(c, t, 2637, 0.3, 0.02, "sine"); },
+  blip: function (c, t) { sfxTone(c, t, 880, 0.08, 0.035, "sine", 1040); },
+  whoosh: function (c, t) { sfxNoise(c, t, 0.3, 0.05, "bandpass", 400, 1800, 0.9, 0.12); },
+  buzz: function (c, t) { sfxTone(c, t, 160, 0.14, 0.07, "triangle", 130); sfxTone(c, t + 0.13, 150, 0.16, 0.07, "triangle", 120); },
+  /* lobby */
+  created: function (c, t) { sfxSeq(c, t, [523.25, 659.25, 783.99], 0.12, 0.3, 0.09, "sine"); sfxTone(c, t + 0.36, 1567.98, 0.25, 0.025, "sine"); },
+  joined: function (c, t) { sfxSeq(c, t, [784, 1175], 0.08, 0.15, 0.08, "sine"); },
+  left: function (c, t) { sfxSeq(c, t, [587, 440], 0.12, 0.22, 0.06, "sine"); },
+  kicked: function (c, t) { sfxTone(c, t, 220, 0.4, 0.09, "sine", 147); sfxNoise(c, t, 0.1, 0.05, "lowpass", 300, 0, 0.7); },
+  chatIn: function (c, t) { sfxTone(c, t, 1200, 0.06, 0.04, "sine"); sfxTone(c, t + 0.05, 1500, 0.07, 0.035, "sine"); },
+  settingTick: function (c, t) { sfxTone(c, t, 1400, 0.03, 0.035, "triangle"); },
+  countdown: function (c, t) {
+    sfxNoise(c, t, 0.5, 0.07, "bandpass", 200, 2400, 0.9, 0.3);
+    [261.63, 329.63, 392, 523.25].forEach(function (f) { sfxTone(c, t + 0.4, f, 0.3, 0.035, "triangle", 0, 0.03); });
+  },
+  /* Peace Pipe */
+  ppStart: function (c, t) { [261.63, 329.63, 392].forEach(function (f) { sfxTone(c, t, f, 0.7, 0.04, "sine", 0, 0.3); }); },
+  ppPluck: function (c, t) { sfxTone(c, t, 660, 0.2, 0.08, "triangle", 600, 0.005); sfxTone(c, t, 1320, 0.1, 0.02, "sine"); },
+  ppReveal: function (c, t) { sfxSeq(c, t, [1568, 1976, 2349, 2637], 0.06, 0.2, 0.04, "sine"); },
+  ppRight: function (c, t) { sfxSeq(c, t, [523.25, 659.25], 0.1, 0.25, 0.06, "sine"); },
+  ppWrong: function (c, t) { sfxTone(c, t, 440, 0.3, 0.05, "sine", 415); },
+  /* round */
+  gem: function (c, t) { sfxSeq(c, t, [988, 1319, 1568, 1976], 0.055, 0.2, 0.06, "sine"); sfxTone(c, t + 0.1, 3136, 0.2, 0.015, "triangle"); },
+  taskStart: function (c, t) { sfxNoise(c, t, 0.02, 0.05, "highpass", 3000, 0, 0.7); sfxTone(c, t, 700, 0.05, 0.05, "triangle"); },
+  taskStep: function (c, t) { sfxTone(c, t, 1100, 0.05, 0.05, "triangle"); },
+  taskDone: function (c, t) {
+    sfxSeq(c, t, [523.25, 659.25, 783.99, 1046.5], 0.09, 0.3, 0.07, "sine");
+    sfxTone(c, t + 0.27, 2093, 0.3, 0.02, "sine");
+  },
+  taskFail: function (c, t) { sfxTone(c, t, 120, 0.4, 0.035, "sawtooth", 100); sfxTone(c, t, 150, 0.3, 0.05, "triangle", 110); },
+  milestone: function (c, t, n) {
+    const f = [523.25, 659.25, 783.99][Math.max(0, Math.min(2, (Number(n) || 1) - 1))];
+    sfxTone(c, t, f, 0.28, 0.05, "sine"); sfxTone(c, t, f * 2, 0.2, 0.015, "sine");
+  },
+  timerTick: function (c, t) { sfxTone(c, t, 900, 0.06, 0.09, "triangle", 700, 0.004); sfxNoise(c, t, 0.02, 0.03, "bandpass", 1200, 0, 1.5, 0.003); },
+  win: function (c, t) {
+    sfxSeq(c, t, [523.25, 659.25, 783.99, 1046.5], 0.1, 0.3, 0.07, "sine");
+    sfxSeq(c, t + 0.35, [2093, 2637, 3136], 0.07, 0.2, 0.03, "sine");
+  },
+  lose: function (c, t) { sfxSeq(c, t, [523.25, 440, 392, 329.63], 0.14, 0.25, 0.06, "sine"); },
+  /* imposter round */
+  roleMiner: function (c, t) { sfxSeq(c, t, [659.25, 880, 1174.66], 0.09, 0.3, 0.07, "triangle"); },
+  roleFaker: function (c, t) {
+    sfxTone(c, t, 147, 0.7, 0.08, "sine", 138, 0.2); sfxTone(c, t, 155.6, 0.7, 0.06, "sine", 146, 0.25);
+    sfxNoise(c, t, 0.6, 0.02, "bandpass", 300, 0, 1, 0.3);
+  },
+  tag: function (c, t) { sfxTone(c, t, 120, 0.18, 0.12, "sine", 50, 0.005); sfxNoise(c, t, 0.08, 0.08, "lowpass", 300, 0, 0.7, 0.004); },
+  report: function (c, t) { sfxSeq(c, t, [880, 660, 880, 660], 0.14, 0.14, 0.08, "triangle"); },
+  dim: function (c, t) { sfxTone(c, t, 600, 0.7, 0.07, "sine", 80); sfxTone(c, t, 300, 0.6, 0.05, "triangle", 60); },
+  restore: function (c, t) { sfxTone(c, t, 100, 0.5, 0.06, "sine", 900); sfxTone(c, t + 0.4, 1175, 0.25, 0.04, "sine"); },
+  voteCast: function (c, t) { sfxTone(c, t, 1000, 0.05, 0.06, "triangle"); sfxNoise(c, t, 0.02, 0.03, "highpass", 3000, 0, 0.7, 0.003); },
+  drumroll: function (c, t) {
+    for (let i = 0; i < 14; i++) sfxNoise(c, t + i * 0.045, 0.05, 0.03 + i * 0.004, "bandpass", 220, 0, 0.8, 0.004);
+  },
+  ejected: function (c, t, faker) {
+    if (faker) sfxSeq(c, t, [523.25, 659.25, 783.99], 0.1, 0.3, 0.07, "sine");
+    else sfxSeq(c, t, [392, 329.63, 261.63], 0.14, 0.3, 0.06, "sine");
+  },
+  noOut: function (c, t) { sfxTone(c, t, 440, 0.35, 0.05, "sine"); sfxTone(c, t, 660, 0.25, 0.02, "sine"); },
+  endMiners: function (c, t) {
+    sfxSeq(c, t, [523.25, 659.25, 783.99, 1046.5], 0.1, 0.3, 0.07, "sine");
+    [523.25, 659.25, 783.99].forEach(function (f) { sfxTone(c, t + 0.4, f, 0.3, 0.035, "triangle"); });
+  },
+  endFakers: function (c, t) {
+    sfxSeq(c, t, [220, 261.63, 329.63, 440], 0.12, 0.35, 0.06, "triangle");
+    sfxTone(c, t, 110, 0.7, 0.07, "sine", 0, 0.05);
+  },
+  /* movement and pause */
+  bump: function (c, t) { sfxTone(c, t, 110, 0.08, 0.09, "sine", 70, 0.004); sfxNoise(c, t, 0.05, 0.05, "lowpass", 250, 0, 0.7, 0.004); },
+  pauseDown: function (c, t) { sfxTone(c, t, 700, 0.5, 0.06, "sine", 80, 0.03); },
+  pauseUp: function (c, t) { sfxTone(c, t, 80, 0.4, 0.06, "sine", 700, 0.03); }
+};
+function sfx(name, arg) {
+  const r = SFX[name];
+  if (!r || !sfxOn()) return;
+  const now = performance.now();
+  if (now - (sfxState.last[name] || 0) < (SFX_GAP[name] || 60)) return;
+  try {
+    const c = audioCtx();
+    if (!c || !audio.master || c.state !== "running") return;
+    sfxState.last[name] = now;
+    if (name !== "blip" && name !== "hover") sfxState.any = now;
+    r(c, c.currentTime + 0.005, arg);
+  } catch (e) { /* ignore */ }
+}
+/* the toast blip only plays if nothing else sounded just now */
+function sfxToastBlip() {
+  setTimeout(function () { if (performance.now() - sfxState.any > 160) sfx("blip"); }, 90);
+}
+/* round bar milestones 25, 50, 75 percent (obj keeps its own count so each fires once) */
+function sfxMilestone(obj, pct) {
+  const n = pct >= 75 ? 3 : pct >= 50 ? 2 : pct >= 25 ? 1 : 0;
+  if (n > (obj.ms || 0)) { obj.ms = n; sfx("milestone", n); }
+}
+function initSfx() {
+  /* the audio context may only start after a user gesture: create or resume it lazily */
+  const wake = function () { try { audioCtx(); } catch (e) { /* ignore */ } };
+  document.addEventListener("pointerdown", wake, true);
+  document.addEventListener("keydown", wake, true);
+  const fine = !!(window.matchMedia && window.matchMedia("(pointer: fine)").matches);
+  if (fine) {
+    document.addEventListener("pointerover", function (e) {
+      if (e.pointerType === "touch") return;
+      const b = e.target && e.target.closest ? e.target.closest("button, select") : null;
+      if (!b || b.disabled) { sfxState.hoverEl = null; return; }
+      if (b === sfxState.hoverEl) return;
+      sfxState.hoverEl = b;
+      sfx("hover");
+    });
+  }
+  document.addEventListener("click", function (e) {
+    const b = e.target && e.target.closest ? e.target.closest("button") : null;
+    if (!b || b.disabled || b.matches(".swatch, .mc, .tb, .holdbtn, .keybtn") || b.id === "btnCopy") return;
+    sfx(b.classList.contains("go") ? "popGo" : b.classList.contains("danger") ? "popDanger" : "pop");
+  }, true);
+  document.addEventListener("change", function (e) {
+    const t = e.target;
+    if (t && (t.tagName === "SELECT" || t.type === "checkbox" || t.type === "radio")) sfx("toggle");
+  });
+}
+
 /* ===== UI: SCREENS ===== */
 const screens = {
   current: null,
@@ -2283,6 +2462,7 @@ function toast(text) {
   box.appendChild(t);
   while (box.children.length > 4) box.removeChild(box.firstChild);
   setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3800);
+  sfxToastBlip();
 }
 function confirmAsk(text, okLabel) {
   return new Promise(function (resolve) {
@@ -2292,7 +2472,7 @@ function confirmAsk(text, okLabel) {
     d.returnValue = "";
     const done = function () { d.removeEventListener("close", done); resolve(d.returnValue === "ok"); };
     d.addEventListener("close", done);
-    if (typeof d.showModal === "function") d.showModal(); else resolve(window.confirm(text));
+    if (typeof d.showModal === "function") { d.showModal(); sfx("whoosh"); } else resolve(window.confirm(text));
   });
 }
 
@@ -2302,7 +2482,7 @@ function createPicker(onPick) {
   const btns = MINERS.map(function (m, i) {
     const b = el("button", { type: "button", class: "swatch" });
     b.appendChild(makeMinerCanvas(i, 46));
-    b.addEventListener("click", function () { if (!b.disabled) onPick(i); });
+    b.addEventListener("click", function () { if (!b.disabled) { sfx("swatch", i); onPick(i); } });
     root.appendChild(b);
     return b;
   });
@@ -2330,6 +2510,7 @@ function showStartMsg(text) {
   const n = $("startMsg");
   n.textContent = text || "";
   n.hidden = !text;
+  if (text) sfx("buzz");
 }
 function readStartForm(needCode) {
   const nick = cleanNick($("nick").value);
@@ -2517,6 +2698,7 @@ let copiedTimer = 0;
 function flashCopied() {
   const b = $("btnCopy");
   b.textContent = "Copied";
+  sfx("ding");
   b.classList.remove("copied"); void b.offsetWidth; b.classList.add("copied");
   clearTimeout(copiedTimer);
   copiedTimer = setTimeout(function () { b.textContent = "Copy code"; b.classList.remove("copied"); }, 1500);
@@ -2852,6 +3034,7 @@ function startPlay() {
   play.last = performance.now();
   play.raf = requestAnimationFrame(playFrame);
   play.timers.push(setInterval(playSendMove, 66));
+  sfx("countdown");
 }
 function stopPlay() {
   play.on = false;
@@ -2943,7 +3126,9 @@ function playUpdate(dt) {
   if (ax || ay) {
     const sp = SPEEDS[view.settings.speed] || SPEEDS.normal, l = jy ? Math.max(1, Math.hypot(ax, ay)) : Math.hypot(ax, ay);
     const r = moveCircle(m.x, m.y, ax / l * sp * dt, ay / l * sp * dt);
-    moved = Math.hypot(r.x - m.x, r.y - m.y) > 0.05;
+    const got = Math.hypot(r.x - m.x, r.y - m.y);
+    moved = got > 0.05;
+    if (got < Math.hypot(ax / l * sp * dt, ay / l * sp * dt) * 0.3) sfx("bump");
     m.x = r.x; m.y = r.y;
     if (ax) m.facing = ax > 0 ? 1 : -1;
   }
@@ -3091,9 +3276,11 @@ function playOnPause(on) {
   if (on) {
     play.paused = true; play.pauseAt = now; play.keys = {};
     if (play.me) play.me.walking = false;
+    sfx("pauseDown");
   } else {
     const d = now - play.pauseAt;
     play.paused = false;
+    sfx("pauseUp");
     warm.tAt += d;
     if (imp.tagUntil) imp.tagUntil += d;
     if (imp.sabUntil) imp.sabUntil += d;
@@ -3151,7 +3338,7 @@ function initTouch() {
   joy.addEventListener("pointermove", function (e) { if (JOY.on) { joyMove(e); e.preventDefault(); } });
   ["pointerup", "pointercancel", "lostpointercapture"].forEach(function (n) { joy.addEventListener(n, joyReset); });
   function tap(id, fn) {
-    $(id).addEventListener("pointerdown", function (e) { e.preventDefault(); if (play.on && !play.paused) fn(); });
+    $(id).addEventListener("pointerdown", function (e) { e.preventDefault(); if (play.on && !play.paused) { sfx(id === "tbSab" ? "popDanger" : id === "tbTag" ? "popDanger" : "popGo"); fn(); } });
   }
   tap("tbUse", function () { if (warm.on) warmAct(); else if (imp.on) impAct(); });
   tap("tbTag", impTag);
@@ -3414,6 +3601,7 @@ function warmOnProgress(msg) {
   const mineBy = msg.by === view.myId;
   const who = cleanNick(msg.byNick) || "A miner";
   if (Array.isArray(msg.tasks)) msg.tasks.slice(0, 10).forEach(function (id) { if (Number.isInteger(id)) warm.done.add(id); });
+  sfxMilestone(warm, warm.bar);
   if (Number.isInteger(msg.gem)) {
     warm.gems = warm.gems.filter(function (g) { return g.id !== msg.gem; });
     if (mineBy) { toast("Gem collected! The team bar grew"); warmSound("gem"); }
@@ -3466,6 +3654,8 @@ function sendHost(msg) {
 }
 function warmSound(kind) {
   if (!playSoundOn() || play.paused) return;
+  const rich = { gem: "gem", task: "taskDone", win: "win", lose: "lose", fail: "taskFail", dim: "dim", tag: "tag" };
+  if (rich[kind]) { sfx(rich[kind]); return; }
   const sets = {
     gem: [[880, 0, 0.14], [1319, 0.1, 0.22]],
     task: [[523, 0, 0.16], [784, 0.14, 0.16], [1047, 0.28, 0.3]],
@@ -3539,6 +3729,7 @@ function warmHud(now) {
   const tText = (low ? "Hurry! " : "") + "Time " + Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
   const gText = "Gems left " + warm.gemsLeft;
   const kText = "Tasks " + warm.done.size + " of " + WARM_TASKS.length;
+  if (!warm.over && !play.paused && secs <= 10 && secs > 0 && secs !== warm.tk) { warm.tk = secs; sfx("timerTick"); }
   const key = [tText, gText, kText, pct].join("|");
   if (key === warm.cache) return;
   warm.cache = key;
@@ -3603,6 +3794,7 @@ function taskOpen(t) {
   const ui = { id: t.id, kind: t.kind, start: performance.now(), last: performance.now(), timer: 0, holding: false, ptrHold: false, kbHold: false, prog: 0, idx: 0, count: 0, drag: null };
   warm.ui = ui;
   play.keys = {};
+  sfx("taskStart");
   sendHost({ t: "taskStart", id: t.id });
   $("taskTitle").textContent = t.title;
   $("taskHelp").textContent = t.help;
@@ -3700,8 +3892,8 @@ function taskRenderKeys(ui) {
   });
 }
 function taskKeyPress(ui, L) {
-  if (ui.seq[ui.idx] === L) { ui.idx++; ui.msg.textContent = ui.idx >= ui.seq.length ? "All done!" : "Good! Keep going"; }
-  else { ui.idx = 0; ui.msg.textContent = "Wrong key. Start again from the first key"; }
+  if (ui.seq[ui.idx] === L) { ui.idx++; ui.msg.textContent = ui.idx >= ui.seq.length ? "All done!" : "Good! Keep going"; if (ui.idx < ui.seq.length) sfx("taskStep"); }
+  else { ui.idx = 0; ui.msg.textContent = "Wrong key. Start again from the first key"; sfx("buzz"); }
   taskRenderKeys(ui);
   if (ui.idx >= ui.seq.length) taskFinish(true);
 }
@@ -3746,6 +3938,7 @@ function taskBuildCart(ui, body) {
       if (!d.moved || inside) {
         node.hidden = true; ui.count++;
         cartTxt.textContent = "In the cart: " + ui.count + " of 3";
+        if (ui.count < 3) sfx("taskStep");
         if (ui.count >= 3) taskFinish(true);
       } else node.style.transform = "";
     });
@@ -4159,7 +4352,7 @@ function impOnRole(msg) {
   }
   $("roleOv").hidden = false;
   play.keys = {};
-  warmSound("dim");
+  setTimeout(function () { if (imp.on && imp.card) sfx(faker ? "roleFaker" : "roleMiner"); }, 450);
 }
 function impCloseCard() {
   if (!imp.card) return;
@@ -4180,12 +4373,12 @@ function impOnState(msg) {
   const d = Number(msg.dark);
   imp.darkUntil = isFinite(d) && d > 0 ? performance.now() + Math.min(20, d) * 1000 : 0;
   imp.n = Math.max(0, Math.min(MAX_PLAYERS, Number(msg.n) || 0));
-  if (!wasDark && imp.darkUntil) { toast("The lamps flicker low. Vision is smaller for a few seconds"); warmSound("dim"); }
-}
+  if (!wasDark && imp.darkUntil) { toast("The lamps flicker low. Vision is smaller for a few seconds"); warmSound("dim"); }}
 function impOnProgress(msg) {
   if (!imp.on || !view) return;
   const v = Number(msg.value), dn = Number(msg.done), tt = Number(msg.total);
   if (isFinite(v)) imp.bar = Math.max(0, Math.min(100, v));
+  sfxMilestone(imp, imp.bar);
   if (Number.isInteger(tt) && tt >= 0) imp.total = Math.min(999, tt);
   if (Number.isInteger(dn) && dn >= 0) {
     if (dn > imp.doneN && !msg.q) { toast("A task was finished. The team bar grew"); warmSound("gem"); }
@@ -4235,7 +4428,7 @@ function impOnEnd(msg) {
   const isH = isHostView();
   $("btnPlayAgain").hidden = !isH; $("btnEndLobby").hidden = !isH; $("endWait").hidden = isH;
   $("endOv").hidden = false;
-  warmSound(win === "none" ? "tick" : (imp.role === "faker") === (win === "fakers") ? "win" : "lose");
+  if (win === "none") warmSound("tick"); else sfx(win === "miners" ? "endMiners" : "endFakers");
 }
 function impPosOf(id) {
   const o = play.others.get(id);
@@ -4315,6 +4508,8 @@ function impUpdate(m) {
 function impHud(now) {
   if (!imp.on) return;
   const dark = imp.darkUntil > now, out = imp.out.has(view.myId), faker = imp.role === "faker";
+  if (imp.wasDark && !dark && !imp.over && !play.paused) { toast("The lamps are back on"); sfx("restore"); }
+  imp.wasDark = dark;
   const tagLeft = Math.ceil(Math.max(0, imp.tagUntil - now) / 1000), sabLeft = Math.ceil(Math.max(0, imp.sabUntil - now) / 1000);
   const darkLeft = Math.ceil(Math.max(0, imp.darkUntil - now) / 1000);
   const pct = Math.floor(imp.bar + 0.0001);
@@ -4516,7 +4711,7 @@ function meetOnStart(msg) {
   $("meetOv").hidden = false;
   meetRender();
   clearInterval(meetTimer); meetTimer = setInterval(meetTick, 250); meetTick();
-  warmSound("bell");
+  if (meet.kind === "report") { sfx("report"); setTimeout(function () { if (meet.on) warmSound("bell"); }, 650); } else warmSound("bell");
   try { $("meetInput").focus(); } catch (e) { /* ignore */ }
 }
 function meetTick() {
@@ -4528,7 +4723,7 @@ function meetTick() {
 function meetVote(t) {
   if (!meet.on || meet.stage !== "vote" || !view || imp.out.has(view.myId)) return;
   meet.myVote = t;
-  warmSound("tick");
+  sfx("voteCast");
   meetRender();
   sendHost({ t: "vote", target: t });
 }
@@ -4605,7 +4800,8 @@ function meetOnResult(msg) {
   }
   $("mrSub").textContent = "Skips: " + skips + ". Back to the mine in a few seconds.";
   $("meetResOv").hidden = false;
-  warmSound(outId ? (faker ? "sting" : "sting2") : "tick");
+  sfx("drumroll");
+  setTimeout(function () { if (meet.on && meet.result) { if (outId) sfx("ejected", faker); else sfx("noOut"); } }, 680);
 }
 function meetOnEnd() {
   if (!meet.on) return;
@@ -4626,12 +4822,13 @@ function chatOnMsg(msg) {
   log.appendChild(line);
   while (log.children.length > 60) log.removeChild(log.firstChild);
   log.scrollTop = log.scrollHeight;
+  if (String(msg.id) !== view.myId) sfx("chatIn");
 }
 function chatSendFrom(inp) {
   const text = cleanText(inp.value, 200);
   if (!text) return;
   const now = performance.now();
-  if (now - chatLast < CHAT_GAP_MS + 100) { toast("One message per second, please. Your text is still in the box."); return; }
+  if (now - chatLast < CHAT_GAP_MS + 100) { toast("One message per second, please. Your text is still in the box."); sfx("buzz"); return; }
   chatLast = now;
   inp.value = "";
   sendHost({ t: "chat", text: text });
@@ -4731,6 +4928,7 @@ function initMotion() {
 
 /* ===== BOOT ===== */
 initMotion();
+initSfx();
 initPlay();
 initStartScreen();
 initLobbyButtons();
