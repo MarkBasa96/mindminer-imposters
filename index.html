@@ -657,6 +657,9 @@ button{font-family:inherit}
 /* ===== CONSTANTS ===== */
 const MAX_PLAYERS = 10;
 const PEER_PREFIX = "mmimp-";
+/* Metered.ca relay (free plan). TURN_APP is the subdomain (mindminer for mindminer.metered.live). Leave both empty to use PeerJS defaults. */
+const TURN_APP = "mindminer-imposters";
+const TURN_API_KEY = "03e65c2be8ac89e08139e154a9fce5df3441";
 const CODE_LETTERS = "ABCDEFGHJKMNPQRSTUVWXYZ"; /* no O, I, L */
 const STALE_MS = 5000;
 const REJOIN_MS = 60000;        /* a dropped player keeps their slot this long during a round */
@@ -1276,7 +1279,9 @@ const clientHandlers = {
 const NET = { peer: null, role: null, conn: null, timers: [] };
 const client = { joined: false, lastPing: 0, hostStale: false, ending: false };
 
+let netGen = 0; /* bumped on every teardown so a pending relay fetch can tell it was cancelled */
 function netTeardown(delayMs) {
+  netGen++;
   NET.timers.forEach(function (t) { clearTimeout(t); clearInterval(t); });
   NET.timers = [];
   const peer = NET.peer;
@@ -1331,6 +1336,31 @@ function peerLibMissing() {
   return false;
 }
 const MSG_SERVICE = "Cannot reach the connection service. Check your internet connection, or ask your IT team if it is blocked.";
+const MSG_ICE_FAIL = "Could not connect to the host's computer. Your network may be blocking it. Try another network, or ask the host to check the relay setting.";
+/* Relay (TURN) servers from Metered.ca, fetched once per session and kept in memory only. Null means use PeerJS defaults. */
+let iceCache = null;
+async function getIceServers() {
+  if (iceCache) return iceCache;
+  if (!TURN_APP || !TURN_API_KEY) return null;
+  let timer = 0;
+  try {
+    const ac = new AbortController();
+    timer = setTimeout(function () { ac.abort(); }, 5000);
+    const res = await fetch("https://" + TURN_APP + ".metered.live/api/v1/turn/credentials?apiKey=" + encodeURIComponent(TURN_API_KEY), { signal: ac.signal });
+    if (!res.ok) return null;
+    const list = await res.json();
+    if (!Array.isArray(list) || !list.length) return null;
+    for (let i = 0; i < list.length; i++) {
+      if (!list[i] || typeof list[i] !== "object" || !list[i].urls) return null;
+    }
+    iceCache = [{ urls: "stun:stun.l.google.com:19302" }].concat(list);
+    return iceCache;
+  } catch (e) {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function hostCreate(nick, color) {
   if (peerLibMissing()) return;
@@ -1338,12 +1368,14 @@ function hostCreate(nick, color) {
   netTeardown();
   screens.show("connecting", "Opening your room");
   let attempts = 0;
-  const attempt = function () {
+  const gen = netGen;
+  const attempt = function (servers) {
+    if (gen !== netGen) return; /* cancelled during the fetch */
     attempts++;
     const code = makeCode();
     let opened = false;
     let peer;
-    try { peer = new Peer(PEER_PREFIX + code); } catch (e) { return netFail(MSG_SERVICE); }
+    try { peer = servers ? new Peer(PEER_PREFIX + code, { config: { iceServers: servers } }) : new Peer(PEER_PREFIX + code); } catch (e) { return netFail(MSG_SERVICE); }
     NET.peer = peer;
     const timeout = setTimeout(function () { if (NET.peer === peer && !opened) netFail(MSG_SERVICE); }, 15000);
     NET.timers.push(timeout);
@@ -1359,7 +1391,7 @@ function hostCreate(nick, color) {
         if (err && err.type === "unavailable-id" && attempts < 8) {
           NET.peer = null;
           try { peer.destroy(); } catch (e) { /* ignore */ }
-          return attempt();
+          return attempt(servers);
         }
         return netFail(MSG_SERVICE);
       }
@@ -1371,7 +1403,7 @@ function hostCreate(nick, color) {
       setTimeout(function () { if (NET.peer === peer) { try { peer.reconnect(); } catch (e) { /* ignore */ } } }, 1500);
     });
   };
-  attempt();
+  getIceServers().then(attempt);
 }
 function hostPeerError(err) {
   /* After the room is open, most errors are about single connections. Keep the room running. */
@@ -1428,8 +1460,11 @@ function clientJoin(code, nick, color, auto) {
   if (!auto) reconnCancel();
   lastJoin = { code: code, nick: nick, color: color };
   screens.show("connecting", (auto ? "Reconnecting to room " : "Joining room ") + code);
+  const gen = netGen;
+  getIceServers().then(function (servers) {
+  if (gen !== netGen) return; /* cancelled during the fetch */
   let peer;
-  try { peer = new Peer(); } catch (e) { return netFail(MSG_SERVICE); }
+  try { peer = servers ? new Peer({ config: { iceServers: servers } }) : new Peer(); } catch (e) { return netFail(MSG_SERVICE); }
   NET.peer = peer; NET.role = "client";
   let connected = false;
   const timeout = setTimeout(function () {
@@ -1440,6 +1475,21 @@ function clientJoin(code, nick, color, auto) {
     if (NET.peer !== peer) return;
     const conn = peer.connect(PEER_PREFIX + code, { reliable: true });
     NET.conn = conn;
+    const watchIce = function () {
+      const pc = conn.peerConnection;
+      if (!pc) return false;
+      pc.addEventListener("iceconnectionstatechange", function () {
+        if (pc.iceConnectionState === "failed" && NET.conn === conn && !connected) netFail(MSG_ICE_FAIL);
+      });
+      return true;
+    };
+    if (!watchIce()) {
+      let tries = 0;
+      const iv = setInterval(function () {
+        if (watchIce() || ++tries > 40 || NET.conn !== conn) clearInterval(iv);
+      }, 250);
+      NET.timers.push(iv);
+    }
     conn.on("open", function () {
       if (NET.conn !== conn) return;
       connected = true; clearTimeout(timeout);
@@ -1468,6 +1518,7 @@ function clientJoin(code, nick, color, auto) {
     if (client.joined && screens.current === "play") return clientBeginReconnect();
     if (client.joined) return endSession("Connection lost", "The connection to the room was lost.");
     netFail(MSG_SERVICE);
+  });
   });
 }
 function clientStaleTick() {
