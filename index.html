@@ -6900,7 +6900,7 @@ function iS3(c, lt) {
   if (chp > 0.02) {
     c.save(); c.translate(0, -186); c.scale(chp, chp);
     iRR(c, -120, -22, 240, 44, 22); c.fillStyle = "#2ee59d"; c.fill(); c.strokeStyle = "#ffffff"; c.lineWidth = 3; c.stroke();
-    iText(c, "Draw: PIZZA", 0, 1, 26, "#06301f");
+    c.font = "800 26px " + I_FONT; c.textAlign = "center"; c.textBaseline = "middle"; c.fillStyle = "#06301f"; c.fillText("Draw: PIZZA", 0, 1); /* dark text on the green chip, no outline so it stays crisp */
     c.restore();
   }
   iBurst(c, 200, 70, iSeg(lt, 0.1, 0.7), 8, 70, 0.4);

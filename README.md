@@ -6,7 +6,7 @@ A browser party game for team calls. Everyone is a little miner in a cave: warm 
 
 | The intro | The lobby |
 |---|---|
-| ![The animated intro: a miner with a pickaxe next to a crystal rock](docs/intro.png) | ![The lobby: pick a nickname and a miner colour, then host or join a game](docs/lobby.png) |
+| ![The animated intro: a miner next to an easel with a pizza drawing, caption "everyone else GUESSES"](docs/intro.png) | ![The lobby: pick a nickname and a miner colour, then host or join a game](docs/lobby.png) |
 
 ## How to play
 
