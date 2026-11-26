@@ -331,6 +331,14 @@ textarea{min-height:clamp(48px,9vh,96px)}
 .lchat{margin-top:clamp(6px,1.2vh,14px)}
 .lchat .chatlog{flex:none; height:clamp(52px,10vh,100px)}
 .lchat .label{font-weight:800; margin-bottom:4px}
+.lobby-grid>[hidden]{display:none!important}
+.nextline{margin:6px 0 0; color:var(--muted); font-size:.95rem}
+.memchat{display:flex; flex-direction:column; min-height:0}
+.memchat .note{margin:0 0 8px; color:var(--muted); font-size:.9rem}
+.memchat .lchat{flex:1 1 auto; min-height:0; margin-top:0; display:flex; flex-direction:column}
+.memchat .lchat .label{display:none}
+.memchat .lchat .chatlog{flex:1 1 auto; height:auto; min-height:120px; margin-bottom:8px}
+@media (max-width:820px){ .lobby-grid.member{grid-template-columns:minmax(0,1fr)!important} }
 .meet-foot{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .meet-foot .note{font-weight:700; flex:1 1 200px}
 .meet-btn{position:absolute; left:14px; bottom:14px; z-index:3; font-size:1.1rem; font-weight:900}
@@ -958,7 +966,8 @@ body:has(#endOv:not([hidden])) .wd-panel,body:has(#endOv:not([hidden])) .wd-bann
         </div>
         <ul id="players" class="players" aria-label="Miners in the room"></ul>
         <p class="wait" id="waitLine"></p>
-        <div class="lchat">
+        <p class="nextline" id="nextLine" hidden></p>
+        <div class="lchat" id="lobbyChatBlock">
           <div class="label">Lobby chat (plain text, no links)</div>
           <div class="chatlog" id="lobbyLog" aria-live="polite" aria-label="Lobby chat messages"></div>
           <div class="chatrow">
@@ -1006,6 +1015,10 @@ body:has(#endOv:not([hidden])) .wd-panel,body:has(#endOv:not([hidden])) .wd-bann
             <button type="button" class="btn" id="btnPpStart">Start Peace Pipe</button>
           </div>
         </div>
+      </aside>
+      <aside class="card-panel memchat" id="memChat" aria-labelledby="h-memchat" hidden>
+        <h2 id="h-memchat">Lobby chat</h2>
+        <p class="note">Plain text, no links.</p>
       </aside>
     </div>
   </section>
@@ -1312,7 +1325,8 @@ const SETTING_DEFS = [
   { key: "round",    label: "Round",            def: "warmup", options: [opt("warmup", "Warm-up"), opt("worddig", "Word Dig")] },
   { key: "wordlist", label: "Word list",        def: "food", only: "worddig", options: [opt("food", "Food"), opt("animals", "Animals"), opt("fruits", "Fruits"), opt("things", "Everyday things"), opt("nature", "Nature")] },
   { key: "drawtime", label: "Draw time",        def: 60, only: "worddig", options: [opt(45, "45 s"), opt(60, "60 s"), opt(75, "75 s"), opt(90, "90 s")] },
-  { key: "speed",    label: "Player speed",     def: "normal", options: [opt("slow", "Slow"), opt("normal", "Normal"), opt("fast", "Fast")] },
+  { key: "rounds",   label: "Rounds",           def: 1, only: "worddig", options: [opt(1, "1"), opt(2, "2"), opt(3, "3")] },
+  { key: "speed",    label: "Player speed",    def: "normal", options: [opt("slow", "Slow"), opt("normal", "Normal"), opt("fast", "Fast")] },
   { key: "fakers",   label: "Fakers",           def: 1, only: "imposters", options: [opt(1, "1"), opt(2, "2")] },
   { key: "tasks",    label: "Tasks per player", def: 5, only: "imposters", options: range(3, 8, 1) },
   { key: "meetings", label: "Meeting calls each", def: 1, only: "imposters", options: range(0, 3, 1) },
@@ -1502,7 +1516,13 @@ function hostPickColor(want, exceptId) {
   for (let i = 0; i < MINERS.length; i++) if (!used.has(i)) return i;
   return 0;
 }
-function hostLobbyPayload() {
+/* Members never get the custom words text or the Peace Pipe question here. Only a flag and a count. */
+function hostPublicSettings() {
+  const s = Object.assign({}, host.settings);
+  s.words = ""; s.pipe = "";
+  return s;
+}
+function hostLobbyPayload(forMember) {
   const down = [];
   const now = Date.now();
   host.players.forEach(function (p) { if (!p.isHost && (p.away || now - p.lastPong > STALE_MS)) down.push(p.id); });
@@ -1513,16 +1533,18 @@ function hostLobbyPayload() {
     players: Array.from(host.players.values()).map(function (p) {
       return { id: p.id, nick: p.nick, color: p.color, pattern: MINERS[p.color].pattern, isHost: !!p.isHost };
     }),
-    settings: host.settings,
+    settings: forMember ? hostPublicSettings() : host.settings,
+    customOn: wdParseCustom(host.settings.words).length >= WD_CUSTOM_MIN,
+    customN: wdParseCustom(host.settings.words).length,
     down: down
   };
 }
 function hostBroadcastLobby() {
   if (!host) return;
-  const payload = hostLobbyPayload();
+  const payload = hostLobbyPayload(true);
   /* "you" is each player's own stable id (it stays the same after a reconnect) */
   host.players.forEach(function (p) { if (!p.isHost) send(p.conn, Object.assign({}, payload, { you: p.id })); });
-  applyLobby(payload);
+  applyLobby(hostLobbyPayload(false));
 }
 function hostRemovePlayer(id) {
   if (!host || !host.players.has(id)) return;
@@ -1759,8 +1781,7 @@ function hostLateJoin(ctx, msg, nick) {
   };
   hostAddPlayer(p);
   if (host.wd) {
-    host.wd.scores.set(p.id, 0);
-    if (host.wd.running) host.wd.order.push(p.id); /* draws once, last, if turns are still left */
+    hostWdAddLate(p.id); /* draws once per remaining round, last in each, if turns are still left */
   } else if (host.warm && host.warm.stats) host.warm.stats.set(p.id, { nick: nick, gems: 0 });
   hostBroadcastLobby();
   hostSendResume(p);
@@ -2236,6 +2257,7 @@ function applyLobby(msg) {
   view = {
     code: String(msg.code || ""), myId: myId, hostId: String(msg.hostId || ""), players: players,
     settings: sanitizeSettings(msg.settings),
+    customOn: !!msg.customOn, customN: Number.isInteger(msg.customN) && msg.customN >= 0 && msg.customN < 1000 ? msg.customN : 0,
     down: new Set(Array.isArray(msg.down) ? msg.down.map(String) : [])
   };
   if (first || (screens.current !== "lobby" && screens.current !== "campfire" && screens.current !== "play")) {
@@ -3038,6 +3060,27 @@ function buildLobbyUi() {
   $("btnLeave").hidden = isHost;
   $("waitLine").textContent = isHost ? "You are the host. Start when everyone has joined." : "Waiting for the host to start";
   setRoomCode(view.code);
+  placeLobbyChat();
+}
+/* Host: chat sits in the left card. Member: chat takes the right column (desktop) or stays in the left card (phone). */
+const lobbyWide = window.matchMedia ? window.matchMedia("(min-width:821px)") : null;
+function placeLobbyChat() {
+  const grid = document.querySelector(".lobby-grid"), chat = $("lobbyChatBlock"), mem = $("memChat"), set = document.querySelector("aside.settings");
+  if (!grid || !chat || !mem || !set) return;
+  const isHost = isHostView();
+  grid.classList.toggle("member", !isHost);
+  set.hidden = !isHost;
+  const right = !isHost && (!lobbyWide || lobbyWide.matches);
+  mem.hidden = !right;
+  if (right) { if (chat.parentNode !== mem) mem.appendChild(chat); }
+  else {
+    const before = document.querySelector(".mycolor");
+    if (chat.parentNode !== before.parentNode || chat.nextElementSibling !== before) before.parentNode.insertBefore(chat, before);
+  }
+}
+if (lobbyWide) {
+  const onWide = function () { if (view && NET.role) placeLobbyChat(); };
+  if (lobbyWide.addEventListener) lobbyWide.addEventListener("change", onWide); else if (lobbyWide.addListener) lobbyWide.addListener(onWide);
 }
 /* room code letters drop in one by one (only when the code changes) */
 function setRoomCode(code) {
@@ -3113,7 +3156,16 @@ function renderPlayers() {
   });
   $("count").textContent = view.players.length + " of " + MAX_PLAYERS + " miners";
 }
+function nextGameLine() {
+  const s = view.settings;
+  if (s.round === "worddig") return "Next game: Word Dig, " + s.rounds + (s.rounds === 1 ? " round, " : " rounds, ") + s.drawtime + " s draw time" + (view.customOn ? ", custom words" : "");
+  if (s.round === "imposters") return "Next game: Imposters";
+  return "Next game: Warm-up";
+}
 function renderSettings() {
+  const nl = $("nextLine");
+  nl.hidden = isHostView();
+  if (!isHostView()) { nl.textContent = nextGameLine(); return; }
   SETTING_DEFS.forEach(function (d) {
     const sel = settingEls[d.key];
     if (sel && document.activeElement !== sel) sel.value = String(view.settings[d.key]);
@@ -4541,8 +4593,15 @@ function hostWdBegin() {
   clearInterval(host.warmTimer);
   const ids = [];
   host.players.forEach(function (p) { if (!p.away) ids.push(p.id); });
+  const rounds = Math.max(1, Math.min(3, Number(host.settings.rounds) || 1)), order = [], rnd = [];
+  for (let r = 1; r <= rounds; r++) {
+    const part = wdShuffle(ids.slice());
+    /* nobody draws twice in a row across a round boundary */
+    if (order.length && part.length > 1 && part[0] === order[order.length - 1]) { const t = part[0]; part[0] = part[1]; part[1] = t; }
+    part.forEach(function (id) { order.push(id); rnd.push(r); });
+  }
   const w = host.wd = {
-    running: true, order: wdShuffle(ids), turn: 0, drawer: "", stage: "", pool: hostWdPool(), used: new Set(),
+    running: true, order: order, rnd: rnd, rounds: rounds, turn: 0, drawer: "", stage: "", pool: hostWdPool(), used: new Set(),
     drawSecs: Number(host.settings.drawtime) || 60, scores: new Map(), word: "", revealed: [], opts: [], skipUsed: false,
     strokes: [], pts: 0, crystals: new Map(), cryId: 0, respawn: [], guessed: new Map(), gains: new Map(), firstDone: false,
     rv: [false, false], pickEnd: 0, endAt: 0, cardEnd: 0, rev50: 0, rev75: 0, lastTime: 0, lastResult: null
@@ -4552,11 +4611,32 @@ function hostWdBegin() {
   hostWdSendScores();
   hostWdStartTurn(0);
 }
+/* round number, turn within that round, and turns in that round, for a turn index */
+function hostWdPos(idx) {
+  const w = host.wd, r = w.rnd[idx] || 1;
+  let t = 0, of = 0;
+  for (let i = 0; i < w.order.length; i++) if (w.rnd[i] === r) { of++; if (i <= idx) t++; }
+  return { r: r, t: Math.max(1, t), of: Math.max(1, of) };
+}
+/* a late joiner draws once in the current round (after the others) and once in every later round, if turns are still left */
+function hostWdAddLate(id) {
+  const w = host.wd, cur = w.rnd[w.turn] || 1;
+  w.scores.set(id, 0);
+  if (!w.running) return;
+  for (let r = w.rounds; r >= cur; r--) {
+    let at = -1;
+    for (let i = 0; i < w.order.length; i++) if (w.rnd[i] === r) at = i;
+    at = at < 0 ? w.order.length : at + 1;
+    if (r === cur && at <= w.turn) at = w.turn + 1;
+    w.order.splice(at, 0, id); w.rnd.splice(at, 0, r);
+  }
+}
 function hostWdStateMsg(ref) {
   const w = host.wd, now = ref || performance.now();
   const end = w.stage === "choose" ? w.pickEnd : w.stage === "draw" ? w.endAt : w.cardEnd;
   const dp = host.players.get(w.drawer);
-  return { t: "wdState", st: w.stage, turn: w.turn + 1, of: w.order.length, drawer: w.drawer, dn: dp ? dp.nick : "", secs: Math.max(0, (end - now) / 1000), dsecs: w.drawSecs, len: w.word.length };
+  const pos = hostWdPos(w.turn);
+  return { t: "wdState", st: w.stage, turn: pos.t, of: pos.of, rn: pos.r, rt: w.rounds, drawer: w.drawer, dn: dp ? dp.nick : "", secs: Math.max(0, (end - now) / 1000), dsecs: w.drawSecs, len: w.word.length };
 }
 function hostWdSendScores() {
   const w = host.wd, s = [];
@@ -4575,8 +4655,13 @@ function hostWdStartTurn(idx) {
 function hostWdOffer() {
   const w = host.wd;
   let avail = w.pool.filter(function (x) { return !w.used.has(x); });
-  if (avail.length < 3) { w.used.clear(); avail = w.pool.slice(); }
-  w.opts = wdShuffle(avail).slice(0, 3);
+  if (avail.length < 3) {
+    /* pool is running low: unpicked words go first, then the oldest picked ones come back (never the last word) */
+    const old = Array.from(w.used).filter(function (x) { return x !== w.word; });
+    avail = wdShuffle(avail).concat(wdShuffle(old));
+    if (avail.length < 3) avail = w.pool.slice();
+    w.opts = avail.slice(0, 3);
+  } else w.opts = wdShuffle(avail).slice(0, 3);
   w.pickEnd = performance.now() + WD_PICK_SECS * 1000;
   w.stage = "choose";
 }
@@ -4801,7 +4886,7 @@ function hostWdEndTurn(why) {
   const gains = [], dp = host.players.get(w.drawer);
   w.gains.forEach(function (v, id) { const q = host.players.get(id); if (q) gains.push([id, q.nick, v]); });
   gains.sort(function (a, b) { return b[2] - a[2]; });
-  w.lastResult = { t: "wdResult", word: w.word, why: why, dn: dp ? dp.nick : "", turn: w.turn + 1, of: w.order.length, gains: gains, secs: WD_RESULT_SECS };
+  w.lastResult = { t: "wdResult", word: w.word, why: why, dn: dp ? dp.nick : "", turn: hostWdPos(w.turn).t, of: hostWdPos(w.turn).of, rn: hostWdPos(w.turn).r, rt: w.rounds, gains: gains, secs: WD_RESULT_SECS };
   hostAll(w.lastResult);
   hostWdSendScores();
 }
@@ -4822,7 +4907,7 @@ function hostWdFinish() {
   const board = [];
   host.players.forEach(function (p) { board.push([p.id, p.nick, p.color, w.scores.get(p.id) || 0]); });
   board.sort(function (a, b) { return b[3] - a[3]; });
-  const msg = { t: "wdEnd", board: board };
+  const msg = { t: "wdEnd", board: board, rt: w.rounds };
   host.lastEnd = msg;
   hostAll(msg);
 }
@@ -4903,7 +4988,7 @@ function hostWdResume(p) {
 /* ---- player side ---- */
 function wdFresh() {
   return {
-    on: false, stage: "", turn: 0, of: 0, drawer: "", dn: "", isDrawer: false, left: 0, tAt: 0, dsecs: 60, len: 0,
+    on: false, stage: "", turn: 0, of: 0, r: 1, rt: 1, wdTitle: "", drawer: "", dn: "", isDrawer: false, left: 0, tAt: 0, dsecs: 60, len: 0,
     word: "", full: false, opts: null, cry: [], strokes: [], dirty: true, color: 0, width: 0, sid: 0, q: [], cur: null, qe: null,
     total: 0, feed: [], myPts: 0, scores: new Map(), sent: 0, lastGuess: 0, guessedMe: false, skipUsed: false, fullWarn: false,
     resultText: "", tk: 0, cache: "", bkey: "", okey: "", flush: 0, optKey: "", curPid: 0
@@ -4943,8 +5028,9 @@ function wdOnState(msg) {
   const st = String(msg.st);
   if (["choose", "draw", "next", "result"].indexOf(st) < 0) return;
   const turn = wdNum(msg.turn, 1, 99, 1);
-  if (turn !== wd.turn) { wd.skipUsed = false; wd.feed = []; wd.total = 0; wd.fullWarn = false; }
+  if (turn !== wd.turn || wdNum(msg.rn, 1, 3, 1) !== wd.r) { wd.skipUsed = false; wd.feed = []; wd.total = 0; wd.fullWarn = false; }
   wd.stage = st; wd.turn = turn; wd.of = wdNum(msg.of, 1, 99, 1);
+  wd.r = wdNum(msg.rn, 1, 3, 1); wd.rt = wdNum(msg.rt, 1, 3, 1);
   wd.drawer = String(msg.drawer || "").slice(0, 80); wd.dn = cleanNick(msg.dn) || "A miner";
   wd.isDrawer = wd.drawer === view.myId;
   wd.dsecs = wdNum(msg.dsecs, 10, 300, 60); wd.left = wdNum(msg.secs, 0, 300, 0); wd.tAt = performance.now();
@@ -4952,7 +5038,7 @@ function wdOnState(msg) {
   wd.strokes = []; wd.cur = null; wd.qe = null; wd.q = []; wd.total = 0; wd.dirty = true; wd.tk = 0;
   if (st === "choose" || st === "next") { wd.word = ""; wd.full = false; wd.cry = []; wd.guessedMe = false; wd.opts = null; wd.optKey = ""; }
   $("wdChooseOv").hidden = true;
-  if (st === "next") wdShowCard("Next drawer: " + wd.dn, "Turn " + wd.turn + " of " + wd.of, []);
+  if (st === "next") wdShowCard("Next drawer: " + wd.dn, wdTurnText(wd.r, wd.rt, wd.turn, wd.of, false), []);
   else if (st !== "result") $("wdCard").hidden = true;
   $("endOv").hidden = true;
   if (!msg.rs) {
@@ -5049,10 +5135,14 @@ function wdOnResult(msg) {
     if (Array.isArray(e)) lines.push("+" + Math.round(wdNum(e[2], 0, 99999, 0)) + "  " + (cleanNick(e[1]) || "Miner"));
   });
   if (!lines.length) lines.push("Nobody scored this turn");
-  wdShowCard(title, why === "left" && word ? "The word was " + word.toUpperCase() : "Turn " + wdNum(msg.turn, 1, 99, 1) + " of " + wdNum(msg.of, 1, 99, 1), lines);
+  wdShowCard(title, why === "left" && word ? "The word was " + word.toUpperCase() : wdTurnText(wdNum(msg.rn, 1, 3, 1), wdNum(msg.rt, 1, 3, 1), wdNum(msg.turn, 1, 99, 1), wdNum(msg.of, 1, 99, 1), false), lines);
   $("wdChooseOv").hidden = true;
   if (!msg.rs) sfx(why === "all" ? "taskDone" : "noOut");
   wdSync();
+}
+function wdTurnText(r, rt, t, of, short) {
+  if (short) return rt > 1 ? "R" + r + "/" + rt + " T" + t + "/" + of : "T" + t + "/" + of;
+  return rt > 1 ? "Round " + r + " of " + rt + ", Turn " + t + " of " + of : "Turn " + t + " of " + of;
 }
 function wdShowCard(title, sub, lines) {
   $("wdCardT").textContent = title;
@@ -5075,8 +5165,11 @@ function wdOnEnd(msg) {
   const list = $("endList");
   list.replaceChildren();
   board.forEach(function (b, i) { list.appendChild(el("li", null, (i + 1) + ".  " + b.nick + ": " + b.pts + " points")); });
-  $("endTitle").textContent = "Word Dig results";
-  $("endSub").textContent = board.length ? "Top miner: " + board[0].nick + " with " + board[0].pts + " points. Well played, everyone." : "Thanks for playing.";
+  $("endTitle").textContent = "Word Dig results" + (wdNum(msg.rt, 1, 3, 1) > 1 ? " (" + wdNum(msg.rt, 1, 3, 1) + " rounds)" : "");
+  const tops = board.filter(function (b) { return b.pts === (board[0] && board[0].pts); }).map(function (b) { return b.nick; });
+  $("endSub").textContent = !board.length ? "Thanks for playing." : tops.length > 1
+    ? "It's a tie! Top miners: " + tops.slice(0, -1).join(", ") + " and " + tops[tops.length - 1] + " with " + board[0].pts + " points. Well played, everyone."
+    : "Top miner: " + board[0].nick + " with " + board[0].pts + " points. Well played, everyone.";
   wdDrawPodium(board);
   $("wdPanel").hidden = true;
   const isH = isHostView();
@@ -5190,7 +5283,7 @@ function wdHud(now) {
   const live = wd.stage === "choose" || wd.stage === "draw";
   const secs = live ? Math.max(0, Math.ceil(wd.left - (now - wd.tAt) / 1000)) : 0;
   const tText = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
-  const nText = wd.stage === "end" ? "Finished" : "Turn " + wd.turn + " of " + wd.of;
+  const nText = wd.stage === "end" ? "Finished" : wdTurnText(wd.r, wd.rt, wd.turn, wd.of, window.matchMedia && window.matchMedia("(max-width:820px)").matches);
   if (wd.stage === "draw" && !play.paused && secs <= 10 && secs > 0 && secs !== wd.tk) { wd.tk = secs; sfx("timerTick"); }
   const wText = wd.stage === "draw" ? (wd.isDrawer || wd.guessedMe ? wd.word.toUpperCase() : wd.len + " letters") : "-";
   const key = [tText, nText, wd.myPts, wText, wd.stage].join("|");
@@ -7488,7 +7581,7 @@ const TOUR_SETS = {
     if (isHostView()) return [
       { t: ".roombar", title: "Share this code", text: "Send these 4 letters to your team. Copy helps." },
       { t: "#players", title: "Your crew", text: "Players appear here as they join." },
-      { t: "#screen-lobby .settings", title: "Room settings", text: "Pick the round and timings." },
+      { t: "#screen-lobby .settings", title: "Room settings", text: "Pick the round, rounds and timings. Only you see these." },
       { t: "#screen-lobby .pipe", title: "Icebreaker", text: "Optional campfire question before the game." },
       { t: "#btnStart", title: "Ready?", text: "Start when everyone is in." }
     ];
