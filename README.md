@@ -1,6 +1,6 @@
 # Mindminer Imposters
 
-**Play it: https://markbasa96.github.io/mindminer-imposters/**
+**Play it: https://markbasa96.github.io/mindminers/**
 
 A party game for your team that runs in the browser. Miners work together to finish tasks down in the mine, while a few hidden fakers try to stop them. Nothing to install: one person hosts, everyone else joins with a 4-letter room code.
 
