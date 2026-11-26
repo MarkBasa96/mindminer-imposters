@@ -806,6 +806,74 @@ body.touch #tourBub .tb-skip{min-height:40px}
   #tourRoot.glide #tourRing,#tourRoot.glide #tourPtr{transition:none}
   #tourBub.in{animation:fadein .25s linear both}
 }
+/* ===== STYLE: WORD DIG (banner, drawing panel, tools, guess box, feed, cards) ===== */
+:root{--wdban:46px}
+.field[hidden],#wdCustomBox[hidden],.wd-panel[hidden],.wd-banner[hidden],.wd-tools[hidden],.wd-guess[hidden],.wd-blanks[hidden]{display:none}
+#wdCustomBox{margin-top:clamp(6px,1.2vh,12px)}
+#wdCustom{width:100%; min-height:clamp(44px,8vh,72px); resize:vertical}
+.warmbar.wd{justify-content:center}
+.warmbar.wd .wb-track,.warmbar.wd .wb-counts{display:none}
+.warmbar.wd .wb-name{display:block; max-width:none}
+.wd-banner{align-self:center; max-width:100%; min-height:var(--wdban); padding:6px 22px; display:flex; align-items:center; justify-content:center; text-align:center; border-radius:16px; border:2px solid rgba(255,255,255,.85); box-shadow:0 6px 18px rgba(0,10,30,.35); font-weight:900; font-size:clamp(1.05rem,2.8vh,1.5rem); line-height:1.15; color:var(--text); background:rgba(10,28,48,.88); pointer-events:none}
+.wd-banner.draw{background:#2ee59d; color:#06301f}
+.wd-banner.guess{background:#ffd23f; color:#2b2000}
+.wd-banner.done{background:#3ee6b0; color:#06301f}
+.wd-panel{position:absolute; z-index:2; display:flex; flex-direction:column; gap:8px; padding:10px; border-radius:18px; background:rgba(10,28,48,.82); border:1px solid var(--line); box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 12px 40px rgba(0,10,30,.35); -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%); color:var(--text);
+  --wdw:max(200px,min(36vw,540px,calc((100dvh - var(--hudh) - var(--wdban) - 300px) * 1.3333)));
+  width:calc(var(--wdw) + 22px); right:max(10px,env(safe-area-inset-right)); top:calc(max(8px,env(safe-area-inset-top)) + var(--hudh) + var(--wdban) + 18px)}
+.wd-panel.me{right:auto; left:50%; transform:translateX(-50%); --wdw:max(220px,min(92vw,900px,calc((100dvh - var(--hudh) - var(--wdban) - 250px) * 1.3333)))}
+#wdCv{display:block; width:var(--wdw); max-width:100%; height:auto; aspect-ratio:4/3; background:#fff; border:3px solid #fff; border-radius:12px; touch-action:none; user-select:none; -webkit-user-select:none; cursor:default}
+.wd-panel.me #wdCv{cursor:crosshair}
+.wd-blanks{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; align-items:flex-end; min-height:2.2rem}
+.wd-blanks .bl{min-width:1.1em; padding:0 4px; font-size:clamp(1.3rem,3.6vh,2rem); font-weight:900; line-height:1.15; text-align:center; color:#fff; border-bottom:4px solid #fff}
+.wd-blanks .bl.empty{color:transparent}
+.wd-guess{display:flex; gap:8px; align-items:stretch}
+.wd-guess input{flex:1 1 auto; min-width:0; font-size:max(16px,1.05rem)}
+.wd-guess .btn{flex:0 0 auto; margin:0}
+.wd-feed{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:3px; font-weight:700; font-size:.95rem; max-height:8.5em; overflow:hidden}
+.wd-feed:empty{display:none}
+.wd-feed li{padding:2px 8px; border-radius:8px; background:rgba(255,255,255,.1); overflow-wrap:anywhere}
+.wd-feed li.ok{color:var(--ok)}
+.wd-feed li.close{color:var(--accent)}
+.wd-feed li.sys{color:var(--muted)}
+.wd-tools{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:flex-end; justify-content:center}
+.wd-grp{display:flex; flex-wrap:wrap; gap:6px; align-items:flex-end}
+.wd-sw{display:flex; flex-direction:column; align-items:center; gap:2px; min-width:48px; min-height:50px; padding:4px 6px; border-radius:12px; border:2px solid var(--line); background:var(--glass); color:var(--text); font:inherit; font-size:.72rem; font-weight:800; cursor:pointer}
+.wd-sw::before{content:""; width:26px; height:26px; border-radius:50%; background:var(--c); border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.55)}
+.wd-sw.on,.wd-size.on{border-color:var(--primary); background:rgba(255,210,63,.28); box-shadow:0 0 0 2px rgba(255,210,63,.55)}
+.wd-sw:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+.wd-sw:disabled,.wd-tools .btn:disabled{opacity:.5; cursor:default}
+.wd-size i{display:inline-block; width:var(--d); height:var(--d); border-radius:50%; background:currentColor; vertical-align:middle; margin-right:6px}
+#wdChooseOv,#wdCard{z-index:6}
+.wd-opts{display:flex; flex-direction:column; gap:12px; margin:10px 0}
+.wd-opt{width:100%; font-size:clamp(1.4rem,4.4vh,2rem); font-weight:900; letter-spacing:.06em; padding:clamp(14px,2.6vh,22px)}
+.wd-pickt{font-weight:800; color:var(--muted)}
+.wd-pop{position:absolute; left:50%; top:22%; z-index:2; transform:translateX(-50%); font-size:2.6rem; font-weight:900; color:#3ee6b0; text-shadow:0 2px 0 #06301f,0 0 14px rgba(0,0,0,.7); animation:wdpop 1.6s ease both; pointer-events:none}
+@keyframes wdpop{0%{opacity:0;transform:translate(-50%,14px)}20%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}}
+#endPodium{display:block; margin:0 auto 8px; width:min(100%,520px); height:auto}
+body.in-play.wd-on #toasts{top:calc(max(8px,env(safe-area-inset-top)) + var(--hudh) + var(--wdban) + 20px)}
+body:has(#endOv:not([hidden])) .wd-panel,body:has(#endOv:not([hidden])) .wd-banner{visibility:hidden}
+@media (max-width:479px){ body.wd-on .hr-n{display:none} }
+/* phone portrait: drawing under the top bar, blanks and guess box below it, map and stick underneath */
+@media (max-width:820px) and (orientation:portrait){
+  .wd-panel{right:auto; left:50%; transform:translateX(-50%); --wdw:min(calc(100vw - 34px),calc(36dvh * 1.3333))}
+  .wd-panel.me{--wdw:min(calc(100vw - 34px),calc((100dvh - var(--hudh) - var(--wdban) - 290px) * 1.3333))}
+  .wd-feed li:nth-last-child(n+3){display:none}
+  body.in-play.wd-on #toasts{top:auto; bottom:calc(max(16px,env(safe-area-inset-bottom)) + 150px)}
+}
+/* phone landscape and short windows: panel on the right, smaller */
+@media (max-height:480px), (max-width:820px) and (orientation:landscape){
+  :root{--wdban:38px}
+  .wd-panel{--wdw:max(160px,min(46vw,calc((100dvh - var(--hudh) - var(--wdban) - 150px) * 1.3333)))}
+  .wd-panel.me{--wdw:max(160px,min(70vw,calc((100dvh - var(--hudh) - var(--wdban) - 140px) * 1.3333)))}
+  .wd-banner{font-size:1rem; padding:4px 16px}
+  .wd-feed li:nth-last-child(n+3){display:none}
+  .wd-opts{flex-direction:row}
+  body.wd-on .hud-hint{display:none}
+  .wd-panel:not(.me){width:calc(var(--wdw) + 22px); min-width:min(300px,52vw)}
+  .wd-guess input{min-width:8em}
+  .wd-guess .btn{padding:4px 12px; min-height:40px; font-size:.95rem}
+}
 </style>
 </head>
 <body>
@@ -912,6 +980,11 @@ body.touch #tourBub .tb-skip{min-height:40px}
         <h2 id="h-set">Room settings</h2>
         <p class="note" id="setNote"></p>
         <div id="settingsHost"></div>
+        <div id="wdCustomBox" hidden>
+          <label for="wdCustom">Custom words (optional, comma separated)</label>
+          <textarea id="wdCustom" maxlength="300" spellcheck="false" placeholder="For example: kite, boat, tent, drum, snail, cloud"></textarea>
+          <p class="hint" id="wdCustomHint"></p>
+        </div>
         <div class="pipe">
           <label for="pipe">Peace Pipe question</label>
           <textarea id="pipe" maxlength="150" placeholder="Optional. Shown to everyone at the campfire."></textarea>
@@ -1004,8 +1077,8 @@ body.touch #tourBub .tb-skip{min-height:40px}
     <div class="hud-menu" id="menuPop" hidden role="group" aria-label="Game menu">
       <dl class="mn-info">
         <div><dt>Round</dt><dd id="mnName"></dd></div>
-        <div><dt>Gems</dt><dd id="mnGems"></dd></div>
-        <div><dt>Tasks</dt><dd id="mnTasks"></dd></div>
+        <div><dt id="mnGemsL">Gems</dt><dd id="mnGems"></dd></div>
+        <div><dt id="mnTasksL">Tasks</dt><dd id="mnTasks"></dd></div>
         <div><dt>Status</dt><dd id="hudStep">Standing</dd></div>
       </dl>
       <button type="button" class="btn ghost small" id="btnPlaySnd">Sound</button>
@@ -1016,6 +1089,7 @@ body.touch #tourBub .tb-skip{min-height:40px}
       <button type="button" class="btn ghost small" id="btnMenuTour">Show me around</button>
       <button type="button" class="btn ghost small" id="btnPlayBack" hidden>Back to lobby</button>
     </div>
+    <div class="wd-banner" id="wdBanner" hidden></div>
     <aside class="imp-panel" id="impPanel" hidden aria-label="Your role and tasks">
       <button type="button" class="ip-toggle" id="ipToggle" aria-expanded="true" aria-controls="ipBody"><span class="ip-tt">Tasks</span><span class="ip-role" id="ipRole"></span><span class="ip-caret" aria-hidden="true"></span></button>
       <div class="ip-body" id="ipBody">
@@ -1024,6 +1098,16 @@ body.touch #tourBub .tb-skip{min-height:40px}
       </div>
     </aside>
     </div>
+    <section class="wd-panel" id="wdPanel" hidden aria-label="Word Dig drawing and guessing">
+      <canvas id="wdCv" width="960" height="720" role="img" aria-label="Drawing"></canvas>
+      <div class="wd-tools" id="wdTools" hidden role="toolbar" aria-label="Drawing tools"></div>
+      <div class="wd-blanks" id="wdBlanks" hidden role="img" aria-label="Hidden word"></div>
+      <form class="wd-guess" id="wdGuessForm" autocomplete="off">
+        <input type="text" id="wdGuessIn" maxlength="30" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" aria-label="Type your guess" aria-keyshortcuts="T" placeholder="Type your guess" disabled>
+        <button type="submit" class="btn small go" id="wdGuessBtn" disabled>Guess</button>
+      </form>
+      <ul class="wd-feed" id="wdFeed" aria-label="Recent guesses"></ul>
+    </section>
     <div class="hud-hint" id="hudHint">Move: W A S D or arrows. E use. M mute. Esc menu. ? shortcuts.</div>
     <button type="button" class="btn meet-btn" id="btnMeet" hidden></button>
     <div class="joy" id="joy" hidden aria-hidden="true"><div class="joy-knob" id="joyKnob"></div></div>
@@ -1031,6 +1115,21 @@ body.touch #tourBub .tb-skip{min-height:40px}
       <button type="button" class="tb" id="tbSab" hidden>Sabotage</button>
       <button type="button" class="tb" id="tbTag" hidden>Tag</button>
       <button type="button" class="tb" id="tbUse">Use</button>
+    </div>
+    <div class="ov" id="wdChooseOv" hidden role="dialog" aria-modal="false" aria-labelledby="wdChooseT">
+      <div class="ov-card">
+        <h3 id="wdChooseT">Pick a word to draw</h3>
+        <p class="wd-pickt" id="wdPickT"></p>
+        <div class="wd-opts" id="wdChooseList"></div>
+        <p class="hint">Press 1, 2 or 3, or tap a word.</p>
+      </div>
+    </div>
+    <div class="ov" id="wdCard" hidden role="dialog" aria-modal="false" aria-labelledby="wdCardT">
+      <div class="ov-card">
+        <h3 id="wdCardT"></h3>
+        <p id="wdCardS"></p>
+        <ul class="end-list" id="wdCardL"></ul>
+      </div>
     </div>
     <div class="ov" id="meetOv" hidden role="dialog" aria-modal="true" aria-labelledby="meetTitle">
       <div class="meet-card">
@@ -1086,6 +1185,7 @@ body.touch #tourBub .tb-skip{min-height:40px}
       <div class="ov-card end">
         <h3 id="endTitle"></h3>
         <p id="endSub"></p>
+        <canvas id="endPodium" width="560" height="260" hidden role="img" aria-label="Podium"></canvas>
         <ul id="endList" class="end-list"></ul>
         <div class="row end-btns">
           <button type="button" class="btn" id="btnPlayAgain" hidden>Play again</button>
@@ -1209,16 +1309,20 @@ function range(a, b, step, fmt) {
   return out;
 }
 const SETTING_DEFS = [
-  { key: "round",    label: "Round",            def: "warmup", options: [opt("warmup", "Warm-up"), opt("imposters", "Imposters")] },
+  /* "only" = the setting is shown only for that round. Warm-up uses just Player speed and Sound. The Imposters ones stay for the hidden Imposters code. */
+  { key: "round",    label: "Round",            def: "warmup", options: [opt("warmup", "Warm-up"), opt("worddig", "Word Dig")] },
+  { key: "wordlist", label: "Word list",        def: "food", only: "worddig", options: [opt("food", "Food"), opt("animals", "Animals"), opt("fruits", "Fruits"), opt("things", "Everyday things"), opt("nature", "Nature")] },
+  { key: "drawtime", label: "Draw time",        def: 60, only: "worddig", options: [opt(45, "45 s"), opt(60, "60 s"), opt(75, "75 s"), opt(90, "90 s")] },
   { key: "speed",    label: "Player speed",     def: "normal", options: [opt("slow", "Slow"), opt("normal", "Normal"), opt("fast", "Fast")] },
-  { key: "fakers",   label: "Fakers",           def: 1, options: [opt(1, "1"), opt(2, "2")] },
-  { key: "tasks",    label: "Tasks per player", def: 5, options: range(3, 8, 1) },
-  { key: "meetings", label: "Meeting calls each", def: 1, options: range(0, 3, 1) },
-  { key: "discuss",  label: "Discussion time",  def: 60, options: range(30, 120, 10, function (v) { return v + " s"; }) },
-  { key: "vote",     label: "Vote time",        def: 30, options: range(15, 60, 5, function (v) { return v + " s"; }) },
-  { key: "vision",   label: "Vision",           def: "wide", options: [opt("off", "Off"), opt("wide", "Wide"), opt("narrow", "Narrow")] },
+  { key: "fakers",   label: "Fakers",           def: 1, only: "imposters", options: [opt(1, "1"), opt(2, "2")] },
+  { key: "tasks",    label: "Tasks per player", def: 5, only: "imposters", options: range(3, 8, 1) },
+  { key: "meetings", label: "Meeting calls each", def: 1, only: "imposters", options: range(0, 3, 1) },
+  { key: "discuss",  label: "Discussion time",  def: 60, only: "imposters", options: range(30, 120, 10, function (v) { return v + " s"; }) },
+  { key: "vote",     label: "Vote time",        def: 30, only: "imposters", options: range(15, 60, 5, function (v) { return v + " s"; }) },
+  { key: "vision",   label: "Vision",           def: "wide", only: "imposters", options: [opt("off", "Off"), opt("wide", "Wide"), opt("narrow", "Narrow")] },
   { key: "sound",    label: "Sound",            def: "on", options: [opt("on", "On"), opt("off", "Off")] }
 ];
+const WORDS_MAX = 300;
 const PIPE_MAX = 150;
 
 /* ===== UTIL ===== */
@@ -1255,6 +1359,8 @@ function sanitizeSettings(raw) {
     out[d.key] = found ? found.v : d.def;
   });
   out.pipe = cleanText(raw && typeof raw === "object" ? raw.pipe : "", PIPE_MAX);
+  /* Word Dig custom words: letters, commas and spaces only */
+  out.words = String(raw && typeof raw === "object" && raw.words != null ? raw.words : "").replace(/[^A-Za-z,; \n]/g, "").replace(/\s+/g, " ").slice(0, WORDS_MAX);
   return out;
 }
 function defaultSettings() { return sanitizeSettings({}); }
@@ -1425,7 +1531,7 @@ function hostRemovePlayer(id) {
   if (host.pp.answers) host.pp.answers.delete(id);
   hostBroadcastLobby();
   hostGuessCheck();
-  hostImpRefresh(); hostMeetCheck();
+  hostImpRefresh(); hostMeetCheck(); hostWdRefresh();
 }
 function hostKick(id) {
   if (!host) return;
@@ -1440,7 +1546,7 @@ function hostKick(id) {
   setTimeout(function () { try { oldConn.close(); } catch (e) { /* ignore */ } }, 300);
   hostBroadcastLobby();
   hostGuessCheck();
-  hostImpRefresh(); hostMeetCheck();
+  hostImpRefresh(); hostMeetCheck(); hostWdRefresh();
 }
 function hostIsKicked(nick, peerId) {
   const now = Date.now();
@@ -1584,16 +1690,17 @@ function hostGuessNext() {
 
 /* ===== HOST: PAUSE AND RECONNECT ===== */
 /* Messages that only make sense while a round is running (play phase). */
-const PLAY_ONLY = ["move", "gem", "taskStart", "taskDone", "taskFail", "tag", "sabotage", "report", "meeting", "vote"];
+const WD_MSGS = ["wdPick", "wdSkip", "wdGuess", "wdStroke", "wdUndo", "wdClear", "wdCrystal"];
+const PLAY_ONLY = ["move", "gem", "taskStart", "taskDone", "taskFail", "tag", "sabotage", "report", "meeting", "vote"].concat(WD_MSGS);
 /* Messages that are ignored while the host has paused the game. Chat is still allowed. */
-const PAUSE_BLOCK = ["move", "gem", "taskStart", "taskDone", "tag", "sabotage", "report", "meeting", "vote"];
+const PAUSE_BLOCK = ["move", "gem", "taskStart", "taskDone", "tag", "sabotage", "report", "meeting", "vote"].concat(WD_MSGS);
 function hostDispatch(msg, ctx) {
   if (!host) return;
   if (PLAY_ONLY.indexOf(msg.t) >= 0 && host.phase !== "play") return;
   if (host.paused && PAUSE_BLOCK.indexOf(msg.t) >= 0) return;
   dispatch(hostHandlers, msg, ctx);
 }
-function hostPauseOk() { return !!host && host.phase === "play" && (hostWarmOn() || hostImpOn()); }
+function hostPauseOk() { return !!host && host.phase === "play" && (hostWarmOn() || hostImpOn() || hostWdOn()); }
 /* Freezes or resumes every host timer. Times are absolute, so on resume they all move forward by the pause length. */
 function hostSetPause(on) {
   if (!host) return;
@@ -1607,6 +1714,7 @@ function hostSetPause(on) {
     host.paused = false;
     if (host.warm) { host.warm.endAt += d; host.warm.lastSend += d; }
     if (host.imp && host.imp.darkUntil) host.imp.darkUntil += d;
+    if (host.wd) hostWdShift(d);
     host.players.forEach(function (p) {
       if (typeof p.tagReady === "number") p.tagReady += d;
       if (typeof p.sabReady === "number") p.sabReady += d;
@@ -1623,6 +1731,7 @@ function hostEndRound() {
   if (!host || host.phase !== "play") return;
   if (host.imp && host.imp.running) hostImpFinish("none", "host", hostImpCounts());
   else if (host.warm && host.warm.running) hostWarmFinish(false);
+  else if (host.wd && host.wd.running) hostWdFinish();
 }
 /* A dropped player comes back with the same nickname. The slot, role, tasks, colour and out status stay as they were. */
 function hostRejoin(ctx, nick) {
@@ -1640,12 +1749,32 @@ function hostRejoin(ctx, nick) {
   hostBroadcastLobby();
   hostSendResume(old);
 }
+/* A brand new player joins a Warm-up or Word Dig round that is already running. */
+function hostLateJoin(ctx, msg, nick) {
+  if (host.players.size >= MAX_PLAYERS) return hostRejectConn(ctx.conn, "full");
+  ctx.conn.mmId = ctx.conn.peer;
+  const s = spawnPoint(host.players.size, MAX_PLAYERS);
+  const p = {
+    id: ctx.conn.peer, nick: nick, color: hostPickColor(msg.color, null), isHost: false, conn: ctx.conn, lastPong: Date.now(),
+    x: s.x, y: s.y, facing: 1, walking: false, lastMove: performance.now(), taskOpen: null
+  };
+  hostAddPlayer(p);
+  if (host.wd) {
+    host.wd.scores.set(p.id, 0);
+    if (host.wd.running) host.wd.order.push(p.id); /* draws once, last, if turns are still left */
+  } else if (host.warm && host.warm.stats) host.warm.stats.set(p.id, { nick: nick, gems: 0 });
+  hostBroadcastLobby();
+  hostSendResume(p);
+  hostTell(p, { t: "late" });
+  if (host.wd) hostWdSendScores();
+}
 /* Sends ONE player the current round state. Roles are only ever sent for the rejoining player themself. */
 function hostSendResume(p) {
   const now = performance.now(), ref = host.paused ? host.pauseAt : now;
   hostTell(p, { t: "phase", name: "play" });
   const w = host.warm, im = host.imp;
-  if (w) {
+  if (host.wd) hostWdResume(p);
+  else if (w) {
     hostTell(p, { t: "round", name: "warmup", time: Math.max(1, (w.endAt - ref) / 1000), gems: Array.from(w.gems.values()).map(function (g) { return [g.id, g.x, g.y]; }) });
     hostTell(p, { t: "progress", value: hostWarmValue(), gemsLeft: w.gems.size, timeLeft: Math.max(0, (w.endAt - ref) / 1000), tasks: Array.from(w.tasksDone) });
   } else if (im && p.role) {
@@ -1681,7 +1810,14 @@ const hostHandlers = {
     const nick = cleanNick(msg.nick);
     if (!nick) return hostRejectConn(ctx.conn, "badnick");
     if (hostIsKicked(nick, ctx.conn.peer)) return hostRejectConn(ctx.conn, "kicked");
-    if (host.phase === "play") return hostRejoin(ctx, nick); /* only a dropped player of this round gets back in */
+    if (host.phase === "play") {
+      /* a dropped player of this round gets their slot back; a brand new player may join Warm-up and Word Dig (not Imposters) */
+      let same = null;
+      host.players.forEach(function (p) { if (p.nick.toLowerCase() === nick.toLowerCase()) same = p; });
+      if (same && same.isHost) return hostRejectConn(ctx.conn, "nickinuse");
+      if (same || host.imp || !(host.wd || host.warm)) return hostRejoin(ctx, nick);
+      return hostLateJoin(ctx, msg, nick);
+    }
     if (host.phase !== "lobby" && host.phase !== "campfire") return hostRejectConn(ctx.conn, "running");
     if (host.players.size >= MAX_PLAYERS) return hostRejectConn(ctx.conn, "full");
     ctx.conn.mmId = ctx.conn.peer;
@@ -1722,8 +1858,16 @@ const hostHandlers = {
   },
   move: function (msg, ctx) {
     if (!host || host.phase !== "play" || host.meet || typeof ctx.player.x !== "number") return;
+    if (hostWdLocked(ctx.player)) return; /* the drawer's miner stays put */
     hostCheckMove(ctx.player, msg);
   },
+  wdPick: function (msg, ctx) { hostWdPick(msg, ctx.player); },
+  wdSkip: function (msg, ctx) { hostWdSkip(ctx.player); },
+  wdGuess: function (msg, ctx) { hostWdGuess(msg, ctx.player); },
+  wdStroke: function (msg, ctx) { hostWdStroke(msg, ctx.player); },
+  wdUndo: function (msg, ctx) { hostWdUndo(ctx.player); },
+  wdClear: function (msg, ctx) { hostWdClear(ctx.player); },
+  wdCrystal: function (msg, ctx) { hostWdCrystal(msg, ctx.player); },
   report: function (msg, ctx) { hostMeetCall(msg, ctx.player, "report"); },
   meeting: function (msg, ctx) { hostMeetCall(msg, ctx.player, "meeting"); },
   vote: function (msg, ctx) { hostMeetVote(msg, ctx.player); },
@@ -1750,6 +1894,7 @@ const clientHandlers = {
     applyLobby(msg);
   },
   pause: function (msg) { playOnPause(!!msg.on); },
+  late: function () { setTimeout(function () { toast("You joined mid round. Jump right in!"); }, 700); },
   pp: function (msg) {
     setPpView(msg);
     if (screens.current !== "play") applyPhase(ppView.active ? "campfire" : "lobby");
@@ -1764,6 +1909,21 @@ const clientHandlers = {
   progress: function (msg) { if (imp.on) impOnProgress(msg); else warmOnProgress(msg); },
   roundEnd: function (msg) { if (imp.on) impOnEnd(msg); else warmOnEnd(msg); },
   taskNo: function (msg) { warmOnTaskNo(msg); },
+  wdState: function (msg) { wdOnState(msg); },
+  wdChoices: function (msg) { wdOnChoices(msg); },
+  wdTime: function (msg) { wdOnTime(msg); },
+  wdWord: function (msg) { wdOnWord(msg); },
+  wdCry: function (msg) { wdOnCry(msg); },
+  wdFound: function (msg) { wdOnFound(msg); },
+  wdNo: function (msg) { wdOnNo(msg); },
+  wdOk: function (msg) { wdOnOk(msg); },
+  wdFeed: function (msg) { wdOnFeed(msg); },
+  wdScores: function (msg) { wdOnScores(msg); },
+  wdResult: function (msg) { wdOnResult(msg); },
+  wdEnd: function (msg) { wdOnEnd(msg); },
+  wdStroke: function (msg) { wdOnStroke(msg); },
+  wdUndo: function () { wdOnUndo(); },
+  wdClear: function () { wdOnClear(); },
   role: function (msg) { impOnRole(msg); },
   imp: function (msg) { impOnState(msg); },
   taskOk: function (msg) { impOnTaskOk(msg); },
@@ -2565,6 +2725,7 @@ const SFX = {
   blip: function (c, t) { sfxTone(c, t, 880, 0.08, 0.035, "sine", 1040); },
   whoosh: function (c, t) { sfxNoise(c, t, 0.3, 0.05, "bandpass", 400, 1800, 0.9, 0.12); },
   buzz: function (c, t) { sfxTone(c, t, 160, 0.14, 0.07, "triangle", 130); sfxTone(c, t + 0.13, 150, 0.16, 0.07, "triangle", 120); },
+  buzzSoft: function (c, t) { sfxTone(c, t, 170, 0.12, 0.035, "triangle", 140); sfxTone(c, t + 0.1, 150, 0.14, 0.03, "triangle", 125); },
   /* lobby */
   created: function (c, t) { sfxSeq(c, t, [523.25, 659.25, 783.99], 0.12, 0.3, 0.09, "sine"); sfxTone(c, t + 0.36, 1567.98, 0.25, 0.025, "sine"); },
   joined: function (c, t) { sfxSeq(c, t, [784, 1175], 0.08, 0.15, 0.08, "sine"); },
@@ -2820,6 +2981,7 @@ function initStartScreen() {
 /* ===== UI: LOBBY ===== */
 let lobbyPicker = null;
 const settingEls = {};
+const settingRows = {};
 
 function isHostView() { return NET.role === "host"; }
 
@@ -2850,7 +3012,16 @@ function buildLobbyUi() {
     row.appendChild(sel);
     sh.appendChild(row);
     settingEls[d.key] = sel;
+    settingRows[d.key] = row;
   });
+  const wc = $("wdCustom");
+  wc.readOnly = !isHost;
+  wc.value = "";
+  wc.oninput = function () {
+    if (!isHostView()) return;
+    clearTimeout(wc._t);
+    wc._t = setTimeout(function () { hostSetSettings({ words: wc.value }); }, 300);
+  };
   const pipe = $("pipe");
   pipe.readOnly = !isHost;
   pipe.value = "";
@@ -2947,7 +3118,16 @@ function renderSettings() {
   SETTING_DEFS.forEach(function (d) {
     const sel = settingEls[d.key];
     if (sel && document.activeElement !== sel) sel.value = String(view.settings[d.key]);
+    if (settingRows[d.key]) settingRows[d.key].hidden = !!d.only && d.only !== view.settings.round;
   });
+  const wdOn = view.settings.round === "worddig", wc = $("wdCustom");
+  $("wdCustomBox").hidden = !wdOn;
+  if (document.activeElement !== wc) wc.value = view.settings.words;
+  const nValid = wdParseCustom(view.settings.words).length;
+  $("wdCustomHint").textContent = !view.settings.words.trim()
+    ? "Optional. Words of 3 to 10 letters, at least 6 needed."
+    : nValid >= WD_CUSTOM_MIN ? nValid + " custom words will be used."
+    : "Only " + nValid + " usable so far. Needs " + WD_CUSTOM_MIN + ", so the word list above is used.";
   const pipe = $("pipe");
   if (document.activeElement !== pipe) pipe.value = view.settings.pipe;
   if (!isHostView()) pipe.placeholder = "The host has not set a question yet.";
@@ -2960,6 +3140,8 @@ function renderLobby() {
   if (isHostView()) {
     $("waitLine").textContent = view.settings.round === "imposters" && view.players.length < IMP_MIN_PLAYERS
       ? "Imposters needs at least " + IMP_MIN_PLAYERS + " players. Waiting for more to join."
+      : view.settings.round === "worddig" && view.players.length < WD_MIN_PLAYERS
+      ? "Word Dig needs at least " + WD_MIN_PLAYERS + " players. Waiting for more to join."
       : "You are the host. Start when everyone has joined.";
   }
   const taken = new Set();
@@ -3099,10 +3281,11 @@ function hostImpTooFew() { return host.settings.round === "imposters" && host.pl
 function hostStartGame() {
   if (!host || host.phase !== "lobby" || host.pp.active) return;
   if (hostImpTooFew()) { toast("Imposters needs at least " + IMP_MIN_PLAYERS + " players. Wait for more to join."); return; }
+  if (hostWdTooFew()) { toast("Word Dig needs at least " + WD_MIN_PLAYERS + " players. Wait for more to join."); return; }
   hostMeetAbort();
   hostPauseClear();
   Array.from(host.players.values()).forEach(function (p) { if (p.away) host.players.delete(p.id); }); /* a new round has no slots for dropped players */
-  host.phase = "play"; host.warm = null; host.imp = null; host.lastEnd = null;
+  host.phase = "play"; host.warm = null; host.imp = null; host.wd = null; host.lastEnd = null;
   const list = Array.from(host.players.values()), now = performance.now();
   list.forEach(function (p, i) {
     const s = spawnPoint(i, list.length);
@@ -3110,7 +3293,7 @@ function hostStartGame() {
   });
   list.forEach(function (p) { if (!p.isHost) send(p.conn, { t: "phase", name: "play" }); });
   applyPhase("play");
-  if (host.settings.round === "imposters") hostImpBegin(); else hostWarmBegin();
+  if (host.settings.round === "imposters") hostImpBegin(); else if (host.settings.round === "worddig") hostWdBegin(); else hostWarmBegin();
   hostSnapTick();
   clearInterval(host.snapTimer);
   host.snapTimer = setInterval(hostSnapTick, 66);
@@ -3121,7 +3304,7 @@ function hostBackToLobby() {
   hostPauseClear();
   host.phase = "lobby";
   clearInterval(host.snapTimer); host.snapTimer = 0;
-  clearInterval(host.warmTimer); host.warmTimer = 0; host.warm = null; host.imp = null; host.lastEnd = null;
+  clearInterval(host.warmTimer); host.warmTimer = 0; host.warm = null; host.imp = null; host.wd = null; host.lastEnd = null;
   /* anyone still marked as dropped is removed now, the lobby has no reconnect slots */
   Array.from(host.players.values()).forEach(function (p) { if (p.away) host.players.delete(p.id); });
   hostBroadcastLobby();
@@ -3322,6 +3505,7 @@ function stopPlay() {
   warmReset();
   impReset();
   meetReset();
+  wdReset();
 }
 function playSendMove() {
   if (!play.on || !play.me || isHostView() || !NET.conn) return;
@@ -3393,8 +3577,9 @@ function playUpdate(dt) {
   play.puffs.forEach(function (p) { p.age += dt; });
   play.puffs = play.puffs.filter(function (p) { return p.age < 0.7; });
   if (!m) return;
-  const k = meet.on ? {} : play.keys; /* nobody moves during a meeting */
-  const jy = (!meet.on && JOY.on && Math.hypot(JOY.x, JOY.y) >= 0.2) ? JOY : null; /* touch stick, analogue */
+  const lock = meet.on || wdLocked(); /* nobody moves during a meeting, and the drawer stays put */
+  const k = lock ? {} : play.keys;
+  const jy = (!lock && JOY.on && Math.hypot(JOY.x, JOY.y) >= 0.2) ? JOY : null; /* touch stick, analogue */
   const ax = jy ? jy.x : (k.right ? 1 : 0) - (k.left ? 1 : 0), ay = jy ? jy.y : (k.down ? 1 : 0) - (k.up ? 1 : 0);
   let moved = false;
   if (ax || ay) {
@@ -3411,7 +3596,7 @@ function playUpdate(dt) {
     m.anim += dt * 11; play.stepT += dt;
     if (play.stepT >= 0.34) { play.stepT = 0; playStep(); }
   } else play.stepT = 0.25;
-  if (imp.on) impUpdate(m); else warmUpdate(m);
+  if (wd.on) wdUpdate(m); else if (imp.on) impUpdate(m); else warmUpdate(m);
   srContext(m);
 }
 function drawMiner(c, e, now, z) {
@@ -3447,8 +3632,11 @@ function playDraw(now) {
     return;
   }
   const vwW = play.vw / z, vwH = play.vh / z, mw = MAP_W * TILE, mh = MAP_H * TILE;
-  const camX = vwW >= mw ? (mw - vwW) / 2 : Math.max(0, Math.min(mw - vwW, m.x - vwW / 2));
-  const camY = vwH >= mh ? (mh - vwH) / 2 : Math.max(0, Math.min(mh - vwH, m.y - vwH / 2));
+  /* with the Word Dig panel open, the player is centred in the part of the screen the panel does not cover */
+  const ins = wd.on && !wd.isDrawer ? wdInsets() : null, ir = ins ? ins.r : 0, it = ins ? ins.t : 0;
+  const sx = (play.vw - ir) / 2, sy = it + (play.vh - it) / 2;
+  const camX = vwW >= mw ? mw / 2 - sx / z : Math.max(0, Math.min(mw - vwW + ir / z, m.x - sx / z));
+  const camY = vwH >= mh ? mh / 2 - sy / z : Math.max(-it / z, Math.min(mh - vwH, m.y - sy / z));
   play.camX = camX; play.camY = camY; /* the tour uses these to point at spots on the map */
   c.setTransform(dpr * z, 0, 0, dpr * z, -camX * dpr * z, -camY * dpr * z);
   c.drawImage(play.mapCv, 0, 0);
@@ -3494,8 +3682,10 @@ function playDraw(now) {
     const info = view.players.find(function (p) { return p.id === e.id; });
     if (!info) return;
     e.color = info.color; e.nick = imp.on ? impLabel(info) : info.nick; shown.push(e);
+    if (wd.on && wd.stage === "draw" && info.id === wd.drawer) e.nick += " (drawing)";
   });
   warmDrawBelow(c, now);
+  wdDrawBelow(c, now);
   impDrawBelow(c, now);
   shown.sort(function (a, b) { return a.y - b.y; });
   shown.forEach(function (e) {
@@ -3515,7 +3705,7 @@ function playFrame(now) {
   try {
     playUpdate(play.paused ? 0 : dt); playDraw(now);
     const fnow = play.paused ? play.pauseAt : now; /* HUD timers stand still while paused */
-    warmHud(fnow); impHud(fnow); playAmbience(now); pauseUi();
+    warmHud(fnow); impHud(fnow); wdHud(fnow); wdRender(); playAmbience(now); pauseUi();
   } catch (e) { console.error("play error", e); }
   play.raf = requestAnimationFrame(playFrame);
 }
@@ -3558,6 +3748,8 @@ function playOnPause(on) {
     play.paused = false;
     sfx("pauseUp");
     warm.tAt += d;
+    if (wd.tAt) wd.tAt += d;
+    wd.cry.forEach(function (c) { c.pend = 0; });
     if (imp.tagUntil) imp.tagUntil += d;
     if (imp.sabUntil) imp.sabUntil += d;
     if (imp.darkUntil) imp.darkUntil += d;
@@ -3629,8 +3821,9 @@ function initTouch() {
     if (n !== t) hint.textContent = n;
   }).observe(hint, { childList: true, characterData: true, subtree: true });
   setInterval(function () {
-    const ok = play.on && !play.paused && !meet.on && !warm.ui && !(imp.on && imp.card) && !!play.me && (warm.on || imp.on);
-    joy.hidden = !ok; tb.hidden = !ok;
+    const wdOk = wd.on && !wdLocked() && $("wdCard").hidden && $("wdChooseOv").hidden && $("endOv").hidden;
+    const ok = play.on && !play.paused && !meet.on && !warm.ui && !(imp.on && imp.card) && !!play.me && (warm.on || imp.on || wdOk);
+    joy.hidden = !ok; tb.hidden = !ok || wd.on;
     if (!ok) { joyReset(); return; }
     const now = performance.now(), m = play.me, out = imp.on && imp.out.has(view.myId);
     const faker = imp.on && imp.role === "faker" && !imp.over && !out;
@@ -3691,6 +3884,8 @@ function initPlay() {
   window.addEventListener("keydown", function (e) {
     if (!play.on || e.ctrlKey || e.metaKey || e.altKey || $("confirm").open || $("keysDlg").open || !$("menuPop").hidden) return;
     if (play.paused) return; /* nothing works while the host has paused */
+    if (e.target && e.target.tagName === "INPUT" && e.target.type === "text") return; /* typing a guess must not walk the miner */
+    if (wd.on && wdKey(e)) return;
     if (meet.on) return; /* the meeting screen uses the mouse and the chat box */
     if (imp.on && imp.card) {
       const k0 = String(e.key).toLowerCase();
@@ -3875,6 +4070,7 @@ function hostWarmTaskDone(msg, p) {
 function hostPlayAgain() {
   if (!host || host.phase !== "play") return;
   if (hostImpTooFew()) { toast("Imposters needs at least " + IMP_MIN_PLAYERS + " players. Pick Warm-up or go back to the lobby."); return; }
+  if (hostWdTooFew(true)) { toast("Word Dig needs at least " + WD_MIN_PLAYERS + " connected players. Go back to the lobby."); return; }
   host.phase = "lobby"; /* lets hostStartGame run again with fresh spawns and a new round */
   hostStartGame();
 }
@@ -4278,6 +4474,962 @@ function taskBuildCart(ui, body) {
     stage.appendChild(node);
   });
   body.appendChild(stage);
+}
+
+/* ===== WORD DIG ROUND (draw and guess while walking, host authoritative) =====
+   Host: one drawer per turn picks a word, draws it; guessers type guesses and walk into letter crystals that reveal letters.
+   Messages to the host: wdPick, wdSkip, wdGuess, wdStroke, wdUndo, wdClear, wdCrystal.
+   Messages from the host: wdState, wdChoices, wdTime, wdWord, wdCry, wdFound, wdNo, wdOk, wdFeed, wdScores, wdResult, wdEnd, wdStroke, wdUndo, wdClear. */
+const WD_MIN_PLAYERS = 2, WD_CUSTOM_MIN = 6;
+const WD_PICK_SECS = 10, WD_RESULT_SECS = 4, WD_NEXT_SECS = 3;
+const WD_CRY_N = 6, WD_CRY_GOOD = 3, WD_CRY_RESPAWN_MS = 4000, WD_CRY_ACCEPT = 100, WD_CRY_AUTO = 36, WD_CRY_FAR = 520, WD_CRY_GAP = 150;
+const WD_MAX_POINTS = 6000, WD_MAX_STROKES = 400, WD_MAX_NUMS = 40, WD_GUESS_GAP_MS = 1000, WD_SEND_MS = 60;
+const WD_W = 960, WD_H = 720;
+const WD_COLORS = [["Black", "#111111"], ["Red", "#e53935"], ["Yellow", "#fdd835"], ["Blue", "#2f6bff"], ["Eraser", "#ffffff"]];
+const WD_WIDTHS = [6, 18];
+const WD_LISTS = {
+  food: "pizza pasta bread cheese burger sandwich noodles rice soup salad cake cookie donut pancake waffle egg taco sushi steak chicken fries popcorn cereal butter honey sausage muffin pretzel curry ramen toast candy pie yogurt bacon omelet dumpling chocolate".split(" "),
+  animals: "dog cat horse rabbit mouse tiger lion zebra monkey elephant giraffe turtle snake frog fish shark whale dolphin penguin parrot eagle owl bear panda camel sheep goat duck butterfly spider crab bee snail kangaroo".split(" "),
+  fruits: "apple banana orange grape lemon mango peach pear cherry melon kiwi plum lime papaya coconut pineapple berry fig apricot guava lychee pomelo durian avocado tomato olive raisin nectarine cranberry".split(" "),
+  things: "chair table lamp phone clock key book pen cup spoon fork knife plate bottle door window bed sofa mirror shoe hat sock umbrella glasses bag backpack computer keyboard scissors brush comb towel candle ladder hammer bucket pillow envelope bicycle".split(" "),
+  nature: "tree flower mountain river ocean sun moon star cloud rain snow rainbow volcano island beach forest desert lake rock leaf grass waterfall cave hill wave lightning thunder storm mushroom cactus sand bush branch valley planet wind fire".split(" ")
+};
+function wdParseCustom(s) {
+  const out = [];
+  String(s || "").toLowerCase().split(/[\s,;]+/).forEach(function (w) {
+    w = w.replace(/[^a-z]/g, "");
+    if (w.length >= 3 && w.length <= 10 && out.indexOf(w) < 0) out.push(w);
+  });
+  return out;
+}
+function wdShuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+function wdRand(a) { return a[Math.floor(Math.random() * a.length)]; }
+function wdNum(x, lo, hi, def) { return meetNum(x, lo, hi, def); }
+function wdCleanWord(s, max) { return String(s == null ? "" : s).toLowerCase().replace(/[^a-z_]/g, "").slice(0, max || 12); }
+function wdCleanGuess(s) { return String(s == null ? "" : s).replace(/[^\p{L} ]/gu, "").replace(/ +/g, " ").trim().slice(0, 30); }
+/* one letter wrong, added or missing (but not the same) */
+function wdClose(a, b) {
+  if (a === b) return false;
+  const la = a.length, lb = b.length;
+  if (Math.abs(la - lb) > 1) return false;
+  let i = 0;
+  while (i < la && i < lb && a[i] === b[i]) i++;
+  if (la === lb && i + 1 < la && a[i] === b[i + 1] && a[i + 1] === b[i] && a.slice(i + 2) === b.slice(i + 2)) return true; /* one swapped pair */
+  if (la === lb) return a.slice(i + 1) === b.slice(i + 1);
+  if (la > lb) return a.slice(i + 1) === b.slice(i);
+  return a.slice(i) === b.slice(i + 1);
+}
+
+/* ---- host side ---- */
+function hostWdOn() { return !!(host && host.phase === "play" && host.wd && host.wd.running); }
+function hostWdTooFew() {
+  if (!host || host.settings.round !== "worddig") return false;
+  let n = 0;
+  host.players.forEach(function (p) { if (!p.away) n++; });
+  return n < WD_MIN_PLAYERS;
+}
+function hostWdLocked(p) {
+  const w = host && host.wd;
+  return !!(w && w.running && p && w.drawer === p.id && (w.stage === "choose" || w.stage === "draw"));
+}
+function hostWdPool() {
+  const custom = wdParseCustom(host.settings.words);
+  if (custom.length >= WD_CUSTOM_MIN) return custom;
+  return (WD_LISTS[host.settings.wordlist] || WD_LISTS.food).slice();
+}
+function hostWdRelay(msg, exceptId) {
+  host.players.forEach(function (q) { if (q.id !== exceptId) hostTell(q, msg); });
+}
+function hostWdBegin() {
+  if (!host) return;
+  clearInterval(host.warmTimer);
+  const ids = [];
+  host.players.forEach(function (p) { if (!p.away) ids.push(p.id); });
+  const w = host.wd = {
+    running: true, order: wdShuffle(ids), turn: 0, drawer: "", stage: "", pool: hostWdPool(), used: new Set(),
+    drawSecs: Number(host.settings.drawtime) || 60, scores: new Map(), word: "", revealed: [], opts: [], skipUsed: false,
+    strokes: [], pts: 0, crystals: new Map(), cryId: 0, respawn: [], guessed: new Map(), gains: new Map(), firstDone: false,
+    rv: [false, false], pickEnd: 0, endAt: 0, cardEnd: 0, rev50: 0, rev75: 0, lastTime: 0, lastResult: null
+  };
+  ids.forEach(function (id) { w.scores.set(id, 0); });
+  host.warmTimer = setInterval(hostWdTick, 250);
+  hostWdSendScores();
+  hostWdStartTurn(0);
+}
+function hostWdStateMsg(ref) {
+  const w = host.wd, now = ref || performance.now();
+  const end = w.stage === "choose" ? w.pickEnd : w.stage === "draw" ? w.endAt : w.cardEnd;
+  const dp = host.players.get(w.drawer);
+  return { t: "wdState", st: w.stage, turn: w.turn + 1, of: w.order.length, drawer: w.drawer, dn: dp ? dp.nick : "", secs: Math.max(0, (end - now) / 1000), dsecs: w.drawSecs, len: w.word.length };
+}
+function hostWdSendScores() {
+  const w = host.wd, s = [];
+  w.scores.forEach(function (v, id) { s.push([id, v]); });
+  hostAll({ t: "wdScores", s: s });
+}
+function hostWdStartTurn(idx) {
+  const w = host.wd;
+  w.turn = idx; w.drawer = w.order[idx]; w.word = ""; w.revealed = []; w.skipUsed = false;
+  w.strokes = []; w.pts = 0; w.crystals = new Map(); w.respawn = []; w.guessed = new Map(); w.gains = new Map(); w.firstDone = false; w.rv = [false, false];
+  hostWdOffer();
+  hostAll(hostWdStateMsg());
+  hostWdSendChoices(host.players.get(w.drawer));
+}
+/* three fresh choices (no word is picked twice in one round) */
+function hostWdOffer() {
+  const w = host.wd;
+  let avail = w.pool.filter(function (x) { return !w.used.has(x); });
+  if (avail.length < 3) { w.used.clear(); avail = w.pool.slice(); }
+  w.opts = wdShuffle(avail).slice(0, 3);
+  w.pickEnd = performance.now() + WD_PICK_SECS * 1000;
+  w.stage = "choose";
+}
+function hostWdSendChoices(p) {
+  const w = host.wd;
+  if (p) hostTell(p, { t: "wdChoices", opts: w.opts.slice(), secs: Math.max(0, (w.pickEnd - (host.paused ? host.pauseAt : performance.now())) / 1000) });
+}
+function hostWdPick(msg, p) {
+  const w = host && host.wd;
+  if (!hostWdOn() || w.stage !== "choose" || !p || p.id !== w.drawer) return;
+  const i = msg.i;
+  if (!Number.isInteger(i) || i < 0 || i >= w.opts.length) return;
+  hostWdBeginDraw(w.opts[i]);
+}
+function hostWdBeginDraw(word) {
+  const w = host.wd, now = performance.now();
+  w.word = word; w.used.add(word); w.revealed = word.split("").map(function () { return false; });
+  w.endAt = now + w.drawSecs * 1000; w.rev50 = now + w.drawSecs * 500; w.rev75 = now + w.drawSecs * 750; w.rv = [false, false]; w.lastTime = now;
+  w.stage = "draw"; w.crystals = new Map(); w.respawn = []; w.strokes = []; w.pts = 0;
+  for (let i = 0; i < WD_CRY_N; i++) hostWdSpawn();
+  hostAll(hostWdStateMsg());
+  hostWdSendWords();
+  hostWdSendCry();
+}
+function hostWdSkip(p) {
+  const w = host && host.wd;
+  if (!hostWdOn() || w.stage !== "draw" || !p || p.id !== w.drawer) return;
+  if (w.skipUsed) { hostTell(p, { t: "wdFeed", k: "sys", text: "You can skip once per turn" }); return; }
+  if (w.guessed.size > 0) { hostTell(p, { t: "wdFeed", k: "sys", text: "Too late to skip, someone guessed already" }); return; }
+  w.skipUsed = true; w.word = ""; w.revealed = []; w.crystals = new Map(); w.respawn = []; w.strokes = []; w.pts = 0;
+  hostWdOffer();
+  hostAll(hostWdStateMsg());
+  hostWdSendChoices(p);
+  hostWdSendCry();
+  hostWdRelay({ t: "wdFeed", k: "sys", text: p.nick + " skipped the word" }, "");
+}
+function hostWdSendWordTo(p) {
+  const w = host.wd;
+  if (!w.word) return;
+  const full = p.id === w.drawer || w.guessed.has(p.id);
+  const s = full ? w.word : w.word.split("").map(function (c, i) { return w.revealed[i] ? c : "_"; }).join("");
+  hostTell(p, { t: "wdWord", w: s, full: full ? 1 : 0 });
+}
+function hostWdSendWords() { host.players.forEach(function (p) { hostWdSendWordTo(p); }); }
+function hostWdCryMsg() {
+  const out = [];
+  host.wd.crystals.forEach(function (c) { out.push([c.id, Math.round(c.x), Math.round(c.y), c.ch]); });
+  return { t: "wdCry", c: out };
+}
+function hostWdSendCry() { hostAll(hostWdCryMsg()); }
+/* floor tiles near the campfire, found once */
+let WD_SPOTS = null;
+function wdSpots() {
+  if (WD_SPOTS) return WD_SPOTS;
+  WD_SPOTS = [];
+  for (let ty = 0; ty < MAP_H; ty++) {
+    for (let tx = 0; tx < MAP_W; tx++) {
+      if (tileAt(tx, ty) !== 1) continue;
+      const x = Math.round((tx + 0.5) * TILE), y = Math.round((ty + 0.5) * TILE), d = Math.hypot(x - CAMP_POS.x, y - CAMP_POS.y);
+      if (d >= 110 && d <= WD_CRY_FAR && !circleBlocked(x, y, 22)) WD_SPOTS.push({ x: x, y: y });
+    }
+  }
+  return WD_SPOTS;
+}
+function wdHiddenLetters(w) {
+  const out = [];
+  w.word.split("").forEach(function (ch, i) { if (!w.revealed[i] && out.indexOf(ch) < 0) out.push(ch); });
+  return out;
+}
+function wdCryTaken(w) {
+  const t = new Set();
+  w.crystals.forEach(function (c) { t.add(c.ch); });
+  return t;
+}
+function wdWrongLetter(w, taken) {
+  const abc = "abcdefghijklmnopqrstuvwxyz".split("");
+  let pool = abc.filter(function (l) { return w.word.indexOf(l) < 0 && !taken.has(l); });
+  if (!pool.length) pool = abc.filter(function (l) { return w.word.indexOf(l) < 0; });
+  return pool.length ? wdRand(pool) : "z";
+}
+/* at least WD_CRY_GOOD crystals carry a hidden letter of the word (when there are enough). Never a letter that would reveal the last hidden one. */
+function wdNewLetter(w) {
+  const taken = wdCryTaken(w), hid = wdHiddenLetters(w), safe = hid.length >= 2 ? hid : [];
+  let good = 0;
+  w.crystals.forEach(function (c) { if (safe.indexOf(c.ch) >= 0) good++; });
+  if (good < WD_CRY_GOOD) {
+    const cand = safe.filter(function (l) { return !taken.has(l); });
+    if (cand.length) return wdRand(cand);
+  }
+  return wdWrongLetter(w, taken);
+}
+function hostWdSpawn() {
+  const w = host.wd;
+  if (w.crystals.size >= WD_CRY_N) return;
+  const far = function (gap) {
+    return wdSpots().filter(function (s) {
+      let ok = true;
+      w.crystals.forEach(function (c) { if (Math.hypot(c.x - s.x, c.y - s.y) < gap) ok = false; });
+      return ok;
+    });
+  };
+  let list = far(WD_CRY_GAP);
+  if (!list.length) list = far(70);
+  if (!list.length) return;
+  const s = wdRand(list), id = ++w.cryId;
+  w.crystals.set(id, { id: id, x: s.x, y: s.y, ch: wdNewLetter(w) });
+}
+/* after any reveal: a crystal must never be able to reveal the last hidden letters */
+function hostWdFixCrystals() {
+  const w = host.wd, hid = wdHiddenLetters(w), safe = hid.length >= 2;
+  w.crystals.forEach(function (c) {
+    if (w.word.indexOf(c.ch) >= 0 && !(safe && hid.indexOf(c.ch) >= 0)) c.ch = wdWrongLetter(w, wdCryTaken(w));
+  });
+}
+function hostWdCrystal(msg, p) {
+  const w = host && host.wd;
+  if (!hostWdOn() || w.stage !== "draw" || !p || p.id === w.drawer || !hostPos(p)) return;
+  const c = w.crystals.get(msg.id);
+  if (!c || Math.hypot(c.x - p.x, c.y - p.y) > WD_CRY_ACCEPT) return;
+  w.crystals.delete(c.id);
+  w.respawn.push(performance.now() + WD_CRY_RESPAWN_MS);
+  const hid = wdHiddenLetters(w);
+  if (hid.indexOf(c.ch) >= 0 && hid.length >= 2) {
+    w.word.split("").forEach(function (l, i) { if (l === c.ch) w.revealed[i] = true; });
+    hostAll({ t: "wdFound", ch: c.ch, by: p.id, nick: p.nick });
+    hostWdSendWords();
+    hostWdFixCrystals();
+  } else hostTell(p, { t: "wdNo", ch: c.ch });
+  hostWdSendCry();
+}
+function hostWdAutoReveal() {
+  const w = host.wd, hidden = [];
+  w.revealed.forEach(function (r, i) { if (!r) hidden.push(i); });
+  if (hidden.length < 2) return;
+  w.revealed[wdRand(hidden)] = true;
+  hostWdSendWords();
+  hostWdFixCrystals();
+  hostWdSendCry();
+  hostAll({ t: "wdFeed", k: "rev", text: "A letter was revealed" });
+}
+function hostWdAdd(id, pts) {
+  const w = host.wd;
+  w.scores.set(id, (w.scores.get(id) || 0) + pts);
+  w.gains.set(id, (w.gains.get(id) || 0) + pts);
+}
+function hostWdGuessers() {
+  const w = host.wd, out = [];
+  host.players.forEach(function (p) { if (p.id !== w.drawer && !p.away) out.push(p); });
+  return out;
+}
+function hostWdAllGuessed() {
+  const w = host.wd, g = hostWdGuessers();
+  return g.length > 0 && g.every(function (p) { return w.guessed.has(p.id); });
+}
+function hostWdGuess(msg, p) {
+  const w = host && host.wd;
+  if (!hostWdOn() || w.stage !== "draw" || !p || p.id === w.drawer || p.away || w.guessed.has(p.id)) return;
+  const now = performance.now();
+  if (now - (p.wdLast || 0) < WD_GUESS_GAP_MS) return;
+  p.wdLast = now;
+  const text = wdCleanGuess(msg.text);
+  if (!text) return;
+  const norm = text.toLowerCase().replace(/ /g, "");
+  if (norm === w.word) {
+    const left = Math.max(0, (w.endAt - now) / 1000);
+    let pts = 50 + Math.round(250 * left / w.drawSecs);
+    if (!w.firstDone) { pts += 50; w.firstDone = true; }
+    w.guessed.set(p.id, pts);
+    hostWdAdd(p.id, pts);
+    hostWdAdd(w.drawer, 50);
+    hostTell(p, { t: "wdOk", pts: pts });
+    hostWdSendWordTo(p);
+    hostAll({ t: "wdFeed", k: "ok", nick: p.nick, who: p.id });
+    hostWdSendScores();
+    if (hostWdAllGuessed()) hostWdEndTurn("all");
+  } else if (wdClose(norm, w.word)) {
+    hostTell(p, { t: "wdFeed", k: "close" }); /* only the guesser hears about a near miss */
+  } else {
+    hostAll({ t: "wdFeed", k: "guess", nick: p.nick, text: text });
+  }
+}
+function hostWdStroke(msg, p) {
+  const w = host && host.wd;
+  if (!hostWdOn() || w.stage !== "draw" || !p || p.id !== w.drawer) return;
+  const id = msg.id, c = msg.c, wi = msg.w, arr = msg.p;
+  if (!Number.isInteger(id) || id < 0 || id > 1000000 || !Number.isInteger(c) || c < 0 || c >= WD_COLORS.length) return;
+  if ((wi !== 0 && wi !== 1) || !Array.isArray(arr) || arr.length < 2 || arr.length > WD_MAX_NUMS || arr.length % 2) return;
+  const clean = [];
+  for (let i = 0; i < arr.length; i++) {
+    const n = Number(arr[i]);
+    if (!isFinite(n)) return;
+    clean.push(Math.max(0, Math.min(1000, Math.round(n))));
+  }
+  if (w.pts + clean.length / 2 > WD_MAX_POINTS) return;
+  let last = w.strokes[w.strokes.length - 1];
+  if (!last || last.id !== id) {
+    if (w.strokes.length >= WD_MAX_STROKES) return;
+    last = { id: id, c: c, w: wi, p: [] };
+    w.strokes.push(last);
+  }
+  clean.forEach(function (n) { last.p.push(n); });
+  w.pts += clean.length / 2;
+  hostWdRelay({ t: "wdStroke", id: last.id, c: last.c, w: last.w, p: clean }, p.id);
+}
+function hostWdUndo(p) {
+  const w = host && host.wd;
+  if (!hostWdOn() || w.stage !== "draw" || !p || p.id !== w.drawer || !w.strokes.length) return;
+  const s = w.strokes.pop();
+  w.pts = Math.max(0, w.pts - s.p.length / 2);
+  hostWdRelay({ t: "wdUndo" }, p.id);
+}
+function hostWdClear(p) {
+  const w = host && host.wd;
+  if (!hostWdOn() || w.stage !== "draw" || !p || p.id !== w.drawer) return;
+  w.strokes = []; w.pts = 0;
+  hostWdRelay({ t: "wdClear" }, p.id);
+}
+function hostWdEndTurn(why) {
+  const w = host && host.wd;
+  if (!w || !w.running || (w.stage !== "choose" && w.stage !== "draw")) return;
+  w.stage = "result"; w.cardEnd = performance.now() + WD_RESULT_SECS * 1000;
+  const gains = [], dp = host.players.get(w.drawer);
+  w.gains.forEach(function (v, id) { const q = host.players.get(id); if (q) gains.push([id, q.nick, v]); });
+  gains.sort(function (a, b) { return b[2] - a[2]; });
+  w.lastResult = { t: "wdResult", word: w.word, why: why, dn: dp ? dp.nick : "", turn: w.turn + 1, of: w.order.length, gains: gains, secs: WD_RESULT_SECS };
+  hostAll(w.lastResult);
+  hostWdSendScores();
+}
+/* next turn index with a connected drawer, or -1 */
+function hostWdNextIdx(from) {
+  const w = host.wd;
+  for (let i = from; i < w.order.length; i++) {
+    const p = host.players.get(w.order[i]);
+    if (p && !p.away) return i;
+  }
+  return -1;
+}
+function hostWdFinish() {
+  const w = host && host.wd;
+  if (!w || !w.running) return;
+  hostPauseClear();
+  w.running = false; w.stage = "end";
+  const board = [];
+  host.players.forEach(function (p) { board.push([p.id, p.nick, p.color, w.scores.get(p.id) || 0]); });
+  board.sort(function (a, b) { return b[3] - a[3]; });
+  const msg = { t: "wdEnd", board: board };
+  host.lastEnd = msg;
+  hostAll(msg);
+}
+/* a drawer who left, or a guesser list that changed */
+function hostWdRefresh() {
+  const w = host && host.wd;
+  if (!hostWdOn() || host.paused) return;
+  if (w.stage === "choose" || w.stage === "draw") {
+    const dp = host.players.get(w.drawer);
+    if (!dp || dp.away) { hostWdEndTurn("left"); return; }
+  }
+  if (w.stage === "draw" && hostWdAllGuessed()) hostWdEndTurn("all");
+}
+function hostWdTick() {
+  const w = host && host.wd;
+  if (!w || !w.running || host.paused) return;
+  const now = performance.now();
+  hostWdRefresh();
+  if (w.stage === "choose") {
+    if (now >= w.pickEnd) hostWdBeginDraw(w.opts[0]);
+  } else if (w.stage === "draw") {
+    if (now >= w.endAt) { hostWdEndTurn("time"); return; }
+    if (!w.rv[0] && now >= w.rev50) { w.rv[0] = true; hostWdAutoReveal(); }
+    if (!w.rv[1] && now >= w.rev75) { w.rv[1] = true; hostWdAutoReveal(); }
+    if (w.respawn.length) {
+      const due = w.respawn.filter(function (t) { return now >= t; });
+      if (due.length) {
+        w.respawn = w.respawn.filter(function (t) { return now < t; });
+        due.forEach(function () { hostWdSpawn(); });
+        hostWdSendCry();
+      }
+    }
+    if (now - w.lastTime >= 1000) { w.lastTime = now; hostAll({ t: "wdTime", left: Math.max(0, (w.endAt - now) / 1000) }); }
+  } else if (w.stage === "result") {
+    if (now >= w.cardEnd) {
+      const idx = hostWdNextIdx(w.turn + 1);
+      if (idx < 0) { hostWdFinish(); return; }
+      w.turn = idx; w.drawer = w.order[idx]; w.word = ""; w.stage = "next"; w.cardEnd = now + WD_NEXT_SECS * 1000;
+      hostAll(hostWdStateMsg());
+    }
+  } else if (w.stage === "next") {
+    if (now >= w.cardEnd) {
+      const dp = host.players.get(w.drawer);
+      if (dp && !dp.away) hostWdStartTurn(w.turn);
+      else {
+        const idx = hostWdNextIdx(w.turn + 1);
+        if (idx < 0) hostWdFinish(); else hostWdStartTurn(idx);
+      }
+    }
+  }
+}
+function hostWdShift(d) {
+  const w = host.wd;
+  if (!w) return;
+  ["pickEnd", "endAt", "cardEnd", "rev50", "rev75", "lastTime"].forEach(function (k) { if (w[k]) w[k] += d; });
+  w.respawn = w.respawn.map(function (t) { return t + d; });
+}
+/* a rejoining player gets the whole picture of the current turn */
+function hostWdResume(p) {
+  const w = host.wd, ref = host.paused ? host.pauseAt : performance.now();
+  const s = []; w.scores.forEach(function (v, id) { s.push([id, v]); });
+  hostTell(p, { t: "wdScores", s: s });
+  if (!w.running) { if (host.lastEnd) hostTell(p, host.lastEnd); return; }
+  const st = hostWdStateMsg(ref);
+  st.rs = 1;
+  hostTell(p, st);
+  if (w.stage === "choose" && p.id === w.drawer) hostWdSendChoices(p);
+  if (w.stage === "draw") {
+    hostWdSendWordTo(p);
+    hostTell(p, hostWdCryMsg());
+    w.strokes.forEach(function (s2) {
+      for (let i = 0; i < s2.p.length; i += WD_MAX_NUMS) hostTell(p, { t: "wdStroke", id: s2.id, c: s2.c, w: s2.w, p: s2.p.slice(i, i + WD_MAX_NUMS), rs: 1 });
+    });
+  }
+  if (w.stage === "result" && w.lastResult) hostTell(p, Object.assign({}, w.lastResult, { rs: 1, secs: Math.max(0, (w.cardEnd - ref) / 1000) }));
+}
+
+/* ---- player side ---- */
+function wdFresh() {
+  return {
+    on: false, stage: "", turn: 0, of: 0, drawer: "", dn: "", isDrawer: false, left: 0, tAt: 0, dsecs: 60, len: 0,
+    word: "", full: false, opts: null, cry: [], strokes: [], dirty: true, color: 0, width: 0, sid: 0, q: [], cur: null, qe: null,
+    total: 0, feed: [], myPts: 0, scores: new Map(), sent: 0, lastGuess: 0, guessedMe: false, skipUsed: false, fullWarn: false,
+    resultText: "", tk: 0, cache: "", bkey: "", okey: "", flush: 0, optKey: "", curPid: 0
+  };
+}
+let wd = wdFresh();
+function wdLocked() { return wd.on && wd.isDrawer && (wd.stage === "choose" || wd.stage === "draw"); }
+function wdCanDraw() { return wd.on && wd.isDrawer && wd.stage === "draw" && !play.paused; }
+function wdReset() {
+  clearInterval(wd.flush);
+  wd = wdFresh();
+  $("wdPanel").hidden = true; $("wdBanner").hidden = true; $("wdChooseOv").hidden = true; $("wdCard").hidden = true; $("endPodium").hidden = true;
+  $("wdGuessIn").value = "";
+  $("wdFeed").replaceChildren();
+  $("warmBar").classList.remove("wd");
+  $("mnGemsL").textContent = "Gems"; $("mnTasksL").textContent = "Tasks";
+  document.body.classList.remove("wd-on");
+}
+function wdEnsureOn() {
+  if (!play.on || !view) return false;
+  if (!wd.on) {
+    warmCloseUi();
+    $("endOv").hidden = true;
+    wd.on = true; wd.dirty = true;
+    const bar = $("warmBar");
+    bar.hidden = false; bar.classList.remove("imp"); bar.classList.add("wd");
+    $("wbName").textContent = "Word Dig";
+    $("wdPanel").hidden = false; $("wdBanner").hidden = false;
+    $("mnGemsL").textContent = "Points"; $("mnTasksL").textContent = "Word";
+    document.body.classList.add("wd-on");
+    wd.flush = setInterval(wdFlush, WD_SEND_MS);
+  }
+  return true;
+}
+function wdOnState(msg) {
+  if (!wdEnsureOn()) return;
+  const st = String(msg.st);
+  if (["choose", "draw", "next", "result"].indexOf(st) < 0) return;
+  const turn = wdNum(msg.turn, 1, 99, 1);
+  if (turn !== wd.turn) { wd.skipUsed = false; wd.feed = []; wd.total = 0; wd.fullWarn = false; }
+  wd.stage = st; wd.turn = turn; wd.of = wdNum(msg.of, 1, 99, 1);
+  wd.drawer = String(msg.drawer || "").slice(0, 80); wd.dn = cleanNick(msg.dn) || "A miner";
+  wd.isDrawer = wd.drawer === view.myId;
+  wd.dsecs = wdNum(msg.dsecs, 10, 300, 60); wd.left = wdNum(msg.secs, 0, 300, 0); wd.tAt = performance.now();
+  wd.len = wdNum(msg.len, 0, 20, 0);
+  wd.strokes = []; wd.cur = null; wd.qe = null; wd.q = []; wd.total = 0; wd.dirty = true; wd.tk = 0;
+  if (st === "choose" || st === "next") { wd.word = ""; wd.full = false; wd.cry = []; wd.guessedMe = false; wd.opts = null; wd.optKey = ""; }
+  $("wdChooseOv").hidden = true;
+  if (st === "next") wdShowCard("Next drawer: " + wd.dn, "Turn " + wd.turn + " of " + wd.of, []);
+  else if (st !== "result") $("wdCard").hidden = true;
+  $("endOv").hidden = true;
+  if (!msg.rs) {
+    if (st === "choose" && wd.isDrawer) { toast("Your turn! Pick a word to draw"); sfx("roleMiner"); }
+    else if (st === "draw" && !wd.isDrawer) sfx("taskStart");
+  }
+  wdSync();
+}
+function wdOnChoices(msg) {
+  if (!wd.on || !wd.isDrawer || wd.stage !== "choose" || !Array.isArray(msg.opts)) return;
+  wd.opts = msg.opts.slice(0, 3).map(function (w) { return wdCleanWord(w); }).filter(function (w) { return w.length >= 3; });
+  wd.left = wdNum(msg.secs, 0, 60, WD_PICK_SECS); wd.tAt = performance.now();
+  wdSync();
+}
+function wdOnTime(msg) {
+  if (!wd.on || wd.stage !== "draw") return;
+  wd.left = wdNum(msg.left, 0, 300, wd.left); wd.tAt = performance.now();
+}
+function wdOnWord(msg) {
+  if (!wd.on) return;
+  wd.word = wdCleanWord(msg.w); wd.full = !!msg.full;
+  if (wd.full && !wd.isDrawer) wd.guessedMe = true;
+  wdSync();
+}
+function wdOnCry(msg) {
+  if (!wd.on || !Array.isArray(msg.c)) return;
+  const old = new Map(wd.cry.map(function (c) { return [c.id, c]; }));
+  const out = [];
+  msg.c.slice(0, 12).forEach(function (e) {
+    if (!Array.isArray(e)) return;
+    const id = Number(e[0]), x = Number(e[1]), y = Number(e[2]), ch = wdCleanWord(e[3], 1);
+    if (!Number.isInteger(id) || !isFinite(x) || !isFinite(y) || !/^[a-z]$/.test(ch)) return;
+    out.push({ id: id, x: x, y: y, ch: ch, pend: old.has(id) ? old.get(id).pend : 0 });
+  });
+  wd.cry = out;
+}
+function wdPushFeed(text, cls) {
+  wd.feed.push({ text: text, cls: cls || "" });
+  while (wd.feed.length > 12) wd.feed.shift();
+  wdRenderFeed();
+}
+function wdRenderFeed() {
+  const ul = $("wdFeed");
+  ul.replaceChildren();
+  wd.feed.slice(-5).forEach(function (f) { ul.appendChild(el("li", f.cls ? { class: f.cls } : null, f.text)); });
+}
+function wdOnFound(msg) {
+  if (!wd.on) return;
+  const ch = wdCleanWord(msg.ch, 1).toUpperCase(), who = cleanNick(msg.nick) || "A miner";
+  const text = who + " found " + ch + " for everyone!";
+  toast(text); sfx("gem"); wdPushFeed(text, "ok"); srSay(text, true);
+}
+function wdOnNo(msg) {
+  if (!wd.on) return;
+  const ch = wdCleanWord(msg.ch, 1).toUpperCase();
+  toast("No " + ch + " in this word"); sfx("buzzSoft");
+}
+function wdOnOk(msg) {
+  if (!wd.on) return;
+  const pts = Math.round(wdNum(msg.pts, 0, 2000, 0));
+  wd.guessedMe = true;
+  wdPop("+" + pts);
+  sfx("ding");
+  wdPushFeed("You got it! +" + pts, "ok");
+  srSay("Correct! You scored " + pts + " points", true);
+  wdSync();
+}
+function wdOnFeed(msg) {
+  if (!wd.on) return;
+  const k = String(msg.k);
+  const nick = cleanNick(msg.nick) || "A miner";
+  if (k === "guess") wdPushFeed(nick + ": " + cleanText(msg.text, 30));
+  else if (k === "ok") { if (msg.who !== view.myId) { wdPushFeed(nick + " guessed it!", "ok"); srSay(nick + " guessed it"); } }
+  else if (k === "close") { wdPushFeed("So close!", "close"); toast("So close!"); srSay("So close!", true); }
+  else if (k === "rev") { wdPushFeed("A letter was revealed", "sys"); toast("A letter was revealed"); sfx("ppReveal"); srSay("A letter was revealed"); }
+  else if (k === "sys") wdPushFeed(cleanText(msg.text, 80), "sys");
+}
+function wdOnScores(msg) {
+  if (!wd.on && !(play.on && view)) return;
+  wd.scores = new Map();
+  (Array.isArray(msg.s) ? msg.s : []).slice(0, MAX_PLAYERS).forEach(function (e) {
+    if (Array.isArray(e)) wd.scores.set(String(e[0]), Math.round(wdNum(e[1], 0, 99999, 0)));
+  });
+  wd.myPts = wd.scores.get(view.myId) || 0;
+}
+function wdOnResult(msg) {
+  if (!wdEnsureOn()) return;
+  wd.stage = "result"; wd.left = 0; wd.tAt = performance.now(); wd.cur = null; wd.qe = null;
+  const word = wdCleanWord(msg.word), dn = cleanNick(msg.dn) || "The drawer", why = String(msg.why);
+  const title = why === "left" ? dn + " left, next turn" : word ? "The word was " + word.toUpperCase() : "Turn over";
+  wd.resultText = title;
+  const lines = [];
+  (Array.isArray(msg.gains) ? msg.gains : []).slice(0, MAX_PLAYERS).forEach(function (e) {
+    if (Array.isArray(e)) lines.push("+" + Math.round(wdNum(e[2], 0, 99999, 0)) + "  " + (cleanNick(e[1]) || "Miner"));
+  });
+  if (!lines.length) lines.push("Nobody scored this turn");
+  wdShowCard(title, why === "left" && word ? "The word was " + word.toUpperCase() : "Turn " + wdNum(msg.turn, 1, 99, 1) + " of " + wdNum(msg.of, 1, 99, 1), lines);
+  $("wdChooseOv").hidden = true;
+  if (!msg.rs) sfx(why === "all" ? "taskDone" : "noOut");
+  wdSync();
+}
+function wdShowCard(title, sub, lines) {
+  $("wdCardT").textContent = title;
+  $("wdCardS").textContent = sub;
+  const ul = $("wdCardL");
+  ul.replaceChildren();
+  lines.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+  $("wdCard").hidden = false;
+}
+function wdOnEnd(msg) {
+  if (!wdEnsureOn()) return;
+  wd.stage = "end"; wd.cur = null; wd.qe = null; wd.resultText = "Word Dig finished";
+  $("wdCard").hidden = true; $("wdChooseOv").hidden = true;
+  const board = [];
+  (Array.isArray(msg.board) ? msg.board : []).slice(0, MAX_PLAYERS).forEach(function (e) {
+    if (!Array.isArray(e)) return;
+    const color = Math.round(wdNum(e[2], 0, MINERS.length - 1, 0));
+    board.push({ id: String(e[0]), nick: cleanNick(e[1]) || "Miner", color: color, pts: Math.round(wdNum(e[3], 0, 99999, 0)) });
+  });
+  const list = $("endList");
+  list.replaceChildren();
+  board.forEach(function (b, i) { list.appendChild(el("li", null, (i + 1) + ".  " + b.nick + ": " + b.pts + " points")); });
+  $("endTitle").textContent = "Word Dig results";
+  $("endSub").textContent = board.length ? "Top miner: " + board[0].nick + " with " + board[0].pts + " points. Well played, everyone." : "Thanks for playing.";
+  wdDrawPodium(board);
+  $("wdPanel").hidden = true;
+  const isH = isHostView();
+  $("btnPlayAgain").hidden = !isH; $("btnEndLobby").hidden = !isH; $("endWait").hidden = isH;
+  $("endOv").hidden = false;
+  sfx("win");
+  wdSync();
+}
+function wdDrawPodium(board) {
+  const cv = $("endPodium"), c = cv.getContext("2d"), W = cv.width, H = cv.height;
+  c.clearRect(0, 0, W, H);
+  if (!board.length) { cv.hidden = true; return; }
+  cv.hidden = false;
+  /* centre, left, right: first, second, third */
+  const slots = [{ i: 0, x: W / 2, h: 110 }, { i: 1, x: W / 2 - 170, h: 78 }, { i: 2, x: W / 2 + 170, h: 52 }];
+  const base = H - 14;
+  slots.forEach(function (s) {
+    const b = board[s.i];
+    if (!b) return;
+    c.fillStyle = ["#ffd23f", "#cfd8e3", "#d89a5c"][s.i]; c.strokeStyle = "rgba(0,0,0,0.45)"; c.lineWidth = 3;
+    c.beginPath(); if (c.roundRect) c.roundRect(s.x - 70, base - s.h, 140, s.h, 10); else c.rect(s.x - 70, base - s.h, 140, s.h); c.fill(); c.stroke();
+    c.fillStyle = "#1b1530"; c.textAlign = "center"; c.font = "900 34px Segoe UI, sans-serif";
+    c.fillText(String(s.i + 1), s.x, base - s.h / 2 + 12);
+    c.drawImage(playMinerImg(b.color), s.x - 40, base - s.h - 78, 80, 80);
+    c.font = "800 20px Segoe UI, sans-serif"; c.lineJoin = "round"; c.lineWidth = 5; c.strokeStyle = "rgba(0,0,0,0.85)"; c.fillStyle = "#ffffff";
+    const name = b.nick.length > 12 ? b.nick.slice(0, 11) + "." : b.nick;
+    c.strokeText(name, s.x, base - s.h - 84); c.fillText(name, s.x, base - s.h - 84);
+    c.font = "800 18px Segoe UI, sans-serif"; c.fillStyle = "#1b1530";
+    c.fillText(b.pts + " pts", s.x, base - 10);
+  });
+  cv.setAttribute("aria-label", "Podium: " + board.slice(0, 3).map(function (b, i) { return (i + 1) + ". " + b.nick + " " + b.pts + " points"; }).join(", "));
+}
+function wdPop(text) {
+  const p = el("div", { class: "wd-pop", "aria-hidden": "true" }, text);
+  $("wdPanel").appendChild(p);
+  setTimeout(function () { if (p.parentNode) p.parentNode.removeChild(p); }, 1700);
+}
+/* banner, blanks, guess box, tools and word choices follow the state */
+function wdSync() {
+  if (!wd.on) return;
+  const me = wd.isDrawer, st = wd.stage;
+  let txt = "", cls = "wait";
+  if (st === "choose") txt = me ? "Pick a word to draw" : wd.dn + " is choosing a word";
+  else if (st === "draw") {
+    if (me) { txt = "Draw: " + wd.word.toUpperCase(); cls = "draw"; }
+    else if (wd.guessedMe) { txt = "You got it! Wait for the others"; cls = "done"; }
+    else { txt = "Guess the drawing!"; cls = "guess"; }
+  } else if (st === "next") txt = "Next drawer: " + wd.dn;
+  else if (st === "result" || st === "end") txt = wd.resultText || "Turn over";
+  const b = $("wdBanner");
+  if (b.dataset.t !== txt) { b.dataset.t = txt; b.textContent = txt; srSay(txt); }
+  b.className = "wd-banner " + cls;
+  const panel = $("wdPanel");
+  panel.classList.toggle("me", me);
+  $("wdCv").setAttribute("aria-label", me ? "Your drawing board" : "Drawing by " + wd.dn);
+  $("wdTools").hidden = !me;
+  $("wdGuessForm").hidden = me;
+  const canGuess = !me && st === "draw" && !wd.guessedMe;
+  const gi = $("wdGuessIn");
+  if (gi.disabled === canGuess) { gi.disabled = !canGuess; $("wdGuessBtn").disabled = !canGuess; }
+  gi.placeholder = st === "draw" ? (wd.guessedMe ? "You got it!" : "Type your guess") : "Guessing opens soon";
+  wdToolSync();
+  /* blanks */
+  const bl = $("wdBlanks"), show = st === "draw" && !me && !!wd.word;
+  bl.hidden = !show;
+  const bkey = show ? wd.word : "";
+  if (bkey !== wd.bkey) {
+    wd.bkey = bkey;
+    bl.replaceChildren();
+    if (show) {
+      wd.word.split("").forEach(function (ch) { bl.appendChild(el("span", { class: "bl" + (ch === "_" ? " empty" : ""), "aria-hidden": "true" }, ch === "_" ? "_" : ch.toUpperCase())); });
+      bl.setAttribute("aria-label", "Word with " + wd.word.length + " letters: " + wd.word.split("").map(function (ch) { return ch === "_" ? "blank" : ch; }).join(", "));
+    }
+  }
+  /* the drawer's three words */
+  const ov = $("wdChooseOv"), okey = me && st === "choose" && wd.opts && wd.opts.length ? wd.opts.join(",") : "";
+  if (okey !== wd.okey) {
+    wd.okey = okey;
+    const list = $("wdChooseList");
+    list.replaceChildren();
+    if (okey) {
+      wd.opts.forEach(function (w, i) {
+        const btn = el("button", { type: "button", class: "btn wd-opt", "aria-label": "Draw " + w + ", key " + (i + 1) }, w.toUpperCase());
+        btn.addEventListener("click", function () {
+          if (wd.stage !== "choose") return;
+          sendHost({ t: "wdPick", i: i });
+          wd.opts = null; wd.okey = ""; ov.hidden = true;
+        });
+        list.appendChild(btn);
+      });
+      try { list.firstChild.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+    }
+  }
+  ov.hidden = !okey;
+  wd.dirty = true;
+}
+function wdToolSync() {
+  const can = wdCanDraw();
+  $("wdTools").querySelectorAll("[data-c]").forEach(function (b) {
+    const on = Number(b.dataset.c) === wd.color;
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); b.disabled = !can;
+  });
+  $("wdTools").querySelectorAll("[data-w]").forEach(function (b) {
+    const on = Number(b.dataset.w) === wd.width;
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); b.disabled = !can;
+  });
+  $("wdUndo").disabled = !can; $("wdClear").disabled = !can; $("wdSkip").disabled = !can || wd.skipUsed;
+}
+function wdHud(now) {
+  if (!wd.on) return;
+  const live = wd.stage === "choose" || wd.stage === "draw";
+  const secs = live ? Math.max(0, Math.ceil(wd.left - (now - wd.tAt) / 1000)) : 0;
+  const tText = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+  const nText = wd.stage === "end" ? "Finished" : "Turn " + wd.turn + " of " + wd.of;
+  if (wd.stage === "draw" && !play.paused && secs <= 10 && secs > 0 && secs !== wd.tk) { wd.tk = secs; sfx("timerTick"); }
+  const wText = wd.stage === "draw" ? (wd.isDrawer || wd.guessedMe ? wd.word.toUpperCase() : wd.len + " letters") : "-";
+  const key = [tText, nText, wd.myPts, wText, wd.stage].join("|");
+  if (key === wd.cache) return;
+  wd.cache = key;
+  $("wbName").textContent = nText;
+  const tm = $("wbTime");
+  tm.textContent = tText; tm.classList.toggle("low", live && secs <= 10 && wd.stage === "draw"); tm.classList.toggle("urgent", wd.stage === "draw" && secs <= 10 && secs > 0);
+  tm.setAttribute("aria-label", (wd.stage === "choose" ? "Time to pick a word " : "Time left ") + secs + " seconds");
+  $("wbGems").textContent = "Points " + wd.myPts; $("wbTasks").textContent = "Word " + wText;
+  $("wdPickT").textContent = wd.stage === "choose" ? "Auto pick in " + secs + " s" : "";
+}
+function wdInsets() {
+  const p = $("wdPanel");
+  if (p.hidden) return null;
+  const r = p.getBoundingClientRect();
+  if (r.width < 10) return null;
+  if (r.left > play.vw * 0.3) return { r: Math.max(0, play.vw - r.left + 6), t: 0 };
+  return { r: 0, t: Math.max(0, r.bottom + 6) };
+}
+function wdUpdate(m) {
+  let text = IS_TOUCH ? "Drag the stick to walk into letter crystals." : "Walk into letter crystals. T to type a guess, Esc to walk again.";
+  if (wd.isDrawer) text = "You are drawing. Your miner stays still.";
+  if (wd.stage === "draw" && !wd.isDrawer && m && !play.paused) {
+    const now = performance.now();
+    wd.cry.forEach(function (c) {
+      if (Math.hypot(c.x - m.x, c.y - m.y) <= WD_CRY_AUTO && now - c.pend > 1500) { c.pend = now; sendHost({ t: "wdCrystal", id: c.id }); }
+    });
+  }
+  if (text !== warm.hint) { warm.hint = text; $("hudHint").textContent = text; }
+}
+function wdDrawBelow(c, now) {
+  if (!wd.on || wd.stage !== "draw") return;
+  wd.cry.forEach(function (k) {
+    const p = REDUCED_MOTION ? 0.5 : 0.5 + 0.5 * Math.sin(now / 800 + k.id * 1.3), s = 22;
+    glowSpot(c, k.x, k.y, 74, "120,230,255", 0.22 + 0.14 * p);
+    c.fillStyle = "#5ee0ff"; c.strokeStyle = "#ffffff"; c.lineWidth = 3; c.lineJoin = "round";
+    c.beginPath();
+    c.moveTo(k.x, k.y - s * 1.25); c.lineTo(k.x + s * 0.9, k.y - s * 0.4); c.lineTo(k.x + s * 0.6, k.y + s * 0.9);
+    c.lineTo(k.x - s * 0.6, k.y + s * 0.9); c.lineTo(k.x - s * 0.9, k.y - s * 0.4); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = "rgba(255,255,255,0.4)";
+    c.beginPath(); c.moveTo(k.x, k.y - s * 1.25); c.lineTo(k.x - s * 0.9, k.y - s * 0.4); c.lineTo(k.x - s * 0.1, k.y - s * 0.3); c.closePath(); c.fill();
+    c.textAlign = "center"; c.textBaseline = "middle"; c.font = "900 26px Segoe UI, sans-serif";
+    c.lineWidth = 6; c.strokeStyle = "rgba(10,30,60,0.9)"; c.fillStyle = "#ffffff";
+    c.strokeText(k.ch.toUpperCase(), k.x, k.y + 2); c.fillText(k.ch.toUpperCase(), k.x, k.y + 2);
+    c.textBaseline = "alphabetic";
+  });
+}
+/* ---- the drawing board ---- */
+function wdPaint(c, s) {
+  const p = s.p, n = Math.floor(p.length / 2);
+  if (!n) return;
+  const X = function (i) { return p[i * 2] / 1000 * WD_W; }, Y = function (i) { return p[i * 2 + 1] / 1000 * WD_H; };
+  const col = WD_COLORS[s.c] ? WD_COLORS[s.c][1] : "#111111", lw = WD_WIDTHS[s.w] || WD_WIDTHS[0];
+  c.strokeStyle = col; c.fillStyle = col; c.lineWidth = lw; c.lineCap = "round"; c.lineJoin = "round";
+  if (n === 1) { c.beginPath(); c.arc(X(0), Y(0), lw / 2, 0, 7); c.fill(); return; }
+  c.beginPath(); c.moveTo(X(0), Y(0));
+  if (n === 2) c.lineTo(X(1), Y(1));
+  else {
+    for (let i = 1; i < n - 1; i++) c.quadraticCurveTo(X(i), Y(i), (X(i) + X(i + 1)) / 2, (Y(i) + Y(i + 1)) / 2);
+    c.lineTo(X(n - 1), Y(n - 1));
+  }
+  c.stroke();
+}
+function wdRender() {
+  if (!wd.on || !wd.dirty || $("wdPanel").hidden) return;
+  wd.dirty = false;
+  const c = $("wdCv").getContext("2d");
+  c.fillStyle = "#ffffff"; c.fillRect(0, 0, WD_W, WD_H);
+  wd.strokes.forEach(function (s) { wdPaint(c, s); });
+  if (!wd.isDrawer && wd.stage !== "draw") {
+    c.fillStyle = "rgba(255,255,255,0.9)"; c.fillRect(0, WD_H / 2 - 60, WD_W, 120);
+    c.fillStyle = "#1b1530"; c.textAlign = "center"; c.textBaseline = "middle"; c.font = "900 54px Segoe UI, sans-serif";
+    c.fillText(wd.stage === "choose" ? wd.dn + " is choosing a word..." : "Get ready...", WD_W / 2, WD_H / 2);
+    c.textBaseline = "alphabetic";
+  }
+}
+function wdPtOf(e) {
+  const r = $("wdCv").getBoundingClientRect();
+  return [Math.round(Math.max(0, Math.min(1, (e.clientX - r.left) / Math.max(1, r.width))) * 1000), Math.round(Math.max(0, Math.min(1, (e.clientY - r.top) / Math.max(1, r.height))) * 1000)];
+}
+function wdAddPoint(x, y) {
+  const s = wd.cur;
+  if (!s) return;
+  const p = s.p, n = p.length;
+  if (n >= 2) { const dx = x - p[n - 2], dy = y - p[n - 1]; if (dx * dx + dy * dy < 9) return; }
+  if (wd.total >= WD_MAX_POINTS) {
+    if (!wd.fullWarn) { wd.fullWarn = true; toast("The board is full. Try Undo or Clear"); }
+    return;
+  }
+  p.push(x, y); wd.qe.p.push(x, y); wd.total++; wd.dirty = true;
+}
+/* strokes go out in small batches: one message per tick, at most 40 numbers (20 points) each */
+function wdFlush(all) {
+  if (!wd.on || play.paused) return;
+  let guard = 0;
+  while (wd.q.length && guard++ < 500) {
+    const e = wd.q[0];
+    if (!e.p.length) { if (e === wd.qe) break; wd.q.shift(); continue; }
+    sendHost({ t: "wdStroke", id: e.id, c: e.c, w: e.w, p: e.p.splice(0, WD_MAX_NUMS) });
+    if (all !== true) break;
+  }
+}
+function wdDoUndo() {
+  if (!wdCanDraw() || wd.cur) return;
+  wdFlush(true);
+  if (!wd.strokes.length) return;
+  const s = wd.strokes.pop();
+  wd.total = Math.max(0, wd.total - s.p.length / 2); wd.dirty = true;
+  sendHost({ t: "wdUndo" });
+}
+function wdDoClear() {
+  if (!wdCanDraw() || wd.cur) return;
+  wdFlush(true);
+  wd.strokes = []; wd.total = 0; wd.dirty = true;
+  sendHost({ t: "wdClear" });
+}
+function wdOnStroke(msg) {
+  if (!wd.on || (wd.isDrawer && !msg.rs) || !Array.isArray(msg.p) || msg.p.length > WD_MAX_NUMS || msg.p.length % 2) return;
+  const id = wdNum(msg.id, 0, 1000000, 0), c = Math.round(wdNum(msg.c, 0, WD_COLORS.length - 1, 0)), w = msg.w === 1 ? 1 : 0;
+  const nums = [];
+  for (let i = 0; i < msg.p.length; i++) {
+    const n = Number(msg.p[i]);
+    if (!isFinite(n)) return;
+    nums.push(Math.max(0, Math.min(1000, Math.round(n))));
+  }
+  let s = wd.strokes[wd.strokes.length - 1];
+  if (!s || s.id !== id) {
+    if (wd.strokes.length >= WD_MAX_STROKES) return;
+    s = { id: id, c: c, w: w, p: [] };
+    wd.strokes.push(s);
+  }
+  nums.forEach(function (n) { s.p.push(n); });
+  if (wd.isDrawer) { wd.total += nums.length / 2; wd.sid = Math.max(wd.sid, id); } /* a drawer who rejoined gets the board back */
+  wd.dirty = true;
+}
+function wdOnUndo() { if (wd.on && !wd.isDrawer && wd.strokes.length) { wd.strokes.pop(); wd.dirty = true; } }
+function wdOnClear() { if (wd.on && !wd.isDrawer) { wd.strokes = []; wd.dirty = true; } }
+function wdFocusGuess() {
+  const gi = $("wdGuessIn");
+  if (gi.disabled || $("wdPanel").hidden) return false;
+  play.keys = {};
+  try { gi.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+  return true;
+}
+/* keys for Word Dig: 1 to 3 pick a word, T jumps to the guess box. Returns true if used. */
+function wdKey(e) {
+  const k = String(e.key).toLowerCase();
+  if (!$("wdChooseOv").hidden && /^[1-3]$/.test(k)) {
+    const b = $("wdChooseList").children[Number(k) - 1];
+    if (b) { e.preventDefault(); b.click(); }
+    return true;
+  }
+  if (k === "t" && !e.repeat && !wd.isDrawer && $("wdCard").hidden) {
+    if (wdFocusGuess()) { e.preventDefault(); return true; }
+  }
+  return false;
+}
+function wdSubmitGuess() {
+  const gi = $("wdGuessIn");
+  if (!wd.on || wd.isDrawer || wd.stage !== "draw" || wd.guessedMe || play.paused) return;
+  const text = wdCleanGuess(gi.value);
+  if (!text) { gi.value = ""; return; }
+  const now = performance.now();
+  if (now - wd.lastGuess < WD_GUESS_GAP_MS) { toast("One guess per second"); return; }
+  wd.lastGuess = now; wd.sent++;
+  sendHost({ t: "wdGuess", text: text });
+  gi.value = "";
+}
+function initWordDig() {
+  const tools = $("wdTools"), cv = $("wdCv");
+  const cols = el("div", { class: "wd-grp", role: "group", "aria-label": "Colours" });
+  WD_COLORS.forEach(function (c, i) {
+    const b = el("button", { type: "button", class: "wd-sw", "aria-label": c[0] + (i === 4 ? " (rubs out)" : ""), title: c[0], "aria-pressed": "false" });
+    b.dataset.c = String(i);
+    b.style.setProperty("--c", c[1]);
+    b.appendChild(el("span", null, c[0]));
+    b.addEventListener("click", function () { wd.color = i; wdToolSync(); });
+    cols.appendChild(b);
+  });
+  const sizes = el("div", { class: "wd-grp", role: "group", "aria-label": "Brush size" });
+  [["Thin", 8], ["Thick", 18]].forEach(function (s, i) {
+    const b = el("button", { type: "button", class: "btn ghost small wd-size", "aria-label": s[0] + " brush", "aria-pressed": "false" });
+    b.dataset.w = String(i);
+    const dot = el("i", { "aria-hidden": "true" });
+    dot.style.setProperty("--d", s[1] + "px");
+    b.appendChild(dot); b.appendChild(document.createTextNode(s[0]));
+    b.addEventListener("click", function () { wd.width = i; wdToolSync(); });
+    sizes.appendChild(b);
+  });
+  const acts = el("div", { class: "wd-grp", role: "group", "aria-label": "Board actions" });
+  [["wdUndo", "Undo", "Undo last stroke"], ["wdClear", "Clear", "Clear the board"], ["wdSkip", "Skip word", "Skip this word and get 3 new ones"]].forEach(function (a) {
+    acts.appendChild(el("button", { type: "button", class: "btn ghost small", id: a[0], "aria-label": a[2] }, a[1]));
+  });
+  tools.appendChild(cols); tools.appendChild(sizes); tools.appendChild(acts);
+  $("wdUndo").addEventListener("click", wdDoUndo);
+  $("wdClear").addEventListener("click", wdDoClear);
+  $("wdSkip").addEventListener("click", function () { if (!wdCanDraw() || wd.skipUsed) return; wd.skipUsed = true; sendHost({ t: "wdSkip" }); wdToolSync(); });
+  /* pointer drawing (drawer only) */
+  cv.addEventListener("pointerdown", function (e) {
+    if (!wdCanDraw() || wd.cur || (e.pointerType === "mouse" && e.button !== 0)) return;
+    if (wd.strokes.length >= WD_MAX_STROKES || wd.total >= WD_MAX_POINTS) { toast("The board is full. Try Undo or Clear"); return; }
+    e.preventDefault();
+    try { cv.setPointerCapture(e.pointerId); } catch (x) { /* ignore */ }
+    const id = ++wd.sid;
+    wd.cur = { id: id, c: wd.color, w: wd.width, p: [] };
+    wd.qe = { id: id, c: wd.color, w: wd.width, p: [] };
+    wd.curPid = e.pointerId;
+    wd.q.push(wd.qe); wd.strokes.push(wd.cur);
+    const pt = wdPtOf(e);
+    wdAddPoint(pt[0], pt[1]);
+  });
+  cv.addEventListener("pointermove", function (e) {
+    if (!wd.cur || e.pointerId !== wd.curPid) return;
+    e.preventDefault();
+    const list = e.getCoalescedEvents ? e.getCoalescedEvents() : null;
+    (list && list.length ? list : [e]).forEach(function (ev) { const pt = wdPtOf(ev); wdAddPoint(pt[0], pt[1]); });
+  });
+  const end = function (e) {
+    if (!wd.cur || e.pointerId !== wd.curPid) return;
+    const pt = wdPtOf(e);
+    wdAddPoint(pt[0], pt[1]);
+    wd.cur = null; wd.qe = null;
+  };
+  ["pointerup", "pointercancel"].forEach(function (n) { cv.addEventListener(n, end); });
+  cv.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  /* guess box */
+  $("wdGuessForm").addEventListener("submit", function (e) { e.preventDefault(); wdSubmitGuess(); });
+  const gi = $("wdGuessIn");
+  gi.addEventListener("focus", function () { play.keys = {}; });
+  gi.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.preventDefault(); gi.blur(); } });
+  wdToolSync();
 }
 
 /* ===== IMPOSTER ROUND "Mindminer Imposters" ===== */
@@ -5531,8 +6683,80 @@ function iS2(c, lt) {
   iGlass(c, 170, -100, 100, 62, 16);
   iGem(c, 196, -70, 14, "#5ee0ff"); iText(c, "x" + got, 242, -68, 34, "#ffffff");
 }
-/* 6.5 to 10.5: camera eases to one miner, red rim and mask, lamps power down, tag */
+/* Word Dig pizza slice, drawn progressively in board space (board 220 by 180, centre 0,-60). t = seconds since the first stroke. */
+function iPizza(c, t) {
+  const A = [-70, -105], B = [70, -105], T = [0, 10];
+  function line(p, q, a, b) {
+    const k = iSeg(t, a, b); if (k <= 0) return null;
+    const x = iLerp(p[0], q[0], k), y = iLerp(p[1], q[1], k);
+    c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(x, y); c.stroke();
+    return k < 1 ? [x, y] : null;
+  }
+  const ck = iSeg(t, 2.3, 2.8);
+  if (ck > 0) { c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.lineTo(T[0], T[1]); c.closePath(); c.fillStyle = "rgba(255,210,63," + (0.85 * ck) + ")"; c.fill(); }
+  c.lineCap = "round"; c.lineJoin = "round"; c.lineWidth = 7; c.strokeStyle = "#8a4b1a";
+  let tip = line(A, T, 0, 0.6) || line(B, T, 0.6, 1.2);
+  const ak = iSeg(t, 1.2, 1.9);
+  if (ak > 0) {
+    c.strokeStyle = "#c9803a"; c.lineWidth = 12; c.beginPath();
+    const n = Math.max(1, Math.round(24 * ak));
+    for (let i = 0; i <= n; i++) { const u = i / 24, x = iLerp(A[0], B[0], u), y = -105 - 40 * 4 * u * (1 - u); if (i) c.lineTo(x, y); else c.moveTo(x, y); }
+    c.stroke();
+    if (ak < 1) tip = [iLerp(A[0], B[0], ak), -105 - 160 * ak * (1 - ak)];
+  }
+  [[-18, -62], [22, -48], [-4, -22]].forEach(function (q, k) {
+    const pk = iBack(iSeg(t, 2.0 + k * 0.3, 2.3 + k * 0.3)); if (pk <= 0.02) return;
+    c.beginPath(); c.arc(q[0], q[1], 13 * pk, 0, 7); c.fillStyle = "#d8402f"; c.fill(); c.lineWidth = 3; c.strokeStyle = "#8f2218"; c.stroke();
+  });
+  return tip;
+}
+/* 6.5 to 10.5: one miner draws a pizza slice on an easel */
 function iS3(c, lt) {
+  iStage(c, 1, 0, 0); iCave(c, 1); iDust(c, lt);
+  c.fillStyle = "#6b4a2b";
+  c.save(); c.lineWidth = 9; c.lineCap = "round"; c.strokeStyle = "#6b4a2b";
+  c.beginPath(); c.moveTo(-90, 36); c.lineTo(-120, 120); c.moveTo(90, 36); c.lineTo(120, 120); c.moveTo(0, 36); c.lineTo(0, 118); c.stroke(); c.restore();
+  iRR(c, -118, -156, 236, 192, 14); c.fillStyle = "#ffffff"; c.fill(); c.strokeStyle = "#6b4a2b"; c.lineWidth = 7; c.stroke();
+  c.save(); c.translate(0, -60 + 12); c.scale(0.98, 0.98);
+  const t0 = lt - 0.6, tip = iPizza(c, Math.max(0, t0)); c.restore();
+  const pm = iBack(iSeg(lt, 0, 0.5));
+  iMiner(c, IC[1].i, 200, 112, 100 * Math.max(0.01, pm), { rot: tip ? Math.sin(lt * 12) * 0.06 : 0 });
+  if (tip) { iSpark(c, tip[0] * 0.98, tip[1] * 0.98 - 48, 11, 0.9, "#fff6c8"); }
+  const chp = iBack(iSeg(lt, 0.1, 0.5));
+  if (chp > 0.02) {
+    c.save(); c.translate(0, -186); c.scale(chp, chp);
+    iRR(c, -120, -22, 240, 44, 22); c.fillStyle = "#2ee59d"; c.fill(); c.strokeStyle = "#ffffff"; c.lineWidth = 3; c.stroke();
+    iText(c, "Draw: PIZZA", 0, 1, 26, "#06301f");
+    c.restore();
+  }
+  iBurst(c, 200, 70, iSeg(lt, 0.1, 0.7), 8, 70, 0.4);
+}
+/* 10.5 to 14.5: blanks fill from a letter crystal */
+function iS4(c, lt) {
+  iStage(c, 1, 0, 0); iCave(c, 1); iDust(c, lt);
+  iRR(c, -66, -190, 132, 108, 10); c.fillStyle = "#ffffff"; c.fill(); c.strokeStyle = "#6b4a2b"; c.lineWidth = 5; c.stroke();
+  c.save(); c.translate(0, -118); c.scale(0.5, 0.5); iPizza(c, 9); c.restore();
+  const word = ["P", "I", "Z", "Z", "_"], rv = iBack(iSeg(lt, 2.9, 3.3));
+  for (let k = 0; k < 5; k++) {
+    const x = (k - 2) * 66;
+    c.fillStyle = "#ffffff"; c.fillRect(x - 24, -44, 48, 6);
+    const show = k === 1 ? rv : k === 4 ? 0 : 1;
+    if (show > 0.02) { c.save(); c.translate(x, -64); c.scale(show, show); iText(c, word[k], 0, 0, 50, "#ffd23f"); c.restore(); }
+  }
+  const walk = iIO(iSeg(lt, 0.3, 2.0)), mx = iLerp(-180, 150, walk), gx = 215, hit = lt >= 2.1;
+  const fp = iSeg(lt, 2.1, 2.9), gx2 = iLerp(gx, -66, iIO(fp)), gy2 = iLerp(70, -64, iIO(fp)) - 60 * Math.sin(fp * Math.PI);
+  if (fp < 1) {
+    const s = 1 + 0.15 * Math.sin(lt * 6);
+    glowSpot(c, gx2, gy2, 90, "181,140,255", 0.5);
+    iGem(c, gx2, gy2 - 6, 24 * s * (1 - 0.4 * fp), "#b58cff");
+    iText(c, "I", gx2, gy2 + 4, 30 * (1 - 0.4 * fp), "#ffffff");
+  }
+  iMiner(c, IC[3].i, mx, 112, 100, { flip: 1, sy: 1 - 0.03 * Math.max(0, Math.sin(lt * 9)) });
+  iBurst(c, gx, 70, iSeg(lt, 2.1, 2.7), 8, 60, 0.3);
+  iBurst(c, -66, -64, iSeg(lt, 2.9, 3.5), 10, 60, 0.8);
+}
+/* 14.5 to 18.5 follows (campfire). Old Imposters scenes below are no longer used by the intro. */
+function iS3Old(c, lt) {
   const zp = iIO(iSeg(lt, 0, 1.3));
   iStage(c, 1 + 0.8 * zp, 100 * zp, 45 * zp);
   const dim = iIO(iSeg(lt, 2.1, 2.9));
@@ -5560,8 +6784,7 @@ function iS3(c, lt) {
     iBurst(c, 200, 62, a, 8, 70, 0.7, "#ff6b6b");
   }
 }
-/* 10.5 to 14.5: bell, meeting card, votes */
-function iS4(c, lt) {
+function iS4Old(c, lt) {
   iStage(c, 1, 0, 0); iCave(c, 0.4); iDark(c, 0.35 + 0.3 * iSeg(lt, 1, 1.6)); iDust(c, lt);
   const bp = iIO(iSeg(lt, 1.0, 1.6)), br = 80 - 46 * bp, by = -80 - 116 * bp;
   const sw = 0.55 * Math.sin(lt * 13) * Math.exp(-lt * 0.9);
@@ -5662,13 +6885,7 @@ function iS6(c, lt) {
   c.beginPath(); c.arc(84, 10, 34, 0, 7); c.fillStyle = "rgba(255,255,255,.16)"; c.fill(); c.strokeStyle = "rgba(255,255,255,.7)"; c.lineWidth = 3; c.stroke();
   const ja = lt < 2.2 ? lt * 2 : 0, jr = lt < 2.2 ? 14 : 0;
   c.beginPath(); c.arc(84 + Math.cos(ja) * jr, 10 + Math.sin(ja) * jr, 15, 0, 7); c.fillStyle = "rgba(255,255,255,.8)"; c.fill(); c.strokeStyle = "#ffffff"; c.stroke();
-  const pr = iSeg(lt, 2.5, 2.65) - iSeg(lt, 2.8, 3.0), ra = iSeg(lt, 2.5, 3.2);
-  c.save(); c.translate(254, 8); c.scale(1 - 0.12 * pr, 1 - 0.12 * pr);
-  c.beginPath(); c.arc(0, 0, 30, 0, 7); c.fillStyle = "#ffd23f"; c.fill(); c.strokeStyle = "#ffffff"; c.lineWidth = 3; c.stroke();
-  c.font = "900 24px " + I_FONT; c.textAlign = "center"; c.textBaseline = "middle"; c.fillStyle = "#1b1530"; c.fillText("USE", 0, 2);
-  c.restore();
-  if (ra > 0 && ra < 1) { c.beginPath(); c.arc(254, 8, 30 + ra * 34, 0, 7); c.strokeStyle = "rgba(255,210,63," + (0.8 * (1 - ra)) + ")"; c.lineWidth = 4; c.stroke(); }
-  iText(c, "STICK + USE", 168, 86, 26, "#ffffff");
+  iText(c, "STICK", 168, 86, 26, "#ffffff");
 }
 /* 22.5 to 26.0: fast montage */
 function iConfetti(c, lt) {
@@ -5713,6 +6930,31 @@ function iS7d(c, lt) {
   if (mp > 0.02) iMask(c, 100, -2, 34 * mp);
   iBurst(c, 100, 10, iSeg(lt, 0.25, 0.7), 10, 80, 0.9, "#ff6b6b");
 }
+/* 22.5 to 26.0 Word Dig montage: +250 pop, then a podium with confetti */
+function iM1(c, lt) {
+  iStage(c, 1, 0, 0); iCave(c, 1); iDark(c, 0.2); iDust(c, lt);
+  const pm = iBack(iSeg(lt, 0, 0.3)), hp = Math.abs(Math.sin(lt * 7));
+  iMiner(c, IC[2].i, 0, 150 - hp * 20, 150 * Math.max(0.01, pm), null);
+  const tp = iSeg(lt, 0.15, 0.55), ty = iLerp(20, -70, iOut(iSeg(lt, 0.15, 1.0)));
+  glowSpot(c, 0, ty, 150, "255,210,63", 0.3 * tp);
+  if (tp > 0.02) { c.save(); c.translate(0, ty); c.scale(iBack(tp), iBack(tp)); iText(c, "+250", 0, 0, 96, "#ffd23f"); c.restore(); }
+  iBurst(c, 0, 0, iSeg(lt, 0.15, 0.8), 12, 120, 0.3, "#ffd23f");
+}
+function iM2(c, lt) {
+  iStage(c, 1, 0, 0); iCave(c, 1); iDark(c, 0.25); iDust(c, lt);
+  const slots = [[0, 96, 2, "1"], [-112, 64, 0, "2"], [112, 40, 4, "3"]];
+  slots.forEach(function (s, k) {
+    const rp = iOut(iSeg(lt, 0.05 + k * 0.12, 0.55 + k * 0.12)), h = s[1] * rp, x = s[0];
+    c.fillStyle = k === 0 ? "#ffd23f" : k === 1 ? "#c3ccd5" : "#d08a4e"; c.fillRect(x - 50, 150 - h, 100, h);
+    c.fillStyle = "rgba(255,255,255,.35)"; c.fillRect(x - 50, 150 - h, 100, 4);
+    if (rp > 0.7) iText(c, s[3], x, 150 - h / 2, 40, "#1b1530");
+    const mp = iBack(iSeg(lt, 0.5 + k * 0.12, 0.9 + k * 0.12)), hop = k === 0 ? Math.abs(Math.sin(lt * 7)) * 16 : 0;
+    if (mp > 0.02) iMiner(c, IC[s[2]].i, x, 150 - h - hop, 92, { sx: mp, sy: mp });
+  });
+  iConfetti(c, lt);
+  iBurst(c, 0, -20, iSeg(lt, 0.6, 1.4), 12, 110, 0.5, "#ffd23f");
+}
+function iM3(c, lt) { iM2(c, lt + 1.0); iConfetti(c, lt + 1.7); }
 /* 26.0 to 30.0: end card art (the title and button are DOM) */
 function iEndLayout() {
   const w = intro.w, h = intro.h, port = w < 640 && h > w;
@@ -5736,22 +6978,23 @@ function iS8(c, lt) {
 const INTRO_SCENES = [
   { a: 0, b: 2.5, still: 2.2, f: iS1 }, { a: 2.5, b: 6.5, still: 3.6, f: iS2 }, { a: 6.5, b: 10.5, still: 3.7, f: iS3 },
   { a: 10.5, b: 14.5, still: 3.9, f: iS4 }, { a: 14.5, b: 18.5, still: 2.9, f: iS5 }, { a: 18.5, b: 22.5, still: 3.0, f: iS6 },
-  { a: 22.5, b: 23.5, still: 0.95, f: iS7a }, { a: 23.5, b: 24.5, still: 0.95, f: iS7b }, { a: 24.5, b: 25.3, still: 0.5, f: iS7c },
-  { a: 25.3, b: 26, still: 0.65, f: iS7d }, { a: 26, b: 30, still: 3.5, f: iS8 }
+  { a: 22.5, b: 24, still: 1.0, f: iM1 }, { a: 24, b: 25.2, still: 1.1, f: iM2 }, { a: 25.2, b: 26, still: 0.7, f: iM3 },
+  { a: 26, b: 30, still: 3.5, f: iS8 }
 ];
 /* sound cues: [timeline seconds, sfx name, arg]. Every one has a matching visual. */
 const INTRO_CUES = [[0, "created"], [0.12, "pop"], [1.25, "taskStep"], [1.3, "gem"], [3.5, "taskStep"], [4.4, "taskStep"], [5.3, "taskDone"],
-  [7.5, "roleFaker"], [8.6, "dim"], [9.6, "tag"], [10.6, "report"], [11.8, "pop"], [12.7, "voteCast"], [13.1, "voteCast"], [13.5, "voteCast"], [13.9, "voteCast"],
-  [14.9, "pop"], [15.45, "pop"], [16.0, "pop"], [16.55, "pop"], [17.1, "pop"], [21.0, "taskStart"], [21.2, "taskDone"],
-  [22.6, "milestone", 3], [23.55, "gem"], [23.6, "win"], [24.5, "endMiners"], [25.6, "ppReveal"], [26.0, "roleMiner"]];
+  [6.6, "pop"], [7.1, "taskStep"], [7.7, "taskStep"], [8.3, "taskStep"], [8.9, "taskStep"], [9.4, "taskStep"], [9.7, "taskStep"],
+  [11.0, "pop"], [12.7, "gem"], [13.4, "taskDone"],
+  [14.9, "pop"], [15.45, "pop"], [16.0, "pop"], [16.55, "pop"], [17.1, "pop"], [21.2, "gem"],
+  [22.7, "ding"], [24.1, "win"], [25.0, "endMiners"], [26.0, "roleMiner"]];
 /* captions: lines, [KEYWORD] is emphasised. Each holds at least 1.2 s. */
 const INTRO_CAPS = [
   { a: 0.35, b: 2.4, l: ["You're a", "[MINER]."] }, { a: 2.7, b: 4.5, l: ["Dig", "[TOGETHER]."] }, { a: 4.7, b: 6.4, l: ["Fill the", "[TEAM BAR]."] },
-  { a: 6.8, b: 8.5, l: ["But some are", "[FAKERS]..."] }, { a: 8.7, b: 10.4, l: ["...they sabotage", "and [TAG]."] },
-  { a: 10.8, b: 12.5, l: ["Spot something?", "Ring the [BELL]."] }, { a: 12.8, b: 14.4, l: ["Talk it out.", "[VOTE]."] },
+  { a: 6.8, b: 8.5, l: ["One miner", "[DRAWS]..."] }, { a: 8.7, b: 10.4, l: ["...everyone else", "[GUESSES]."] },
+  { a: 10.8, b: 12.5, l: ["Walk into", "[CRYSTALS]..."] }, { a: 12.8, b: 14.4, l: ["...to reveal", "[LETTERS]."] },
   { a: 14.7, b: 16.4, l: ["Warm up at the", "[CAMPFIRE]."] }, { a: 16.7, b: 18.4, l: ["Get to know", "your [CREW]."] },
-  { a: 18.7, b: 20.4, l: ["Move: [WASD]", "or the stick."] }, { a: 20.7, b: 22.4, l: ["Tap [USE]", "at a task."] },
-  { a: 22.6, b: 25.9, l: ["Find the fakers.", "Win [TOGETHER]."] }
+  { a: 18.7, b: 20.4, l: ["Move: [WASD]", "or the stick."] }, { a: 20.7, b: 22.4, l: ["[TYPE]", "your guess."] },
+  { a: 22.6, b: 25.9, l: ["Fastest guess", "[WINS]."] }
 ];
 /* ----- intro music bed: campfire-style chords plus plucks, brighter, 112 bpm, scheduled from the timeline ----- */
 const IM_8 = 60 / 112 / 2;
@@ -5813,7 +7056,7 @@ function introBeat(m, n, tt, at) {
     }
     return;
   }
-  const full = tt >= 2.5, tense = tt >= 8.4 && tt < 10.5, camp = tt >= 14.5 && tt < 18.5, mont = tt >= 22.5 && tt < 26, drive = full && !camp && !tense && tt < 26;
+  const full = tt >= 2.5, tense = false, camp = tt >= 14.5 && tt < 18.5, mont = tt >= 22.5 && tt < 26, drive = full && !camp && !tense && tt < 26;
   if (n === 0) {
     [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach(function (f, i) { introNote(m, f, "triangle", 0.07, at + i * 0.055, 0.004, 0, 0.35); });
     MUSIC_CHORDS[0].forEach(function (f) { introNote(m, f * 2, "triangle", 0.05, at, 0.01, 0.5, 0.5); });
@@ -6122,9 +7365,8 @@ function srContext(m) {
 const KEY_GROUPS = [
   ["Start screen", [["? or H", "Open this list"], ["Enter in Nickname", "Go to Room code, or press Join room if a code is typed"], ["Arrow keys, Home, End", "Choose a miner colour"]]],
   ["Lobby", [["S", "Start game (host only)"], ["C", "Copy room code"], ["T", "Type in lobby chat"], ["Arrow keys", "Choose a miner colour"]]],
-  ["Round", [["W A S D or arrows", "Move"], ["E or Space", "Use: collect a gem, start a task"], ["M", "Mute or unmute"], ["Esc", "Open or close the menu, or cancel a task"], ["P", "Pause or resume (host only)"], ["Enter", "Close the role card"]]],
-  ["Imposters", [["Q", "Tag a nearby miner (fakers)"], ["R", "Sabotage a nearby lamp (fakers)"], ["F", "Report a body"], ["B", "Ring the meeting bell"]]],
-  ["Meeting", [["1 to 9", "Vote for the Nth player card"], ["0 or K", "Skip vote"], ["T", "Type in meeting chat"], ["Enter", "Send chat message"], ["Esc", "Leave the chat box"]]],
+  ["Round", [["W A S D or arrows", "Move"], ["E or Space", "Use: collect a gem, start a task"], ["M", "Mute or unmute"], ["Esc", "Open or close the menu, or cancel a task"], ["P", "Pause or resume (host only)"]]],
+  ["Word Dig", [["T", "Jump to the guess box"], ["Enter", "Send your guess"], ["Esc", "Leave the guess box, then walk again"], ["1 to 3", "Pick a word (when it is your turn to draw)"]]],
   ["Paused", [["P or Esc", "Resume (host only)"]]],
   ["Intro", [["Space", "Pause or play"], ["M", "Sound on or off"], ["Enter or Esc", "Skip the intro"]]]
 ];
@@ -6207,7 +7449,7 @@ function initShortcuts() {
    UI only. The flag "mmimp_tour_done" holds a short list of finished context names, nothing else (like the intro flag).
    No network messages and no game rules are touched. In a round it never dims or pauses anything. */
 const TOUR_KEY = "mmimp_tour_done";
-const TOUR_CTX = ["start", "lobby", "play-warm", "play-imp", "meeting"];
+const TOUR_CTX = ["start", "lobby", "play-warm", "play-word"];
 const tour = { on: false, ctx: "", steps: [], i: -1, raf: 0, poll: 0, adv: 0, glide: 0, st: null, dim: false, hide: false, session: [], rk: "", rAt: 0, pk: "", prev: null };
 function tourLoad() {
   const a = tour.session.slice();
@@ -6280,6 +7522,26 @@ const TOUR_SETS = {
       { t: "#btnMenu", title: "Menu", text: "Sound, help and leave are in here." }
     ];
   },
+  "play-word": function () {
+    const nearestCry = function () {
+      const m = play.me;
+      if (!m || !wd.cry.length) return null;
+      let best = null, bd = Infinity;
+      wd.cry.forEach(function (k) { const d = Math.hypot(k.x - m.x, k.y - m.y); if (d < bd) { bd = d; best = k; } });
+      return best ? tourPt(best.x, best.y, 76, 76) : null;
+    };
+    if (wd.isDrawer) return [
+      { t: "#wdBanner", title: "Your word", text: "Only you can see it. Draw it!" },
+      { t: "#wdCv", title: "Draw here", text: "Press and drag to draw. Pick colours and brush size below.", tt: "Touch and drag to draw. Pick colours and brush size below." },
+      { t: "#wdSkip", title: "Too hard?", text: "Skip once to get 3 new words." }
+    ];
+    return [
+      { t: "#wdCv", title: "Watch the drawing", text: "It appears live as your friend draws." },
+      { t: "#wdGuessIn", title: "Type your guess", text: "Press Enter to send. Press T to jump here.", tt: "Tap here, type, then tap Guess.",
+        init: function (st) { st.n = wd.sent; }, watch: function (st) { return wd.sent > st.n; }, delay: 500 },
+      { t: nearestCry, title: "Free letters", text: "Walk into a glowing crystal to reveal a letter for everyone.", tt: "Walk into a glowing crystal to reveal a letter for everyone." }
+    ];
+  },
   "play-imp": function () {
     if (imp.role === "faker") return [
       { t: IS_TOUCH ? "#tBtns" : "#ipToggle", title: "You are a faker", text: "Blend in. Q tags, R dims lamps.", tt: "Blend in. Tag and Sabotage buttons show up near targets." },
@@ -6306,13 +7568,13 @@ function tourCtxNow() {
   if (s === "start") return "start";
   if (s === "lobby") return "lobby";
   if (s !== "play" || !play.on || !view) return "";
-  if (meet.on) return "meeting";
-  if (imp.on) return "play-imp";
+  if (wd.on) return "play-word";
   if (warm.on) return "play-warm";
-  return "";
+  return ""; /* the Imposters and meeting tours are no longer offered */
 }
 function tourReady(c) {
   if (c === "play-warm") return !!play.me && !warm.over && !warm.ui;
+  if (c === "play-word") return !!play.me && wd.stage === "draw" && !!wd.word && $("wdCard").hidden;
   if (c === "play-imp") return !!play.me && !imp.card && !imp.over && !warm.ui && !imp.out.has(view.myId);
   if (c === "meeting") return meet.stage === "discuss";
   return true;
@@ -6324,6 +7586,7 @@ function tourBlocked(c, step) {
   if (play.paused || (warm.on && warm.over) || (imp.on && imp.over)) return true;
   if (!$("roleOv").hidden || !$("endOv").hidden || !$("pauseOv").hidden || !$("meetResOv").hidden || !$("menuPop").hidden) return true;
   if (c !== "meeting" && !$("meetOv").hidden) return true;
+  if (c === "play-word" && (!$("wdCard").hidden || !$("wdChooseOv").hidden)) return true;
   if (!$("taskOv").hidden && !(step && step.panelOk)) return true;
   return false;
 }
@@ -6505,6 +7768,7 @@ initScrollFades();
 initMotion();
 initSfx();
 initPlay();
+initWordDig();
 initStartScreen();
 initLobbyButtons();
 initIntro();
