@@ -1003,7 +1003,6 @@ body:has(#endOv:not([hidden])) .wd-panel,body:has(#endOv:not([hidden])) .wd-bann
                 <option value="anon">Anonymous</option>
               </select>
             </div>
-            <button type="button" class="btn ghost small" id="btnPpTest">Use test question</button>
             <button type="button" class="btn" id="btnPpStart">Start Peace Pipe</button>
           </div>
         </div>
@@ -3176,12 +3175,6 @@ function copyCode() {
 }
 function initLobbyButtons() {
   $("btnCopy").addEventListener("click", copyCode);
-  $("btnPpTest").addEventListener("click", function () {
-    if (!isHostView()) return;
-    $("pipe").value = "What's the weirdest food combination you actually enjoy?";
-    updatePipeCount();
-    hostSetSettings({ pipe: $("pipe").value });
-  });
   $("btnPpStart").addEventListener("click", function () {
     if (!isHostView() || !host) return;
     const mode = $("ppMode").value;
