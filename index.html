@@ -1041,13 +1041,10 @@ body:has(#endOv:not([hidden])) .wd-panel,body:has(#endOv:not([hidden])) .wd-bann
           <textarea id="pipe" maxlength="150" placeholder="Optional. Shown to everyone at the campfire."></textarea>
           <div class="counter" id="pipeCount" aria-live="off">0 / 150</div>
           <div class="ppctl" id="ppCtl" hidden>
-            <label for="ppMode">Peace Pipe mode</label>
-            <select id="ppMode">
-              <option value="talk">Talk (answer out loud)</option>
-              <option value="type">Type (short written answers)</option>
-              <option value="guess">Guess who (private answers, guess the author)</option>
+            <select id="ppMode" hidden aria-hidden="true" tabindex="-1">
+              <option value="type" selected>Type (short written answers)</option>
             </select>
-            <p class="hint" id="ppTypeNote" hidden>Type answers are always anonymous. Afterwards, pick who talks with the wheel.</p>
+            <p class="hint" id="ppTypeNote">Everyone types a short answer. Answers are anonymous. Afterwards, pick who talks with the wheel.</p>
             <button type="button" class="btn" id="btnPpStart">Start Peace Pipe</button>
           </div>
         </div>
